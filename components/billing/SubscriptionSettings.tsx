@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { useState } from "react";
+import Link from "next/link";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -45,7 +46,7 @@ export function SubscriptionSettings({
         </CardHeader>
         <CardContent>
           <Button asChild>
-            <a href="/pricing">View Plans</a>
+            <Link href="/pricing">View Plans</Link>
           </Button>
         </CardContent>
       </Card>
