@@ -145,7 +145,8 @@ export function DocumentUpload({ onUploadComplete }: DocumentUploadProps): React
       <CardHeader>
         <CardTitle>Upload Document</CardTitle>
         <CardDescription>
-          Upload secure documents like W-2s, contracts, and call sheets. All documents are encrypted.
+          Upload secure documents like W-2s, contracts, and call sheets. All documents are
+          encrypted.
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -170,9 +171,7 @@ export function DocumentUpload({ onUploadComplete }: DocumentUploadProps): React
               className="hidden"
             />
             <Upload className="text-muted-foreground h-10 w-10" />
-            <p className="text-muted-foreground mt-2 text-sm">
-              Drag and drop or click to upload
-            </p>
+            <p className="text-muted-foreground mt-2 text-sm">Drag and drop or click to upload</p>
             <p className="text-muted-foreground text-xs">
               PDF, JPG, or PNG up to {MAX_DOCUMENT_SIZE / (1024 * 1024)}MB
             </p>
@@ -191,7 +190,9 @@ export function DocumentUpload({ onUploadComplete }: DocumentUploadProps): React
               <Button
                 variant="ghost"
                 size="sm"
-                onClick={() => { setPendingFile(null); }}
+                onClick={() => {
+                  setPendingFile(null);
+                }}
                 disabled={isUploading}
               >
                 <X className="h-4 w-4" />
@@ -204,7 +205,9 @@ export function DocumentUpload({ onUploadComplete }: DocumentUploadProps): React
                 <label className="mb-1 block text-sm font-medium">Document Name</label>
                 <Input
                   value={pendingFile.name}
-                  onChange={(e) => { setPendingFile({ ...pendingFile, name: e.target.value }); }}
+                  onChange={(e) => {
+                    setPendingFile({ ...pendingFile, name: e.target.value });
+                  }}
                   placeholder="Enter document name"
                   disabled={isUploading}
                 />
@@ -214,9 +217,12 @@ export function DocumentUpload({ onUploadComplete }: DocumentUploadProps): React
                 <label className="mb-1 block text-sm font-medium">Document Type</label>
                 <select
                   value={pendingFile.documentType}
-                  onChange={(e) =>
-                    { setPendingFile({ ...pendingFile, documentType: e.target.value as DocumentType }); }
-                  }
+                  onChange={(e) => {
+                    setPendingFile({
+                      ...pendingFile,
+                      documentType: e.target.value as DocumentType,
+                    });
+                  }}
                   className="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex h-10 w-full rounded-md border px-3 py-2 text-sm file:border-0 file:bg-transparent file:text-sm file:font-medium focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
                   disabled={isUploading}
                 >
@@ -234,12 +240,12 @@ export function DocumentUpload({ onUploadComplete }: DocumentUploadProps): React
                   <Input
                     type="number"
                     value={pendingFile.taxYear ?? ""}
-                    onChange={(e) =>
-                      { setPendingFile({
+                    onChange={(e) => {
+                      setPendingFile({
                         ...pendingFile,
                         taxYear: e.target.value ? parseInt(e.target.value, 10) : undefined,
-                      }); }
-                    }
+                      });
+                    }}
                     placeholder={String(new Date().getFullYear() - 1)}
                     min={1900}
                     max={new Date().getFullYear() + 1}
@@ -252,7 +258,9 @@ export function DocumentUpload({ onUploadComplete }: DocumentUploadProps): React
                 <label className="mb-1 block text-sm font-medium">Description (optional)</label>
                 <Input
                   value={pendingFile.description}
-                  onChange={(e) => { setPendingFile({ ...pendingFile, description: e.target.value }); }}
+                  onChange={(e) => {
+                    setPendingFile({ ...pendingFile, description: e.target.value });
+                  }}
                   placeholder="Add a description"
                   disabled={isUploading}
                 />
@@ -261,10 +269,19 @@ export function DocumentUpload({ onUploadComplete }: DocumentUploadProps): React
 
             {/* Upload button */}
             <div className="flex justify-end gap-2">
-              <Button variant="outline" onClick={() => { setPendingFile(null); }} disabled={isUploading}>
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setPendingFile(null);
+                }}
+                disabled={isUploading}
+              >
                 Cancel
               </Button>
-              <Button onClick={() => void handleUpload()} disabled={isUploading || !pendingFile.name}>
+              <Button
+                onClick={() => void handleUpload()}
+                disabled={isUploading || !pendingFile.name}
+              >
                 {isUploading ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />

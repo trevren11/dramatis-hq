@@ -66,9 +66,7 @@ describe("Encryption Service", () => {
       expect(result1.salt).not.toBe(result2.salt);
 
       // Encrypted data should be different
-      expect(result1.encryptedData.toString("hex")).not.toBe(
-        result2.encryptedData.toString("hex")
-      );
+      expect(result1.encryptedData.toString("hex")).not.toBe(result2.encryptedData.toString("hex"));
     });
 
     it("should use provided salt when specified", async () => {

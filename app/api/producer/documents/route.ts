@@ -121,7 +121,8 @@ export async function POST(request: Request): Promise<NextResponse> {
     const file = formData.get("file") as File | null;
 
     const fileError = validateFile(file);
-    if (fileError || !file) return fileError ?? NextResponse.json({ error: "No file" }, { status: 400 });
+    if (fileError || !file)
+      return fileError ?? NextResponse.json({ error: "No file" }, { status: 400 });
 
     const taxYearStr = formData.get("taxYear") as string | null;
     const taxYear = taxYearStr ? parseInt(taxYearStr, 10) : undefined;

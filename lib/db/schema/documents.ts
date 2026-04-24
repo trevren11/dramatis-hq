@@ -36,8 +36,7 @@ export const documents = pgTable(
       .references(() => users.id, { onDelete: "cascade" })
       .notNull(),
     // Who uploaded the document (could be talent or producer)
-    uploadedById: uuid("uploaded_by_id")
-      .references(() => users.id, { onDelete: "set null" }),
+    uploadedById: uuid("uploaded_by_id").references(() => users.id, { onDelete: "set null" }),
     documentType: documentTypeEnum("document_type").notNull(),
     // Display name for the document
     name: varchar("name", { length: 255 }).notNull(),
@@ -83,8 +82,7 @@ export const documentAccessLogs = pgTable(
       .references(() => documents.id, { onDelete: "cascade" })
       .notNull(),
     // User who performed the action
-    userId: uuid("user_id")
-      .references(() => users.id, { onDelete: "set null" }),
+    userId: uuid("user_id").references(() => users.id, { onDelete: "set null" }),
     action: documentAccessActionEnum("action").notNull(),
     // IP address for audit trail
     ipAddress: varchar("ip_address", { length: 45 }),
