@@ -4,7 +4,14 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from "@/components/ui/card";
+import {
+  Card,
+  CardHeader,
+  CardTitle,
+  CardDescription,
+  CardContent,
+  CardFooter,
+} from "@/components/ui/card";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
 describe("Button", () => {
@@ -116,7 +123,11 @@ describe("Card", () => {
   });
 
   it("applies custom className to card", () => {
-    render(<Card className="custom-class" data-testid="card">Content</Card>);
+    render(
+      <Card className="custom-class" data-testid="card">
+        Content
+      </Card>
+    );
     expect(screen.getByTestId("card")).toHaveClass("custom-class");
   });
 });

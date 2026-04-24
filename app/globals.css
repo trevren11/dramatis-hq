@@ -30,7 +30,10 @@
 }
 
 @plugin "daisyui" {
-  themes: light --default, dark, dramatis;
+  themes:
+    light --default,
+    dark,
+    dramatis;
 }
 
 @utility dramatis {
