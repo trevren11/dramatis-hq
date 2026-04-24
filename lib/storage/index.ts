@@ -183,3 +183,11 @@ export async function getSignedUploadUrl(
 
   return getSignedUrl(client, command, { expiresIn });
 }
+
+// Document-specific storage functions
+export {
+  uploadDocument,
+  downloadDocument,
+  deleteDocument,
+  generateDocumentKey,
+} from "./document-storage";
