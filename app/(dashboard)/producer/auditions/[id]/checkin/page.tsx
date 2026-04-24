@@ -63,7 +63,7 @@ export default async function ProducerCheckinPage({ params }: Props): Promise<Re
     notFound();
   }
 
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
+  const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:6767";
   const checkinUrl = `${baseUrl}/auditions/${audition.slug}/checkin`;
 
   return (

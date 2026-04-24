@@ -15,6 +15,7 @@ import { producerProfiles } from "./producer-profiles";
 import { shows } from "./shows";
 import { roles } from "./roles";
 import { talentProfiles } from "./talent-profiles";
+import { users } from "./users";
 
 // Enums
 export const auditionVisibilityEnum = pgEnum("audition_visibility", [
@@ -39,6 +40,8 @@ export const applicationStatusEnum = pgEnum("application_status", [
 ]);
 
 export const checkinStatusEnum = pgEnum("checkin_status", ["checked_in", "in_room", "completed"]);
+
+export const decisionTypeEnum = pgEnum("decision_type", ["callback", "no_thanks", "callback_role"]);
 
 // Types for JSONB fields
 export interface AuditionDate {
@@ -244,6 +247,59 @@ export const auditionFormResponses = pgTable(
   ]
 );
 
+// Audition decisions - callback/rejection tracking
+export const auditionDecisions = pgTable(
+  "audition_decisions",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    auditionId: uuid("audition_id")
+      .references(() => auditions.id, { onDelete: "cascade" })
+      .notNull(),
+    talentProfileId: uuid("talent_profile_id")
+      .references(() => talentProfiles.id, { onDelete: "cascade" })
+      .notNull(),
+    decision: decisionTypeEnum("decision").notNull(),
+    roleId: uuid("role_id").references(() => roles.id, { onDelete: "set null" }), // for callback_role
+    notes: text("notes"),
+    decidedBy: uuid("decided_by")
+      .references(() => users.id, { onDelete: "set null" })
+      .notNull(),
+    decidedAt: timestamp("decided_at", { mode: "date" }).defaultNow().notNull(),
+  },
+  (table) => [
+    index("audition_decisions_audition_id_idx").on(table.auditionId),
+    index("audition_decisions_talent_profile_id_idx").on(table.talentProfileId),
+    index("audition_decisions_decision_idx").on(table.decision),
+    index("audition_decisions_decided_by_idx").on(table.decidedBy),
+    index("audition_decisions_decided_at_idx").on(table.decidedAt),
+  ]
+);
+
+// Audition notes - private notes per talent
+export const auditionNotes = pgTable(
+  "audition_notes",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    auditionId: uuid("audition_id")
+      .references(() => auditions.id, { onDelete: "cascade" })
+      .notNull(),
+    talentProfileId: uuid("talent_profile_id")
+      .references(() => talentProfiles.id, { onDelete: "cascade" })
+      .notNull(),
+    note: text("note").notNull(),
+    createdBy: uuid("created_by")
+      .references(() => users.id, { onDelete: "set null" })
+      .notNull(),
+    createdAt: timestamp("created_at", { mode: "date" }).defaultNow().notNull(),
+  },
+  (table) => [
+    index("audition_notes_audition_id_idx").on(table.auditionId),
+    index("audition_notes_talent_profile_id_idx").on(table.talentProfileId),
+    index("audition_notes_created_by_idx").on(table.createdBy),
+    index("audition_notes_created_at_idx").on(table.createdAt),
+  ]
+);
+
 // Type exports
 export type Audition = typeof auditions.$inferSelect;
 export type NewAudition = typeof auditions.$inferInsert;
@@ -255,6 +311,10 @@ export type AuditionForm = typeof auditionForms.$inferSelect;
 export type NewAuditionForm = typeof auditionForms.$inferInsert;
 export type AuditionFormResponse = typeof auditionFormResponses.$inferSelect;
 export type NewAuditionFormResponse = typeof auditionFormResponses.$inferInsert;
+export type AuditionDecision = typeof auditionDecisions.$inferSelect;
+export type NewAuditionDecision = typeof auditionDecisions.$inferInsert;
+export type AuditionNote = typeof auditionNotes.$inferSelect;
+export type NewAuditionNote = typeof auditionNotes.$inferInsert;
 
 // Option constants for UI
 export const AUDITION_VISIBILITY_OPTIONS = [
@@ -297,3 +357,11 @@ export const CHECKIN_STATUS_OPTIONS = [
 ] as const;
 
 export const CHECKIN_STATUS_VALUES = ["checked_in", "in_room", "completed"] as const;
+
+export const DECISION_TYPE_OPTIONS = [
+  { value: "callback", label: "Callback" },
+  { value: "no_thanks", label: "No Thanks" },
+  { value: "callback_role", label: "Callback for Role" },
+] as const;
+
+export const DECISION_TYPE_VALUES = ["callback", "no_thanks", "callback_role"] as const;

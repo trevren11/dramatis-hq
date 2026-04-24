@@ -11,7 +11,7 @@ pnpm install                    # Install dependencies
 cp .env.example .env.local      # Configure environment
 docker-compose up -d            # Start local Postgres + Redis + MinIO
 pnpm db:migrate                 # Run database migrations
-pnpm dev                        # Server on http://localhost:3000
+pnpm dev                        # Server on http://localhost:6767
 ```
 
 Run `pnpm install` when: first time in repo, after pulling dependency changes, or "Cannot find module" errors.
@@ -395,7 +395,7 @@ Required for development:
 ```bash
 DATABASE_URL=                   # PostgreSQL connection string
 NEXTAUTH_SECRET=                # Auth secret (generate with openssl)
-NEXTAUTH_URL=http://localhost:3000
+NEXTAUTH_URL=http://localhost:6767
 S3_ENDPOINT=                    # MinIO/R2/S3 endpoint
 S3_ACCESS_KEY_ID=
 S3_SECRET_ACCESS_KEY=
