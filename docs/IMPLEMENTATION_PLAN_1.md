@@ -1,301 +1,341 @@
 <!-- IMPLEMENTATION_PLAN_START -->
 
-# Implementation Plan: DRM-017 Audition Announcements
+# Implementation Plan: DRM-018 Audition Form Builder
 
 ## Overview
 
-Build a complete audition announcement system enabling producers to create, publish, and manage auditions. Talent can discover, filter, and apply to auditions with their profile materials. This feature requires new database tables, API routes, and both public and authenticated UI components.
+Build a drag-and-drop form builder for producers to create custom audition forms with various field types, plus QR code check-in functionality for audition day. Includes pre-built question library, auto-fill from talent profiles, and real-time check-in queue management.
 
 ## Repository
 
 - **dramatis-hq**: Full-stack Next.js application
-  - **Branch**: `trenshaw/dramatis-hq-17`
+  - **Branch**: `trenshaw/dramatis-hq-18`
 
 ## Detailed Plan
 
 ### Phase 1: Database Schema
 
-**Complexity**: medium
-**Files**: lib/db/schema/auditions.ts, lib/db/schema/index.ts
+**Complexity**: simple
+**Files**: lib/db/schema/auditions.ts (extend), lib/db/schema/index.ts
 
 **Task**:
-Create three new tables following existing patterns from shows.ts and roles.ts:
+Add two new tables to the existing auditions schema:
 
-1. **auditions table**
-   - id, showId, organizationId (foreign keys)
-   - title, description, slug (unique)
-   - location, isVirtual (boolean)
-   - auditionDates (jsonb array of date/time objects)
-   - submissionDeadline (timestamp)
-   - requirements (jsonb - union status, age range, gender, etc.)
-   - materials (jsonb - what applicants must submit)
-   - visibility enum: 'public' | 'private' | 'unlisted'
-   - publishAt (timestamp, nullable for immediate)
-   - status enum: 'draft' | 'open' | 'closed' | 'cancelled'
+1. **audition_forms table**
+   - id (uuid, primary key)
+   - auditionId (uuid, foreign key to auditions)
+   - fields (jsonb - array of FormField objects)
    - createdAt, updatedAt
 
-2. **audition_roles junction table**
-   - auditionId, roleId (composite primary key)
-   - Links auditions to specific roles being cast
+2. **audition_form_responses table**
+   - id (uuid, primary key)
+   - auditionId (uuid, foreign key to auditions)
+   - talentProfileId (uuid, foreign key to talent_profiles)
+   - responses (jsonb - key-value pairs matching form fields)
+   - checkedInAt (timestamp)
+   - queueNumber (integer)
+   - status enum: 'checked_in' | 'in_room' | 'completed'
+   - createdAt
 
-3. **audition_applications table**
-   - id, auditionId, talentProfileId
-   - status enum: 'submitted' | 'reviewed' | 'callback' | 'rejected' | 'cast'
-   - materials (jsonb - uploaded files/links)
-   - notes (text - producer notes)
-   - submittedAt, reviewedAt (timestamps)
+Add TypeScript interfaces for FormField schema:
 
-Add indexes on: auditionId, talentProfileId, status, slug, publishAt, submissionDeadline
+```typescript
+interface FormField {
+  id: string;
+  type: "text" | "textarea" | "select" | "multiselect" | "boolean" | "date" | "file";
+  label: string;
+  required: boolean;
+  options?: string[]; // for select/multiselect
+  profileMapping?: string; // auto-fill from profile field
+  placeholder?: string;
+}
+```
 
 ---
 
 ### Phase 2: Validation Schemas
 
 **Complexity**: simple
-**Files**: lib/validations/auditions.ts
+**Files**: lib/validations/form-builder.ts
 
 **Task**:
-Create Zod schemas following patterns from shows.ts:
+Create Zod schemas:
 
-- auditionCreateSchema (for creating new auditions)
-- auditionUpdateSchema (for editing)
-- auditionSearchSchema (for filtering/browse)
-- applicationSubmitSchema (for talent applications)
-
-Validate: required fields, date ordering (deadline before audition dates), slug format, materials structure.
+- formFieldSchema (validate individual field structure)
+- formBuilderSchema (validate full form with fields array)
+- formResponseSchema (validate talent form submissions)
+- checkInUpdateSchema (validate queue status updates)
 
 ---
 
-### Phase 3: API Routes - Producer Side
+### Phase 3: Pre-built Questions Library
+
+**Complexity**: simple
+**Files**: lib/form-builder/prebuilt-questions.ts
+
+**Task**:
+Create a library of common audition questions:
+
+```typescript
+export const PREBUILT_QUESTIONS: FormField[] = [
+  { id: "age_18", type: "boolean", label: "Are you 18 or older?", required: true },
+  {
+    id: "work_auth",
+    type: "boolean",
+    label: "Are you legally authorized to work in the US?",
+    required: true,
+  },
+  {
+    id: "transportation",
+    type: "boolean",
+    label: "Do you have reliable transportation?",
+    required: true,
+  },
+  {
+    id: "conflicts",
+    type: "textarea",
+    label: "Any conflicts during production dates?",
+    required: false,
+  },
+  {
+    id: "referral",
+    type: "select",
+    label: "How did you hear about this audition?",
+    required: false,
+    options: ["Social Media", "Website", "Friend", "Agent", "Other"],
+  },
+];
+```
+
+Include profile field mappings for auto-fill:
+
+```typescript
+export const PROFILE_MAPPINGS = {
+  name: "talentProfile.name",
+  email: "user.email",
+  unionStatus: "talentProfile.unionStatus",
+  skills: "talentProfile.skills",
+  // etc.
+};
+```
+
+---
+
+### Phase 4: API Routes - Form Builder
 
 **Complexity**: medium
 **Files**:
 
-- app/api/auditions/route.ts (GET list, POST create)
-- app/api/auditions/[id]/route.ts (GET, PUT, DELETE)
-- app/api/auditions/[id]/applications/route.ts (GET applications)
-- app/api/auditions/[id]/applications/[applicationId]/route.ts (PUT update status)
+- app/api/auditions/[id]/form/route.ts (GET, PUT)
+- app/api/auditions/[id]/form/preview/route.ts (GET)
 
 **Task**:
-Following patterns from app/api/shows/route.ts:
 
-1. **GET /api/auditions** - List producer's auditions with filters (status, showId)
-2. **POST /api/auditions** - Create new audition (requires producer profile)
-3. **GET /api/auditions/[id]** - Get audition details (producer view with applications)
-4. **PUT /api/auditions/[id]** - Update audition
-5. **DELETE /api/auditions/[id]** - Cancel/delete audition
-6. **GET /api/auditions/[id]/applications** - List applications with pagination
-7. **PUT /api/auditions/[id]/applications/[applicationId]** - Update application status
+1. **GET /api/auditions/[id]/form** - Get form for audition (producer only)
+2. **PUT /api/auditions/[id]/form** - Save form fields (producer only)
+3. **GET /api/auditions/[id]/form/preview** - Preview form (for producer testing)
 
-All routes verify producer owns the audition's organization.
+Verify producer owns audition before allowing edits.
 
 ---
 
-### Phase 4: API Routes - Public/Talent Side
+### Phase 5: API Routes - Check-in System
 
 **Complexity**: medium
 **Files**:
 
-- app/api/auditions/browse/route.ts (public browse)
-- app/api/auditions/[slug]/public/route.ts (public audition page)
-- app/api/auditions/[id]/apply/route.ts (submit application)
-- app/api/talent/applications/route.ts (talent's applications)
+- app/api/auditions/[id]/checkin/route.ts (POST - submit form/check in)
+- app/api/auditions/[id]/checkin/queue/route.ts (GET - real-time queue)
+- app/api/auditions/[id]/checkin/[responseId]/route.ts (PUT - update status)
+- app/api/auditions/[id]/qr/route.ts (GET - generate QR code)
 
 **Task**:
 
-1. **GET /api/auditions/browse** - Public listing with filters:
-   - location (with "near me" geocoding)
-   - dateRange
-   - unionStatus
-   - roleType
-   - search (title, company name)
-   - Pagination, only shows published & open auditions
+1. **POST /api/auditions/[id]/checkin** - Submit form and check in
+   - Validate form responses against form schema
+   - Auto-fill from profile where mapped
+   - Assign queue number (max + 1)
+   - Create form_response record
 
-2. **GET /api/auditions/[slug]/public** - Public audition detail page
-   - Returns audition + show + organization info
-   - No auth required, but checks visibility
+2. **GET /api/auditions/[id]/checkin/queue** - Get check-in queue
+   - Return all checked-in talent with status
+   - Support real-time polling or SSE
 
-3. **POST /api/auditions/[id]/apply** - Submit application
-   - Requires talent profile
-   - Validates materials against audition requirements
-   - Checks deadline not passed
-   - Prevents duplicate applications
+3. **PUT /api/auditions/[id]/checkin/[responseId]** - Update check-in status
+   - Change status: checked_in → in_room → completed
+   - Allow reordering queue
 
-4. **GET /api/talent/applications** - Talent's submitted applications
-   - Status tracking across all applications
+4. **GET /api/auditions/[id]/qr** - Generate QR code
+   - Return QR code data URL or SVG
+   - QR links to /auditions/[slug]/checkin
 
 ---
 
-### Phase 5: Producer UI Components
+### Phase 6: Form Builder UI Components
 
 **Complexity**: complex
 **Files**:
 
-- components/auditions/AuditionList.tsx
-- components/auditions/AuditionCard.tsx
-- components/auditions/CreateAuditionWizard.tsx
-- components/auditions/AuditionSettings.tsx
-- components/auditions/ApplicationList.tsx
-- components/auditions/ApplicationCard.tsx
-- components/auditions/ApplicationReviewDialog.tsx
-- components/auditions/wizard-steps/ (4-5 step components)
-- components/auditions/index.ts
+- components/form-builder/FormBuilder.tsx (main drag-drop canvas)
+- components/form-builder/FieldPalette.tsx (available field types)
+- components/form-builder/FieldEditor.tsx (configure selected field)
+- components/form-builder/FieldPreview.tsx (render field in form)
+- components/form-builder/PrebuiltQuestions.tsx (insert from library)
+- components/form-builder/FormPreview.tsx (full form preview)
+- components/form-builder/index.ts
 
 **Task**:
-Following patterns from components/shows/:
+Install @dnd-kit for drag-and-drop:
 
-1. **AuditionList** - List view with filters, status badges, action menu
-2. **AuditionCard** - Summary card showing key details, applicant count
-3. **CreateAuditionWizard** - Multi-step form:
-   - Step 1: Select show, title, description
-   - Step 2: Dates, times, location
-   - Step 3: Select roles, requirements
-   - Step 4: Materials needed, instructions
-   - Step 5: Visibility, publish date, deadline
-4. **AuditionSettings** - Edit existing audition
-5. **ApplicationList** - Table/list of applications with sorting
-6. **ApplicationCard** - Application summary with talent info
-7. **ApplicationReviewDialog** - Review materials, update status, add notes
+```bash
+pnpm add @dnd-kit/core @dnd-kit/sortable @dnd-kit/utilities
+```
+
+1. **FormBuilder** - Main component with:
+   - DndContext for drag-drop
+   - Left sidebar: FieldPalette with draggable field types
+   - Center: SortableContext with current form fields
+   - Right sidebar: FieldEditor for selected field
+
+2. **FieldPalette** - Draggable cards for each field type:
+   - Text, Textarea, Select, Multi-select, Yes/No, Date, File Upload
+   - Drag to canvas to add
+
+3. **FieldEditor** - Edit selected field:
+   - Label, placeholder, required toggle
+   - Options for select/multiselect
+   - Profile mapping dropdown
+
+4. **PrebuiltQuestions** - Modal to insert pre-built questions
+
+5. **FormPreview** - Full preview of form as talent would see it
 
 ---
 
-### Phase 6: Public Audition Pages
+### Phase 7: Check-in UI Components
 
 **Complexity**: medium
 **Files**:
 
-- app/auditions/page.tsx (browse page)
-- app/auditions/[slug]/page.tsx (detail page)
-- components/auditions/AuditionBrowse.tsx
-- components/auditions/AuditionFilters.tsx
-- components/auditions/AuditionPublicCard.tsx
-- components/auditions/AuditionDetail.tsx
+- components/checkin/QRCodeDisplay.tsx
+- components/checkin/CheckinForm.tsx
+- components/checkin/CheckinQueue.tsx
+- components/checkin/CheckinCard.tsx
+- components/checkin/QueueNumber.tsx
+- components/checkin/index.ts
 
 **Task**:
 
-1. **Browse Page** (/auditions)
-   - Filter sidebar: location, date, union, role type
-   - Search bar
-   - Grid/list toggle
-   - Pagination
-   - Save/bookmark functionality
+1. **QRCodeDisplay** - Show QR code for audition
+   - Uses qrcode.react (already installed)
+   - Download/print options
 
-2. **Detail Page** (/auditions/[slug])
-   - Audition info, dates, location
-   - Roles being cast with descriptions
-   - Requirements and materials needed
-   - Company sidebar with logo, about
-   - Apply button (or login prompt)
-   - Share buttons
+2. **CheckinForm** - Dynamic form for talent
+   - Render fields based on form schema
+   - Auto-fill from profile
+   - Submit handler
+
+3. **CheckinQueue** - Real-time queue for producer
+   - List of checked-in talent
+   - Drag to reorder
+   - Status badges
+   - Mark as in_room/completed
+
+4. **QueueNumber** - Display queue number to talent after check-in
 
 ---
 
-### Phase 7: Talent Application Flow
+### Phase 8: Public Check-in Pages
 
 **Complexity**: medium
 **Files**:
 
-- components/auditions/ApplyDialog.tsx
-- components/auditions/ApplicationForm.tsx
-- components/auditions/ApplicationStatus.tsx
-- app/(dashboard)/talent/applications/page.tsx
+- app/auditions/[slug]/checkin/page.tsx
+- app/auditions/[slug]/checkin/success/page.tsx
 
 **Task**:
 
-1. **ApplyDialog** - Modal opened from audition detail:
-   - Shows current profile completeness
-   - Validates required materials are available
-   - Upload additional materials if needed
-   - Fill custom questions
-   - Review before submit
+1. **Check-in Page** (/auditions/[slug]/checkin)
+   - If logged in: Pre-fill form, show profile data
+   - If not logged in: Prompt to create account or continue as guest
+   - Submit form = checked in
+   - Redirect to success page
 
-2. **ApplicationForm** - Main form component:
-   - Auto-fills from talent profile (headshot, resume)
-   - Dynamic fields based on audition requirements
-   - File upload for requested materials
-   - Confirm submission
-
-3. **ApplicationStatus** - Status display component:
-   - Badge for current status
-   - Timeline of status changes
-   - Any producer notes shared
-
-4. **Talent Applications Page** - Dashboard view:
-   - List all applications
-   - Filter by status
-   - Quick view of audition details
-   - Status tracking
+2. **Success Page** (/auditions/[slug]/checkin/success)
+   - Show queue number prominently
+   - "You are #X in line"
+   - Estimated wait time (optional)
 
 ---
 
-### Phase 8: Dashboard Integration
+### Phase 9: Producer Dashboard Integration
 
 **Complexity**: simple
 **Files**:
 
-- app/(dashboard)/producer/auditions/page.tsx
-- app/(dashboard)/producer/auditions/[id]/page.tsx
-- app/(dashboard)/producer/auditions/create/page.tsx
-- components/layout/ProducerNav.tsx (add auditions link)
+- app/(dashboard)/producer/auditions/[id]/form/page.tsx
+- app/(dashboard)/producer/auditions/[id]/checkin/page.tsx
 
 **Task**:
 
-1. Add "Auditions" section to producer dashboard navigation
-2. Create page routes for audition management:
-   - /producer/auditions - List all auditions
-   - /producer/auditions/create - Create wizard
-   - /producer/auditions/[id] - Manage specific audition & applications
+1. **Form Builder Page** (/producer/auditions/[id]/form)
+   - Full form builder interface
+   - Save/preview buttons
+   - Link to copy check-in URL
+
+2. **Check-in Management Page** (/producer/auditions/[id]/checkin)
+   - QR code display
+   - Real-time check-in queue
+   - Controls for managing queue
 
 ---
 
 ## Implementation Order
 
-1. **Database Schema** - Foundation for all other work
-2. **Validation Schemas** - Needed by API routes
-3. **API Routes (Producer)** - Core CRUD operations
-4. **API Routes (Public/Talent)** - Browse and apply functionality
-5. **Producer UI Components** - Create and manage auditions
-6. **Public Pages** - Browse and detail pages
-7. **Talent Application Flow** - Apply and track
-8. **Dashboard Integration** - Wire everything together
+1. **Database Schema** - Foundation for forms and check-ins
+2. **Validation Schemas** - Required for API routes
+3. **Pre-built Questions** - Utility for form builder
+4. **API Routes (Form Builder)** - CRUD for forms
+5. **API Routes (Check-in)** - Check-in flow and queue
+6. **Form Builder UI** - Producer creates forms
+7. **Check-in UI** - Talent check-in flow
+8. **Public Pages** - QR-accessible check-in
+9. **Dashboard Integration** - Wire into producer dashboard
 
 ## Testing Requirements
 
 ### Unit Tests
 
-- **lib/**tests**/auditions/**: Test validation schemas, slug generation
-- **lib/**tests**/auditions/deadline.test.ts**: Deadline enforcement logic
+- **lib/**tests**/form-builder/**: Validation schemas, field parsing
+- **lib/**tests**/form-builder/prebuilt.test.ts**: Pre-built questions structure
 
 ### Integration Tests
 
-- API route tests for all endpoints
-- Auth/permission tests (producer owns audition, talent can apply)
-- Deadline enforcement (can't apply after deadline)
-- Visibility rules (private vs public)
+- Form save/load roundtrip
+- Check-in flow with queue number assignment
+- Profile auto-fill mapping
 
 ### E2E Tests (Playwright)
 
-- Producer creates audition flow
-- Talent browses and applies flow
-- Producer reviews applications flow
-- Application status updates
+- Producer builds form with drag-drop
+- Talent scans QR and completes check-in
+- Producer manages check-in queue
 
 ### Manual Testing
 
-- Create audition with all fields
-- Verify public page displays correctly
-- Test all filter combinations on browse
-- Submit application with various materials
-- Review application and change status
+- Create form with all field types
+- Test drag-and-drop reordering
+- QR code scans correctly on mobile
+- Real-time queue updates
 
 ## Risks and Considerations
 
-- **Slug uniqueness**: Generate slugs from title, handle conflicts with suffix
-- **Geocoding for "near me"**: May need external API (Google Places) for location filtering
-- **File uploads**: Reuse existing upload infrastructure from documents/headshots
-- **Deadline timezone**: Store in UTC, display in user's timezone
-- **Partial profiles**: Talent may not have all required materials - show completion prompts
-- **Concurrent applications**: Handle race conditions in application submission
-- **SEO**: Public audition pages should have proper meta tags for discoverability
+- **Drag-drop complexity**: @dnd-kit has learning curve; start simple
+- **Real-time queue**: Consider polling vs SSE/WebSocket for updates
+- **Mobile QR scanning**: Ensure check-in page is mobile-optimized
+- **Queue number race conditions**: Use database sequence or atomic increment
+- **File uploads in form**: Reuse existing upload infrastructure
+- **Guest check-in**: Decide if guests can check in without accounts
+- **Form versioning**: Consider what happens if form changes after submissions
 
 <!-- IMPLEMENTATION_PLAN_END -->
