@@ -1,6 +1,6 @@
 import "server-only";
 
-import sharp from "sharp";
+import sharp, { type Sharp, type Metadata } from "sharp";
 
 export interface ImageProcessingOptions {
   maxWidth?: number;
@@ -37,10 +37,10 @@ export async function processImage(
 ): Promise<ProcessedImage> {
   const { maxWidth = 1920, maxHeight = 1920, quality = 85, format = "webp" } = options;
 
-  let pipeline = sharp(buffer);
+  let pipeline: Sharp = sharp(buffer);
 
   // Get original metadata
-  const metadata = await pipeline.metadata();
+  const metadata: Metadata = await pipeline.metadata();
 
   // Resize if needed, maintaining aspect ratio
   if (
@@ -66,8 +66,8 @@ export async function processImage(
       break;
   }
 
-  const outputBuffer = await pipeline.toBuffer();
-  const outputMetadata = await sharp(outputBuffer).metadata();
+  const outputBuffer: Buffer = await pipeline.toBuffer();
+  const outputMetadata: Metadata = await sharp(outputBuffer).metadata();
 
   const contentTypeMap: Record<"webp" | "jpeg" | "png", string> = {
     webp: "image/webp",
@@ -100,11 +100,10 @@ export async function validateImageBuffer(buffer: Buffer): Promise<{
   error?: string;
 }> {
   try {
-    const metadata = await sharp(buffer).metadata();
+    const metadata: Metadata = await sharp(buffer).metadata();
     const validFormats = ["jpeg", "png", "webp", "gif"];
-    const format = metadata.format;
+    const format: string | undefined = metadata.format;
 
-    // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
     if (!format || !validFormats.includes(format)) {
       return {
         valid: false,
