@@ -51,8 +51,11 @@ export async function POST(request: Request): Promise<NextResponse> {
       where: eq(users.id, session.user.id),
     });
 
-    if (!user || user.userType !== "producer") {
-      return NextResponse.json({ error: "Only producers can create company profiles" }, { status: 403 });
+    if (user?.userType !== "producer") {
+      return NextResponse.json(
+        { error: "Only producers can create company profiles" },
+        { status: 403 }
+      );
     }
 
     const existingProfile = await db.query.producerProfiles.findFirst({

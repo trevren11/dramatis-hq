@@ -22,7 +22,7 @@ export default async function ProducerSetupPage(): Promise<React.ReactElement> {
     where: eq(users.id, session.user.id),
   });
 
-  if (!user || user.userType !== "producer") {
+  if (user?.userType !== "producer") {
     redirect("/");
   }
 

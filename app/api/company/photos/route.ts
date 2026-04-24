@@ -47,7 +47,10 @@ export async function POST(request: Request): Promise<NextResponse> {
     });
 
     if (!profile) {
-      return NextResponse.json({ error: "Profile not found. Create a company profile first." }, { status: 404 });
+      return NextResponse.json(
+        { error: "Profile not found. Create a company profile first." },
+        { status: 404 }
+      );
     }
 
     const body: unknown = await request.json();
@@ -64,7 +67,9 @@ export async function POST(request: Request): Promise<NextResponse> {
       const newCount = bulkParsed.data.photos.length;
       if (existingCount.length + newCount > MAX_PRODUCTION_PHOTOS) {
         return NextResponse.json(
-          { error: `Maximum ${MAX_PRODUCTION_PHOTOS} photos allowed. You have ${existingCount.length} photos.` },
+          {
+            error: `Maximum ${String(MAX_PRODUCTION_PHOTOS)} photos allowed. You have ${String(existingCount.length)} photos.`,
+          },
           { status: 400 }
         );
       }
@@ -99,7 +104,7 @@ export async function POST(request: Request): Promise<NextResponse> {
 
     if (existingCount.length >= MAX_PRODUCTION_PHOTOS) {
       return NextResponse.json(
-        { error: `Maximum ${MAX_PRODUCTION_PHOTOS} photos allowed` },
+        { error: `Maximum ${String(MAX_PRODUCTION_PHOTOS)} photos allowed` },
         { status: 400 }
       );
     }
