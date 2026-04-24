@@ -77,8 +77,8 @@ export default function Home(): React.ReactElement {
         {/* Hero Section */}
         <section className="relative overflow-hidden py-20 lg:py-32">
           <div className="from-primary/5 via-accent/5 to-secondary/5 absolute inset-0 bg-gradient-to-br" />
-          <div className="absolute top-20 left-10 h-72 w-72 rounded-full bg-primary/10 blur-3xl" />
-          <div className="absolute bottom-20 right-10 h-72 w-72 rounded-full bg-secondary/10 blur-3xl" />
+          <div className="bg-primary/10 absolute top-20 left-10 h-72 w-72 rounded-full blur-3xl" />
+          <div className="bg-secondary/10 absolute right-10 bottom-20 h-72 w-72 rounded-full blur-3xl" />
           <div className="relative mx-auto max-w-7xl px-4">
             <div className="mx-auto max-w-4xl text-center">
               <div className="bg-primary/10 text-primary mb-6 inline-flex items-center gap-2 rounded-full px-4 py-1.5 text-sm font-medium">
@@ -399,7 +399,7 @@ export default function Home(): React.ReactElement {
                 <div className="mt-10 flex flex-col items-center justify-center gap-4 sm:flex-row">
                   <Link
                     href="/signup"
-                    className="flex w-full items-center justify-center gap-2 rounded-lg bg-white px-8 py-4 font-medium text-primary shadow-lg transition-all hover:-translate-y-0.5 hover:shadow-xl sm:w-auto"
+                    className="text-primary flex w-full items-center justify-center gap-2 rounded-lg bg-white px-8 py-4 font-medium shadow-lg transition-all hover:-translate-y-0.5 hover:shadow-xl sm:w-auto"
                   >
                     Create Your Free Account
                     <ArrowRight className="h-4 w-4" />

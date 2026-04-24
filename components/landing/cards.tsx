@@ -66,7 +66,7 @@ export function PricingCard({
     <div
       className={`relative rounded-2xl border p-8 ${
         featured
-          ? "border-primary bg-primary/5 shadow-xl ring-2 ring-primary/20"
+          ? "border-primary bg-primary/5 ring-primary/20 shadow-xl ring-2"
           : "border-border bg-card shadow-sm"
       }`}
     >
