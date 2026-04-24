@@ -1,4 +1,13 @@
-import { pgTable, uuid, varchar, timestamp, pgEnum, text, index } from "drizzle-orm/pg-core";
+import {
+  pgTable,
+  uuid,
+  varchar,
+  timestamp,
+  pgEnum,
+  text,
+  index,
+  integer,
+} from "drizzle-orm/pg-core";
 
 export const userTypeEnum = pgEnum("user_type", ["talent", "producer", "admin"]);
 
@@ -34,13 +43,13 @@ export const accounts = pgTable(
     providerAccountId: varchar("provider_account_id", {
       length: 255,
     }).notNull(),
-    refreshToken: text("refresh_token"),
-    accessToken: text("access_token"),
-    expiresAt: timestamp("expires_at", { mode: "date" }),
-    tokenType: varchar("token_type", { length: 255 }),
+    refresh_token: text("refresh_token"),
+    access_token: text("access_token"),
+    expires_at: integer("expires_at"),
+    token_type: varchar("token_type", { length: 255 }),
     scope: varchar("scope", { length: 255 }),
-    idToken: text("id_token"),
-    sessionState: varchar("session_state", { length: 255 }),
+    id_token: text("id_token"),
+    session_state: varchar("session_state", { length: 255 }),
   },
   (table) => [index("accounts_user_id_idx").on(table.userId)]
 );
@@ -64,7 +73,22 @@ export const verificationTokens = pgTable("verification_tokens", {
   expires: timestamp("expires", { mode: "date" }).notNull(),
 });
 
+export const passwordResetTokens = pgTable(
+  "password_reset_tokens",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    userId: uuid("user_id")
+      .references(() => users.id, { onDelete: "cascade" })
+      .notNull(),
+    token: varchar("token", { length: 255 }).notNull().unique(),
+    expires: timestamp("expires", { mode: "date" }).notNull(),
+    createdAt: timestamp("created_at", { mode: "date" }).defaultNow().notNull(),
+  },
+  (table) => [index("password_reset_tokens_user_id_idx").on(table.userId)]
+);
+
 export type User = typeof users.$inferSelect;
 export type NewUser = typeof users.$inferInsert;
 export type Account = typeof accounts.$inferSelect;
 export type Session = typeof sessions.$inferSelect;
+export type PasswordResetToken = typeof passwordResetTokens.$inferSelect;
