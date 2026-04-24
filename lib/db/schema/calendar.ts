@@ -128,11 +128,9 @@ export const RECURRENCE_PATTERN_LABELS: Record<(typeof RECURRENCE_PATTERNS)[numb
 
 export const SHOW_SCHEDULE_STATUSES = ["confirmed", "tentative", "cancelled"] as const;
 
-export const SHOW_SCHEDULE_STATUS_LABELS: Record<
-  (typeof SHOW_SCHEDULE_STATUSES)[number],
-  string
-> = {
-  confirmed: "Confirmed",
-  tentative: "Tentative",
-  cancelled: "Cancelled",
-};
+export const SHOW_SCHEDULE_STATUS_LABELS: Record<(typeof SHOW_SCHEDULE_STATUSES)[number], string> =
+  {
+    confirmed: "Confirmed",
+    tentative: "Tentative",
+    cancelled: "Cancelled",
+  };

@@ -27,8 +27,7 @@ function addAvailabilityEvents(calendar: ICalCalendar, entries: Availability[]):
       allDay: entry.isAllDay ?? true,
       summary: entry.title ?? statusText,
       description: entry.notes ?? undefined,
-      status:
-        entry.status === "tentative" ? ICalEventStatus.TENTATIVE : ICalEventStatus.CONFIRMED,
+      status: entry.status === "tentative" ? ICalEventStatus.TENTATIVE : ICalEventStatus.CONFIRMED,
     });
   }
 }
@@ -59,10 +58,7 @@ function addShowEvents(calendar: ICalCalendar, entries: ShowSchedule[]): void {
   }
 }
 
-function createCalendarResponse(
-  icalString: string,
-  profile: TalentProfile
-): NextResponse {
+function createCalendarResponse(icalString: string, profile: TalentProfile): NextResponse {
   return new NextResponse(icalString, {
     status: 200,
     headers: {
