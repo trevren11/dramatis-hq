@@ -20,6 +20,7 @@ export default tseslint.config(
       "*.config.mjs",
       "*.config.ts",
       "next-env.d.ts",
+      "lib/resume/**",
     ],
   },
   {
