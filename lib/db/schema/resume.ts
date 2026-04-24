@@ -23,7 +23,7 @@ export const resumeTalentProfiles = pgTable(
   (table) => [index("talent_profiles_user_id_idx").on(table.userId)]
 );
 
-export const workHistory = pgTable(
+export const resumeWorkHistory = pgTable(
   "work_history",
   {
     id: uuid("id").primaryKey().defaultRandom(),
@@ -47,7 +47,7 @@ export const workHistory = pgTable(
   ]
 );
 
-export const education = pgTable(
+export const resumeEducation = pgTable(
   "education",
   {
     id: uuid("id").primaryKey().defaultRandom(),
@@ -91,9 +91,9 @@ export const resumeConfigurations = pgTable(
 
 export type ResumeTalentProfileRecord = typeof resumeTalentProfiles.$inferSelect;
 export type NewResumeTalentProfile = typeof resumeTalentProfiles.$inferInsert;
-export type WorkHistoryRecord = typeof workHistory.$inferSelect;
-export type NewWorkHistory = typeof workHistory.$inferInsert;
-export type EducationRecord = typeof education.$inferSelect;
-export type NewEducation = typeof education.$inferInsert;
+export type ResumeWorkHistoryRecord = typeof resumeWorkHistory.$inferSelect;
+export type NewResumeWorkHistory = typeof resumeWorkHistory.$inferInsert;
+export type ResumeEducationRecord = typeof resumeEducation.$inferSelect;
+export type NewResumeEducation = typeof resumeEducation.$inferInsert;
 export type ResumeConfigurationRecord = typeof resumeConfigurations.$inferSelect;
 export type NewResumeConfiguration = typeof resumeConfigurations.$inferInsert;
