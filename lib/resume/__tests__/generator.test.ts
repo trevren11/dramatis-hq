@@ -1,5 +1,6 @@
 import { describe, it, expect } from "vitest";
-import { generateResumePdf, createSampleProfile } from "../generator";
+import { generateResumePdf } from "../generator";
+import { createSampleProfile } from "../sample";
 import type { TalentProfile } from "../types";
 
 describe("Resume Generator", () => {
