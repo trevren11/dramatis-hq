@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { documents, documentAccessLogs } from "@/lib/db/schema";
-import { downloadFromS3, deleteFromS3 } from "@/lib/storage";
+import { downloadDocument, deleteDocument } from "@/lib/storage/document-storage";
 import { decryptDocument } from "@/lib/encryption";
 import { eq, and, isNull } from "drizzle-orm";
 
@@ -34,7 +34,7 @@ export async function GET(request: Request, context: RouteContext): Promise<Next
     }
 
     // Download encrypted content from S3
-    const encryptedData = await downloadFromS3(document.s3Key);
+    const encryptedData = await downloadDocument(document.s3Key);
 
     // Decrypt the content
     const decryptedData = decryptDocument(
@@ -114,7 +114,7 @@ export async function DELETE(request: Request, context: RouteContext): Promise<N
       .where(eq(documents.id, id));
 
     // Delete from S3 (hard delete the encrypted file)
-    await deleteFromS3(document.s3Key);
+    await deleteDocument(document.s3Key);
 
     return NextResponse.json({ success: true });
   } catch (error) {
