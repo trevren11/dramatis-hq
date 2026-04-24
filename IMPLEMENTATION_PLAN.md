@@ -27,12 +27,335 @@
 
 ## 1. Executive Summary
 
-Dramatis-HQ is a theatrical production management platform serving two primary user types:
+### 1.1 Vision
 
-- **Talent (Free Tier):** Performers who create profiles, manage availability, and apply for roles
-- **Producers (Paid Subscription):** Production companies managing shows, auditions, casting, and production workflows
+Dramatis-HQ is a comprehensive theatrical production management platform that bridges the gap between talent and producers in the performing arts industry. The platform streamlines the entire production lifecycle—from talent discovery and auditions through casting, rehearsals, and production management.
 
-The platform emphasizes secure document handling (SOC 2 compliance for W2/I-9 documents), real-time collaboration (casting boards, schedules), and professional-grade media management (headshots, video samples, minus tracks).
+### 1.2 Platform Goals
+
+1. **Democratize Access to Opportunities** - Give performers a professional platform to showcase their work and connect with producers regardless of geographic location or industry connections
+2. **Streamline the Audition Process** - Replace paper-based auditions with digital profiles, QR check-in, and real-time casting decisions
+3. **Centralize Production Management** - Provide producers with a single platform for all production needs: scheduling, notes, documents, budgets, and communication
+4. **Protect Sensitive Information** - Ensure SOC 2 compliant storage for tax documents (W2, I-9) and personal information
+5. **Enable Collaboration** - Support multi-user workflows where directors, stage managers, and designers can work together with appropriate access controls
+6. **Generate Professional Materials** - Auto-generate resumes, cast lists, call sheets, and other industry-standard documents
+
+### 1.3 User Types
+
+The platform serves two primary account types with multiple permission levels within each:
+
+| Account Type | Pricing | Description |
+|--------------|---------|-------------|
+| **Talent** | Free | Performers, actors, musicians, dancers who create profiles and audition for roles |
+| **Producer** | Paid Subscription | Production companies, theaters, and organizations that manage shows and hire talent |
+
+---
+
+### 1.4 Talent Capabilities (Free Tier)
+
+#### Profile & Identity
+| Feature | Description |
+|---------|-------------|
+| **Profile Pictures/Headshots** | Upload multiple professional headshots with cropping and optimization |
+| **Video Samples** | Upload and showcase work samples: singing, acting, instrument performances, dance reels |
+| **Social Media Links** | Connect Instagram, TikTok, Facebook, X (Twitter) profiles |
+| **Contact Information** | Email and phone number (visibility controlled by user) |
+| **Public Profile URL** | Shareable link to public-facing profile |
+| **QR Code Generation** | Generate QR codes linking to profile for audition check-in |
+
+#### Professional History
+| Feature | Description |
+|---------|-------------|
+| **Society/Union Membership** | Track memberships: AEA, SAG-AFTRA, IATSE, AFM, etc. |
+| **Work History** | Comprehensive project history with categorization |
+| **Project Details** | Show/project name, role/position, location, dates, union/non-union status |
+| **Project Categories** | Categorize as Theater, Film, Television, Commercial, Voice-over, etc. |
+| **Education/Training** | Program name, degree, university/conservatory, years attended |
+| **Special Skills** | Searchable skill tags (similar to LinkedIn skills) |
+
+#### Physical Attributes (Searchable by Producers, Not Public)
+| Attribute | Notes |
+|-----------|-------|
+| Hair Color | Current and natural |
+| Eye Color | — |
+| Height | — |
+| Willingness to Cut Hair | Yes/No/Negotiable |
+| Ethnicity | Self-identified, optional |
+| Age Range | Playable age range |
+| Vocal Range | For singers (e.g., Soprano, Tenor, Baritone) |
+| 18+ Confirmation | Legal verification for mature content |
+
+#### Resume Generation
+| Feature | Description |
+|---------|-------------|
+| **Auto-Generate Resume** | Pull profile picture, work history, education, and skills into formatted PDF |
+| **Selective Inclusion** | Checkbox interface to include/exclude specific experiences before generation |
+| **Print-Ready Format** | Industry-standard resume format suitable for printing |
+| **Multiple Versions** | Save different resume configurations for different audition types |
+
+#### Document Storage (Private, SOC 2 Compliant)
+| Document Type | Description |
+|---------------|-------------|
+| **Tax Documents** | W2, 1099 forms (encrypted, user-only access) |
+| **Call Sheets** | Received call sheets from productions |
+| **Contracts** | Employment agreements and deal memos |
+| **Personal Documents** | ID copies, work permits, etc. |
+
+#### Calendar & Availability
+| Feature | Description |
+|---------|-------------|
+| **Availability Calendar** | Mark available/unavailable dates for auditions and bookings |
+| **Schedule Sync** | Automatic blackout dates when booked on a show (without revealing project details) |
+| **Conflict Detection** | Warn when applying for overlapping commitments |
+
+#### Communication
+| Feature | Description |
+|---------|-------------|
+| **Message Center** | Send and receive messages to/from producers and other talent |
+| **Email Notifications** | Configurable notifications for messages, audition updates, casting decisions |
+| **Push Notifications** | Mobile alerts for time-sensitive communications |
+
+#### Profile Sharing
+| Method | Description |
+|--------|-------------|
+| **Direct Link** | Shareable URL to public profile |
+| **QR Code** | Scannable code for audition check-in |
+| **Search Visibility** | Opt-in to be discoverable by producers searching for talent |
+
+---
+
+### 1.5 Producer Capabilities (Paid Subscription)
+
+#### Company Profile
+| Feature | Description |
+|---------|-------------|
+| **Company Logo** | Brand identity display |
+| **About Us** | Company description, mission, history |
+| **Location** | Primary venue/office location |
+| **Website** | Link to company website |
+| **Union Status** | AEA signatory, non-union, or mixed |
+| **Photo Gallery** | Showcase current and past productions |
+| **Upcoming Season** | Announce upcoming shows and audition opportunities |
+
+#### Audition Management
+
+##### Audition Announcements
+| Feature | Description |
+|---------|-------------|
+| **Public Listings** | Post auditions visible to all talent |
+| **Requirements** | Specify union status, age range, roles available |
+| **Materials Request** | Specify required audition materials (headshot, resume, song, monologue) |
+| **Submission Deadline** | Set application cutoff dates |
+
+##### Audition Form Builder
+| Feature | Description |
+|---------|-------------|
+| **Custom Questions** | Build forms asking talent-specific questions beyond profile data |
+| **Required Fields** | Mark questions as required or optional |
+| **Auto-Fill from Profile** | Pre-populate answers from talent's existing profile data |
+| **QR Code Check-In** | Generate unique QR for audition; talent scans to pull their info |
+
+##### Audition Day Interface
+| Feature | Description |
+|---------|-------------|
+| **Talent Queue** | View profiles in audition order |
+| **Profile View** | See headshot on first click |
+| **Resume View** | Flip to resume on second click |
+| **Quick Actions** | Sort talent into: Callback, No Thanks, Callback with Role (typeable) |
+| **Notes** | Add private notes per talent |
+| **Future Cast List** | Running view of callback/cast decisions |
+
+##### Callback Management
+| Feature | Description |
+|---------|-------------|
+| **Pull from Auditions** | Import callback list from initial auditions |
+| **Same Interface** | Headshot → Resume flip with decision buttons |
+| **Role Assignment** | Assign specific roles being considered |
+| **Save States** | Save to Casting or save to Callback List with updated decisions |
+
+##### Casting Board (Lucidchart-style Interface)
+| Feature | Description |
+|---------|-------------|
+| **Role Columns** | Left side displays squares for each role to be filled |
+| **Talent Pool** | Right side shows all auditioned talent for drag-and-drop |
+| **Drag & Drop** | Drag talent photos onto role squares; name appears under role |
+| **Eject Button** | Remove talent from role and set aside for reconsideration |
+| **Lock Button** | Lock a role to prevent accidental changes |
+| **Tier/Hide** | Hide leads or ensemble to focus on specific role groups |
+| **Deck Area** | Bottom area to shuffle and organize talent being considered |
+| **Save Draft** | Save current casting state to return later |
+| **Submit Casting** | Finalize casting with confirmation prompt |
+| **Cast Notification** | Email talent their role using merge fields (name, role, show) |
+| **Email Composer** | Customize cast notification emails with merge fields |
+| **Cast List Generation** | Auto-generate cast list with names, roles, contact info |
+
+#### Production Management
+
+##### Show/Project Creation
+| Feature | Description |
+|---------|-------------|
+| **Project Setup** | Create new production with title, dates, venue |
+| **Role Definition** | Define all roles/positions needed |
+| **Staff Assignment** | Add staff members with specific permissions |
+| **Department Tabs** | Organize by production department |
+
+##### Document Management
+| Feature | Description |
+|---------|-------------|
+| **W2/I-9 Upload** | Upload employee tax documents; syncs to talent's secure storage |
+| **Call Sheet Storage** | Store and distribute call sheets |
+| **Cast Lists** | Maintain cast contact and role information |
+| **Script Storage** | Master script with version control |
+| **Minus Tracks** | Audio tracks shareable with permission controls (copyright consideration) |
+
+##### Production Notes (Department Tabs)
+| Department | Content |
+|------------|---------|
+| **Lighting** | Light plots, cue sheets, equipment lists |
+| **Director's Vision** | Concept documents, vision statements, research |
+| **Makeup/Hair** | Design documents, character breakdowns |
+| **Costuming** | Costume plots, measurements, fitting schedules |
+| **Scenic** | Set designs, ground plans, construction drawings |
+| **Dramaturg** | Research packets, program notes, historical context |
+| **Assistant Director** | Blocking notes, rehearsal reports |
+| **Props** | Props lists, sourcing documents, tracking |
+| **Choreographer** | Dance notation, video references, spacing charts |
+
+##### Calendar & Scheduling
+| Feature | Description |
+|---------|-------------|
+| **Rehearsal Calendar** | Create and manage rehearsal schedule |
+| **Cast Tagging** | Tag which cast members are called for each rehearsal |
+| **Time/Date Edits** | Modify schedule with change tracking |
+| **Push Notifications** | Alert talent of schedule changes |
+| **Email Notifications** | Send schedule updates via email |
+| **Conflict View** | See talent availability conflicts |
+
+##### Budget & Receipts
+| Feature | Description |
+|---------|-------------|
+| **Budget Tracking** | Track production budget by department |
+| **Receipt Upload** | Upload receipts for expenses |
+| **Reimbursement Requests** | Staff can submit reimbursement requests |
+| **Approval Workflow** | Producers approve/deny reimbursements |
+
+#### Communication
+| Feature | Description |
+|---------|-------------|
+| **Message Center** | Send messages to talent, staff, other producers |
+| **Bulk Messaging** | Send to entire cast or filtered groups |
+| **Email Integration** | Messages can be delivered via email |
+| **Announcement Board** | Post updates visible to all show participants |
+
+---
+
+### 1.6 Permission Levels & Access Control
+
+The platform implements granular role-based access control (RBAC) to ensure users only see what they need.
+
+#### Producer Organization Roles
+
+| Role | Description | Access Level |
+|------|-------------|--------------|
+| **Owner** | Organization owner/admin | Full access to all features, billing, user management |
+| **Admin** | Organization administrator | Full access except billing and ownership transfer |
+| **Producer** | Production lead | Create/manage shows, full casting access, budget approval |
+| **Associate Producer** | Assistant producer | View all, limited edit on assigned shows |
+
+#### Per-Show Roles
+
+| Role | Access | Restrictions |
+|------|--------|--------------|
+| **Director** | Casting board, audition review, production notes (all), schedule, cast communication | No budget, no tax documents |
+| **Music Director** | Casting board (view), audition review, minus tracks, schedule | Limited casting (can recommend, not finalize) |
+| **Choreographer** | Casting board (view), audition review, choreography notes, schedule | No other department notes |
+| **Stage Manager** | Full schedule control, call sheets, cast lists, production notes (all), cast communication | No casting, no budget approval |
+| **Assistant Stage Manager** | Schedule (view/edit), call sheets, cast lists, rehearsal reports | No casting, no budget |
+| **Production Manager** | Budget, receipts, vendor management, schedule | No casting, no artistic notes |
+| **Technical Director** | Scenic notes, lighting notes, schedule | No casting, no budget approval |
+| **Lighting Designer** | Lighting notes (full), other notes (view only) | No casting, no budget |
+| **Sound Designer** | Sound notes (full), minus tracks, other notes (view only) | No casting, no budget |
+| **Costume Designer** | Costume notes (full), cast measurements, other notes (view only) | No casting, no budget |
+| **Scenic Designer** | Scenic notes (full), other notes (view only) | No casting, no budget |
+| **Props Master** | Props notes (full), budget (props line items only) | No casting |
+| **Hair/Makeup Designer** | Hair/Makeup notes (full), other notes (view only) | No casting, no budget |
+| **Dramaturg** | Dramaturg notes (full), director's vision (view), cast communication (limited) | No casting, no budget |
+| **Assistant Director** | AD notes (full), blocking notes, schedule (view), cast list (view) | No budget, recommend only on casting |
+| **Crew Member** | Schedule (own calls only), department notes (assigned department only) | View only, no edit rights |
+| **Cast Member (Talent)** | Own schedule, own call sheets, scripts (if shared), minus tracks (if shared) | No access to other cast info, no production notes |
+
+#### Permission Matrix by Feature
+
+| Feature | Owner | Admin | Director | SM | Designer | Crew | Cast |
+|---------|-------|-------|----------|-----|----------|------|------|
+| Billing & Subscription | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
+| User Management | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ |
+| Create Shows | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ |
+| Audition Management | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
+| Casting Board (Edit) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
+| Casting Board (View) | ✅ | ✅ | ✅ | ✅ | 👁️ | ❌ | ❌ |
+| Finalize Casting | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
+| Schedule (Edit) | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ |
+| Schedule (View) | ✅ | ✅ | ✅ | ✅ | ✅ | 👁️ | 👁️ |
+| Call Sheets | ✅ | ✅ | ✅ | ✅ | ✅ | 👁️ | 👁️ |
+| Cast List (Full) | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ |
+| Cast List (Names Only) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
+| Production Notes (All) | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ |
+| Production Notes (Own Dept) | ✅ | ✅ | ✅ | ✅ | ✅ | 👁️ | ❌ |
+| Scripts | ✅ | ✅ | ✅ | ✅ | 👁️ | ❌ | 👁️* |
+| Minus Tracks | ✅ | ✅ | ✅ | ✅ | 👁️ | ❌ | 👁️* |
+| Budget (Full) | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ |
+| Budget (Own Dept) | ✅ | ✅ | ❌ | ❌ | ✅ | ❌ | ❌ |
+| Receipts/Reimbursement | ✅ | ✅ | ❌ | ❌ | ✅ | ❌ | ❌ |
+| W2/I-9 Documents | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ |
+| Message Cast | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ |
+| Announcements | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ |
+
+**Legend:** ✅ = Full Access | 👁️ = View Only | 👁️* = If Shared | ❌ = No Access
+
+#### Multi-Decision Maker Support
+
+For productions with multiple directors or decision-makers during casting:
+
+| Feature | Description |
+|---------|-------------|
+| **Collaborative Casting** | Multiple users can view and edit the casting board simultaneously |
+| **Real-time Sync** | Changes sync across all connected users instantly |
+| **Decision Attribution** | Track who made each casting decision |
+| **Voting/Consensus** | Optional voting mode where multiple decision-makers must agree |
+| **Comments** | Add comments to specific casting choices for discussion |
+| **Lock Override** | Only users with equal or higher permission can unlock a locked role |
+
+---
+
+### 1.7 Security & Compliance Considerations
+
+| Requirement | Implementation |
+|-------------|----------------|
+| **SOC 2 Type II** | Required for storing W2, I-9, and other sensitive documents |
+| **Encryption at Rest** | AES-256 encryption for all stored documents |
+| **Encryption in Transit** | TLS 1.3 for all communications |
+| **Access Logging** | Audit trail for all document access |
+| **Data Residency** | Option for US-only data storage |
+| **GDPR Compliance** | For EU talent; data export, deletion rights |
+| **PCI Compliance** | Via Stripe for payment processing |
+| **Two-Factor Authentication** | Required for producer accounts, optional for talent |
+| **Session Management** | Configurable session timeouts, device management |
+
+---
+
+### 1.8 Future Considerations
+
+| Feature | Description | Priority |
+|---------|-------------|----------|
+| **Mobile Apps** | Native iOS/Android apps for talent and producers | Phase 2 |
+| **Video Auditions** | Record and submit video auditions directly in platform | Phase 2 |
+| **AI Casting Suggestions** | Recommend talent based on role requirements and past casting | Phase 3 |
+| **Contract Management** | Digital contract signing with e-signature | Phase 2 |
+| **Payroll Integration** | Connect with payroll providers for direct payment | Phase 3 |
+| **Venue Management** | Manage multiple venues, room booking | Phase 2 |
+| **Ticket Sales Integration** | Connect with box office systems | Phase 3 |
+| **Agent Portal** | Allow talent agents to manage multiple clients | Phase 2 |
 
 ---
 
