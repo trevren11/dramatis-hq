@@ -179,10 +179,4 @@ export const VOCAL_RANGES = [
 
 export const WILLINGNESS_OPTIONS = ["yes", "no", "negotiable"] as const;
 
-export const GENDERS = [
-  "male",
-  "female",
-  "non_binary",
-  "other",
-  "prefer_not_to_say",
-] as const;
+export const GENDERS = ["male", "female", "non_binary", "other", "prefer_not_to_say"] as const;
