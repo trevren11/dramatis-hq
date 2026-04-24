@@ -40,10 +40,8 @@ export function TalentSearchResultCard({
           </h3>
           <p className="text-muted-foreground text-sm">
             {result.profile.heightInches != null && formatHeight(result.profile.heightInches)}
-            {result.profile.hairColor != null &&
-              ` • ${formatLabel(result.profile.hairColor)} hair`}
-            {result.profile.eyeColor != null &&
-              ` • ${formatLabel(result.profile.eyeColor)} eyes`}
+            {result.profile.hairColor != null && ` • ${formatLabel(result.profile.hairColor)} hair`}
+            {result.profile.eyeColor != null && ` • ${formatLabel(result.profile.eyeColor)} eyes`}
           </p>
           {result.profile.vocalRange != null && result.profile.vocalRange !== "not_applicable" && (
             <p className="text-muted-foreground text-sm">

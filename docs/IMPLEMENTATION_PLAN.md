@@ -25,7 +25,7 @@ The existing schema in `IMPLEMENTATION_PLAN.md` already defines some physical at
 // New enums
 export const vocalRangeEnum = pgEnum("vocal_range", [
   "soprano",
-  "mezzo_soprano", 
+  "mezzo_soprano",
   "alto",
   "countertenor",
   "tenor",
@@ -34,11 +34,7 @@ export const vocalRangeEnum = pgEnum("vocal_range", [
   "not_applicable",
 ]);
 
-export const willingnessEnum = pgEnum("willingness", [
-  "yes",
-  "no",
-  "negotiable",
-]);
+export const willingnessEnum = pgEnum("willingness", ["yes", "no", "negotiable"]);
 
 // Add to talentProfiles table:
 // - vocalRange: vocalRangeEnum("vocal_range")
@@ -100,6 +96,7 @@ index("talent_profiles_vocal_range_idx").on(talentProfiles.vocalRange),
 ### 2.1 tRPC Procedures
 
 #### Update Physical Attributes
+
 ```typescript
 // lib/trpc/routers/talent.ts
 updatePhysicalAttributes: protectedProcedure
@@ -107,27 +104,26 @@ updatePhysicalAttributes: protectedProcedure
   .mutation(async ({ ctx, input }) => {
     // Only talent users can update their own profile
     // Returns updated profile
-  })
+  });
 ```
 
 #### Get Physical Attributes (for profile owner)
+
 ```typescript
-getPhysicalAttributes: protectedProcedure
-  .query(async ({ ctx }) => {
-    // Returns all physical attributes for the logged-in talent
-  })
+getPhysicalAttributes: protectedProcedure.query(async ({ ctx }) => {
+  // Returns all physical attributes for the logged-in talent
+});
 ```
 
 #### Producer Search
+
 ```typescript
-searchTalent: producerProcedure
-  .input(talentSearchSchema)
-  .query(async ({ ctx, input }) => {
-    // Filters: height range, age range, hair color, eye color, 
-    //          ethnicity, vocal range, willingness to cut hair, is 18+
-    // Excludes: profiles with hideFromSearch = true
-    // Returns: matching profiles with match percentage
-  })
+searchTalent: producerProcedure.input(talentSearchSchema).query(async ({ ctx, input }) => {
+  // Filters: height range, age range, hair color, eye color,
+  //          ethnicity, vocal range, willingness to cut hair, is 18+
+  // Excludes: profiles with hideFromSearch = true
+  // Returns: matching profiles with match percentage
+});
 ```
 
 ### 2.2 Zod Validation Schemas
@@ -268,8 +264,10 @@ function calculateMatchPercentage(profile: TalentProfile, filters: SearchFilters
   // Height match
   if (filters.heightMin || filters.heightMax) {
     totalCriteria++;
-    if (profile.heightInches >= (filters.heightMin ?? 0) && 
-        profile.heightInches <= (filters.heightMax ?? Infinity)) {
+    if (
+      profile.heightInches >= (filters.heightMin ?? 0) &&
+      profile.heightInches <= (filters.heightMax ?? Infinity)
+    ) {
       matchedCriteria++;
     }
   }
@@ -277,7 +275,7 @@ function calculateMatchPercentage(profile: TalentProfile, filters: SearchFilters
   // Age range overlap
   if (filters.ageMin || filters.ageMax) {
     totalCriteria++;
-    const hasOverlap = 
+    const hasOverlap =
       profile.ageRangeLow <= (filters.ageMax ?? Infinity) &&
       profile.ageRangeHigh >= (filters.ageMin ?? 0);
     if (hasOverlap) matchedCriteria++;
@@ -301,11 +299,11 @@ function calculateMatchPercentage(profile: TalentProfile, filters: SearchFilters
 
 ### 4.1 Access Control Rules
 
-| Data | Talent Owner | Producer | Public |
-|------|--------------|----------|--------|
-| Physical attributes | Read/Write | Read (if !hideFromSearch) | Hidden |
-| hideFromSearch toggle | Read/Write | Hidden | Hidden |
-| isOver18 status | Read/Write | Read | Hidden |
+| Data                  | Talent Owner | Producer                  | Public |
+| --------------------- | ------------ | ------------------------- | ------ |
+| Physical attributes   | Read/Write   | Read (if !hideFromSearch) | Hidden |
+| hideFromSearch toggle | Read/Write   | Hidden                    | Hidden |
+| isOver18 status       | Read/Write   | Read                      | Hidden |
 
 ### 4.2 Implementation
 
@@ -314,10 +312,10 @@ function calculateMatchPercentage(profile: TalentProfile, filters: SearchFilters
 const canViewPhysicalAttributes = (viewer: User, profile: TalentProfile): boolean => {
   // Owner can always view
   if (viewer.id === profile.userId) return true;
-  
+
   // Producers can view if not hidden from search
-  if (viewer.userType === 'producer' && !profile.hideFromSearch) return true;
-  
+  if (viewer.userType === "producer" && !profile.hideFromSearch) return true;
+
   return false;
 };
 ```
@@ -336,24 +334,28 @@ const canViewPhysicalAttributes = (viewer: User, profile: TalentProfile): boolea
 ## 5. Implementation Order
 
 ### Phase 1: Database & Schema
+
 1. Add new enums to schema
 2. Add new columns to talent_profiles
 3. Create migration
 4. Add search indexes
 
 ### Phase 2: API Layer
+
 1. Create validation schemas
 2. Implement updatePhysicalAttributes procedure
 3. Implement getPhysicalAttributes procedure
 4. Implement searchTalent procedure with filters
 
-### Phase 3: UI Components  
+### Phase 3: UI Components
+
 1. Create PhysicalAttributesForm component
 2. Add form to talent profile settings page
 3. Create TalentSearch component for producers
 4. Add search page to producer dashboard
 
 ### Phase 4: Testing
+
 1. Unit tests for validation schemas
 2. Unit tests for match percentage calculation
 3. Integration tests for privacy boundaries
@@ -364,6 +366,7 @@ const canViewPhysicalAttributes = (viewer: User, profile: TalentProfile): boolea
 ## 6. Files to Create/Modify
 
 ### New Files
+
 - `lib/db/schema/talent-profiles.ts` - Talent profile schema with physical attributes
 - `lib/validations/physical-attributes.ts` - Zod schemas
 - `lib/trpc/routers/talent.ts` - tRPC procedures
@@ -376,6 +379,7 @@ const canViewPhysicalAttributes = (viewer: User, profile: TalentProfile): boolea
 - `lib/__tests__/privacy-boundaries.test.ts` - Privacy tests
 
 ### Modified Files
+
 - `lib/db/schema/index.ts` - Export new schema
 - `lib/trpc/routers/index.ts` - Add talent router
 

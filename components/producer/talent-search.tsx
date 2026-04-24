@@ -86,7 +86,8 @@ export function TalentSearch({
                     )}
                   </h3>
                   <p className="text-muted-foreground text-sm">
-                    {result.profile.heightInches != null && formatHeight(result.profile.heightInches)}
+                    {result.profile.heightInches != null &&
+                      formatHeight(result.profile.heightInches)}
                     {result.profile.hairColor != null &&
                       ` • ${formatLabel(result.profile.hairColor)} hair`}
                     {result.profile.eyeColor != null &&
