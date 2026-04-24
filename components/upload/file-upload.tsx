@@ -138,9 +138,9 @@ function DropZone({
         }
       )}
     >
-      <Icon className="mb-3 h-10 w-10 text-base-content/50" />
+      <Icon className="text-base-content/50 mb-3 h-10 w-10" />
       <p className="mb-1 text-sm font-medium">Drop your file here or click to browse</p>
-      <p className="text-xs text-base-content/50">
+      <p className="text-base-content/50 text-xs">
         {type === "headshot" && "JPG, PNG or WebP up to 10MB"}
         {type === "video" && "MP4, MOV or WebM up to 500MB"}
         {type === "document" && "PDF or DOC up to 25MB"}
@@ -160,12 +160,12 @@ function UploadComplete({
 }): React.ReactElement {
   const Icon = TYPE_ICONS[type];
   return (
-    <div className="flex items-center justify-between rounded-lg border border-success/30 bg-success/5 p-4">
+    <div className="border-success/30 bg-success/5 flex items-center justify-between rounded-lg border p-4">
       <div className="flex items-center gap-3">
-        <Icon className="h-6 w-6 text-success" />
+        <Icon className="text-success h-6 w-6" />
         <div>
           <p className="text-sm font-medium">{filename}</p>
-          <p className="text-xs text-success">Upload complete</p>
+          <p className="text-success text-xs">Upload complete</p>
         </div>
       </div>
       <Button variant="ghost" size="icon" onClick={onReset} aria-label="Remove file">
@@ -188,12 +188,12 @@ function UploadError({
 }): React.ReactElement {
   const Icon = TYPE_ICONS[type];
   return (
-    <div className="flex items-center justify-between rounded-lg border border-error/30 bg-error/5 p-4">
+    <div className="border-error/30 bg-error/5 flex items-center justify-between rounded-lg border p-4">
       <div className="flex items-center gap-3">
-        <Icon className="h-6 w-6 text-error" />
+        <Icon className="text-error h-6 w-6" />
         <div>
           <p className="text-sm font-medium">{filename ?? "Upload"}</p>
-          <p className="text-xs text-error">{error}</p>
+          <p className="text-error text-xs">{error}</p>
         </div>
       </div>
       <Button variant="ghost" size="icon" onClick={onReset} aria-label="Try again">
@@ -354,7 +354,7 @@ export function FileUpload({
       )}
 
       {(state.status === "uploading" || state.status === "processing") && (
-        <div className="rounded-lg border border-base-300 p-4">
+        <div className="border-base-300 rounded-lg border p-4">
           <UploadProgress
             progress={state.progress}
             status={state.status}
