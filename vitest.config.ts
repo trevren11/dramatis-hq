@@ -24,6 +24,8 @@ export default defineConfig({
         "components/**",
         "lib/db/**",
         "lib/auth/**",
+        "lib/storage/index.ts",
+        "lib/storage/image-processing.ts",
         "middleware.ts",
         "next-env.d.ts",
       ],
