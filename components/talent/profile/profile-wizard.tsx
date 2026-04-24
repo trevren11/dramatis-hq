@@ -143,8 +143,8 @@ export function ProfileWizard({ initialData }: ProfileWizardProps): React.ReactE
           ))}
         </div>
         <div className="mt-4 text-center">
-          <h2 className="text-lg font-semibold">{STEPS[currentStep].title}</h2>
-          <p className="text-muted-foreground text-sm">{STEPS[currentStep].description}</p>
+          <h2 className="text-lg font-semibold">{STEPS[currentStep]?.title}</h2>
+          <p className="text-muted-foreground text-sm">{STEPS[currentStep]?.description}</p>
         </div>
       </div>
 

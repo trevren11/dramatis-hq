@@ -52,7 +52,8 @@ export async function POST(request: Request): Promise<NextResponse> {
       .from(headshots)
       .where(eq(headshots.talentProfileId, profile.id));
 
-    if (countResult.count >= MAX_HEADSHOTS) {
+    const currentCount = countResult?.count ?? 0;
+    if (currentCount >= MAX_HEADSHOTS) {
       return NextResponse.json(
         { error: `Maximum of ${String(MAX_HEADSHOTS)} headshots allowed` },
         { status: 400 }
@@ -85,7 +86,7 @@ export async function POST(request: Request): Promise<NextResponse> {
         width: parsed.data.width,
         height: parsed.data.height,
         isPrimary: !existingPrimary,
-        sortOrder: countResult.count,
+        sortOrder: currentCount,
       })
       .returning();
 
