@@ -4,7 +4,8 @@ import { useState, useRef } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { useToast } from "@/components/ui/use-toast";
-import { Upload, Star, Trash2, Loader2, ImagePlus, CheckCircle2 } from "lucide-react";
+import { Star, Trash2, Loader2, ImagePlus, CheckCircle2 } from "lucide-react";
+import Image from "next/image";
 import { MAX_HEADSHOTS, ALLOWED_IMAGE_TYPES, MAX_FILE_SIZE } from "@/lib/db/schema/headshots";
 import type { Headshot } from "@/lib/db/schema/headshots";
 
@@ -28,7 +29,7 @@ export function HeadshotsSection({ initialData }: HeadshotsSectionProps): React.
       toast({
         variant: "destructive",
         title: "Limit reached",
-        description: `Maximum of ${MAX_HEADSHOTS} headshots allowed`,
+        description: `Maximum of ${String(MAX_HEADSHOTS)} headshots allowed`,
       });
       return;
     }
@@ -79,11 +80,11 @@ export function HeadshotsSection({ initialData }: HeadshotsSectionProps): React.
       });
 
       if (!response.ok) {
-        const data = await response.json();
-        throw new Error(data.error ?? "Failed to upload");
+        const errorData = (await response.json()) as { error?: string };
+        throw new Error(errorData.error ?? "Failed to upload");
       }
 
-      const data = await response.json();
+      const data = (await response.json()) as { headshot: Headshot };
       setHeadshots([...headshots, data.headshot]);
       toast({ title: "Success", description: "Headshot uploaded" });
     } catch (error) {
@@ -107,8 +108,8 @@ export function HeadshotsSection({ initialData }: HeadshotsSectionProps): React.
       });
 
       if (!response.ok) {
-        const data = await response.json();
-        throw new Error(data.error ?? "Failed to update");
+        const errorData = (await response.json()) as { error?: string };
+        throw new Error(errorData.error ?? "Failed to update");
       }
 
       setHeadshots(
@@ -137,8 +138,8 @@ export function HeadshotsSection({ initialData }: HeadshotsSectionProps): React.
       const response = await fetch(`/api/talent/headshots/${id}`, { method: "DELETE" });
 
       if (!response.ok) {
-        const data = await response.json();
-        throw new Error(data.error ?? "Failed to delete");
+        const errorData = (await response.json()) as { error?: string };
+        throw new Error(errorData.error ?? "Failed to delete");
       }
 
       setHeadshots(headshots.filter((h) => h.id !== id));
@@ -181,7 +182,7 @@ export function HeadshotsSection({ initialData }: HeadshotsSectionProps): React.
             type="file"
             accept={ALLOWED_IMAGE_TYPES.join(",")}
             multiple
-            onChange={handleFileSelect}
+            onChange={(e) => { void handleFileSelect(e); }}
             className="hidden"
             disabled={headshots.length >= MAX_HEADSHOTS || isUploading}
           />
@@ -205,10 +206,11 @@ export function HeadshotsSection({ initialData }: HeadshotsSectionProps): React.
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
             {headshots.map((headshot) => (
               <div key={headshot.id} className="group relative aspect-[3/4] overflow-hidden rounded-lg">
-                <img
+                <Image
                   src={headshot.thumbnailUrl ?? headshot.url}
                   alt="Headshot"
-                  className="h-full w-full object-cover"
+                  fill
+                  className="object-cover"
                 />
                 {headshot.isPrimary && (
                   <div className="bg-primary text-primary-foreground absolute top-2 left-2 flex items-center gap-1 rounded-full px-2 py-1 text-xs">
@@ -221,7 +223,7 @@ export function HeadshotsSection({ initialData }: HeadshotsSectionProps): React.
                     <Button
                       size="sm"
                       variant="secondary"
-                      onClick={() => setPrimary(headshot.id)}
+                      onClick={() => { void setPrimary(headshot.id); }}
                       disabled={isLoading}
                     >
                       <Star className="mr-1 h-3 w-3" />
@@ -231,7 +233,7 @@ export function HeadshotsSection({ initialData }: HeadshotsSectionProps): React.
                   <Button
                     size="sm"
                     variant="destructive"
-                    onClick={() => deleteHeadshot(headshot.id)}
+                    onClick={() => { void deleteHeadshot(headshot.id); }}
                     disabled={isLoading}
                   >
                     <Trash2 className="h-3 w-3" />
