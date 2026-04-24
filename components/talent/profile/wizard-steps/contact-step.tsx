@@ -33,7 +33,9 @@ export function ContactStep({ data, onUpdate }: ContactStepProps): React.ReactEl
             id="phone"
             type="tel"
             value={data.phone ?? ""}
-            onChange={(e) => { onUpdate({ phone: e.target.value || null }); }}
+            onChange={(e) => {
+              onUpdate({ phone: e.target.value || null });
+            }}
             placeholder="(555) 123-4567"
           />
         </div>
@@ -46,7 +48,9 @@ export function ContactStep({ data, onUpdate }: ContactStepProps): React.ReactEl
             id="website"
             type="url"
             value={data.website ?? ""}
-            onChange={(e) => { onUpdate({ website: e.target.value || null }); }}
+            onChange={(e) => {
+              onUpdate({ website: e.target.value || null });
+            }}
             placeholder="https://yourwebsite.com"
           />
         </div>
@@ -63,7 +67,9 @@ export function ContactStep({ data, onUpdate }: ContactStepProps): React.ReactEl
             <Input
               id="instagram"
               value={socialLinks.instagram ?? ""}
-              onChange={(e) => { updateSocialLink("instagram", e.target.value); }}
+              onChange={(e) => {
+                updateSocialLink("instagram", e.target.value);
+              }}
               placeholder="@username"
             />
           </div>
@@ -75,7 +81,9 @@ export function ContactStep({ data, onUpdate }: ContactStepProps): React.ReactEl
             <Input
               id="tiktok"
               value={socialLinks.tiktok ?? ""}
-              onChange={(e) => { updateSocialLink("tiktok", e.target.value); }}
+              onChange={(e) => {
+                updateSocialLink("tiktok", e.target.value);
+              }}
               placeholder="@username"
             />
           </div>
@@ -87,7 +95,9 @@ export function ContactStep({ data, onUpdate }: ContactStepProps): React.ReactEl
             <Input
               id="twitter"
               value={socialLinks.twitter ?? ""}
-              onChange={(e) => { updateSocialLink("twitter", e.target.value); }}
+              onChange={(e) => {
+                updateSocialLink("twitter", e.target.value);
+              }}
               placeholder="@username"
             />
           </div>
@@ -99,7 +109,9 @@ export function ContactStep({ data, onUpdate }: ContactStepProps): React.ReactEl
             <Input
               id="youtube"
               value={socialLinks.youtube ?? ""}
-              onChange={(e) => { updateSocialLink("youtube", e.target.value); }}
+              onChange={(e) => {
+                updateSocialLink("youtube", e.target.value);
+              }}
               placeholder="Channel URL"
             />
           </div>
@@ -111,7 +123,9 @@ export function ContactStep({ data, onUpdate }: ContactStepProps): React.ReactEl
             <Input
               id="linkedin"
               value={socialLinks.linkedin ?? ""}
-              onChange={(e) => { updateSocialLink("linkedin", e.target.value); }}
+              onChange={(e) => {
+                updateSocialLink("linkedin", e.target.value);
+              }}
               placeholder="Profile URL"
             />
           </div>
@@ -123,7 +137,9 @@ export function ContactStep({ data, onUpdate }: ContactStepProps): React.ReactEl
             <Input
               id="imdb"
               value={socialLinks.imdb ?? ""}
-              onChange={(e) => { updateSocialLink("imdb", e.target.value); }}
+              onChange={(e) => {
+                updateSocialLink("imdb", e.target.value);
+              }}
               placeholder="IMDb profile URL"
             />
           </div>

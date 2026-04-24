@@ -78,7 +78,11 @@ export function WorkHistorySection({ initialData }: WorkHistorySectionProps): Re
   // eslint-disable-next-line complexity
   const handleSave = async (): Promise<void> => {
     if (!formData.showName || !formData.role) {
-      toast({ variant: "destructive", title: "Error", description: "Show name and role are required" });
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Show name and role are required",
+      });
       return;
     }
 
@@ -101,11 +105,11 @@ export function WorkHistorySection({ initialData }: WorkHistorySectionProps): Re
       });
 
       if (!response.ok) {
-        const errorData: ApiResponse = await response.json() as ApiResponse;
+        const errorData: ApiResponse = (await response.json()) as ApiResponse;
         throw new Error(errorData.error ?? "Failed to save");
       }
 
-      const data: ApiResponse = await response.json() as ApiResponse;
+      const data: ApiResponse = (await response.json()) as ApiResponse;
       const newEntry = data.workHistory;
 
       if (newEntry) {
@@ -117,7 +121,10 @@ export function WorkHistorySection({ initialData }: WorkHistorySectionProps): Re
       }
 
       resetForm();
-      toast({ title: "Success", description: isEdit ? "Work history updated" : "Work history added" });
+      toast({
+        title: "Success",
+        description: isEdit ? "Work history updated" : "Work history added",
+      });
     } catch (error) {
       toast({
         variant: "destructive",
@@ -137,7 +144,7 @@ export function WorkHistorySection({ initialData }: WorkHistorySectionProps): Re
       const response = await fetch(`/api/talent/work-history/${id}`, { method: "DELETE" });
 
       if (!response.ok) {
-        const errorData: ApiResponse = await response.json() as ApiResponse;
+        const errorData: ApiResponse = (await response.json()) as ApiResponse;
         throw new Error(errorData.error ?? "Failed to delete");
       }
 
@@ -183,7 +190,9 @@ export function WorkHistorySection({ initialData }: WorkHistorySectionProps): Re
                 </label>
                 <Input
                   value={formData.showName}
-                  onChange={(e) => { setFormData({ ...formData, showName: e.target.value }); }}
+                  onChange={(e) => {
+                    setFormData({ ...formData, showName: e.target.value });
+                  }}
                   placeholder="e.g., Hamilton"
                 />
               </div>
@@ -193,7 +202,9 @@ export function WorkHistorySection({ initialData }: WorkHistorySectionProps): Re
                 </label>
                 <Input
                   value={formData.role}
-                  onChange={(e) => { setFormData({ ...formData, role: e.target.value }); }}
+                  onChange={(e) => {
+                    setFormData({ ...formData, role: e.target.value });
+                  }}
                   placeholder="e.g., Ensemble"
                 />
               </div>
@@ -204,7 +215,9 @@ export function WorkHistorySection({ initialData }: WorkHistorySectionProps): Re
                 <label className="text-sm font-medium">Category</label>
                 <Select
                   value={formData.category}
-                  onChange={(e) => { setFormData({ ...formData, category: e.target.value }); }}
+                  onChange={(e) => {
+                    setFormData({ ...formData, category: e.target.value });
+                  }}
                   options={categoryOptions}
                 />
               </div>
@@ -212,7 +225,9 @@ export function WorkHistorySection({ initialData }: WorkHistorySectionProps): Re
                 <label className="text-sm font-medium">Location</label>
                 <Input
                   value={formData.location}
-                  onChange={(e) => { setFormData({ ...formData, location: e.target.value }); }}
+                  onChange={(e) => {
+                    setFormData({ ...formData, location: e.target.value });
+                  }}
                   placeholder="e.g., Broadway, NYC"
                 />
               </div>
@@ -223,7 +238,9 @@ export function WorkHistorySection({ initialData }: WorkHistorySectionProps): Re
                 <label className="text-sm font-medium">Director</label>
                 <Input
                   value={formData.director}
-                  onChange={(e) => { setFormData({ ...formData, director: e.target.value }); }}
+                  onChange={(e) => {
+                    setFormData({ ...formData, director: e.target.value });
+                  }}
                   placeholder="Director name"
                 />
               </div>
@@ -231,7 +248,9 @@ export function WorkHistorySection({ initialData }: WorkHistorySectionProps): Re
                 <label className="text-sm font-medium">Production Company</label>
                 <Input
                   value={formData.productionCompany}
-                  onChange={(e) => { setFormData({ ...formData, productionCompany: e.target.value }); }}
+                  onChange={(e) => {
+                    setFormData({ ...formData, productionCompany: e.target.value });
+                  }}
                   placeholder="Company name"
                 />
               </div>
@@ -241,7 +260,9 @@ export function WorkHistorySection({ initialData }: WorkHistorySectionProps): Re
               <label className="text-sm font-medium">Description</label>
               <textarea
                 value={formData.description}
-                onChange={(e) => { setFormData({ ...formData, description: e.target.value }); }}
+                onChange={(e) => {
+                  setFormData({ ...formData, description: e.target.value });
+                }}
                 placeholder="Brief description of your work..."
                 className="border-input bg-background focus-visible:ring-ring flex min-h-[80px] w-full rounded-lg border px-3 py-2 text-sm focus-visible:ring-2 focus-visible:outline-none"
               />
@@ -251,7 +272,9 @@ export function WorkHistorySection({ initialData }: WorkHistorySectionProps): Re
               <input
                 type="checkbox"
                 checked={formData.isUnion}
-                onChange={(e) => { setFormData({ ...formData, isUnion: e.target.checked }); }}
+                onChange={(e) => {
+                  setFormData({ ...formData, isUnion: e.target.checked });
+                }}
                 className="h-4 w-4 rounded"
               />
               <span className="text-sm">Union production</span>
@@ -293,7 +316,9 @@ export function WorkHistorySection({ initialData }: WorkHistorySectionProps): Re
                       </span>
                       {entry.location && <span>{entry.location}</span>}
                       {entry.isUnion && (
-                        <span className="bg-primary/10 text-primary rounded px-2 py-0.5">Union</span>
+                        <span className="bg-primary/10 text-primary rounded px-2 py-0.5">
+                          Union
+                        </span>
                       )}
                     </div>
                   </div>
@@ -302,7 +327,9 @@ export function WorkHistorySection({ initialData }: WorkHistorySectionProps): Re
                   <Button
                     variant="ghost"
                     size="icon"
-                    onClick={() => { startEditing(entry); }}
+                    onClick={() => {
+                      startEditing(entry);
+                    }}
                     disabled={isLoading}
                   >
                     <Pencil className="h-4 w-4" />

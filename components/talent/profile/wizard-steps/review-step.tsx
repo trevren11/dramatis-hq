@@ -53,7 +53,7 @@ export function ReviewStep({ data }: ReviewStepProps): React.ReactElement {
         {data.bio && (
           <div className="rounded-lg border p-4">
             <h3 className="mb-3 font-semibold">Bio</h3>
-            <p className="text-muted-foreground whitespace-pre-wrap text-sm">{data.bio}</p>
+            <p className="text-muted-foreground text-sm whitespace-pre-wrap">{data.bio}</p>
           </div>
         )}
 

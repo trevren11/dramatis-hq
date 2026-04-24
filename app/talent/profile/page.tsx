@@ -3,14 +3,30 @@ import Link from "next/link";
 import Image from "next/image";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
-import { talentProfiles, workHistory, education, headshots, talentSkills, skills } from "@/lib/db/schema";
+import {
+  talentProfiles,
+  workHistory,
+  education,
+  headshots,
+  talentSkills,
+  skills,
+} from "@/lib/db/schema";
 import { eq, asc, inArray } from "drizzle-orm";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { UNION_OPTIONS } from "@/lib/validations/profile";
-import { Edit, MapPin, Phone, Globe, Briefcase, GraduationCap, Sparkles, Camera } from "lucide-react";
+import {
+  Edit,
+  MapPin,
+  Phone,
+  Globe,
+  Briefcase,
+  GraduationCap,
+  Sparkles,
+  Camera,
+} from "lucide-react";
 
 function getUnionLabel(value: string): string {
   return UNION_OPTIONS.find((u) => u.value === value)?.label ?? value;
@@ -73,7 +89,9 @@ export default async function ProfilePage(): Promise<React.ReactElement> {
 
   const skillIds = userSkills.map((s) => s.skillId);
   const skillDetails =
-    skillIds.length > 0 ? await db.query.skills.findMany({ where: inArray(skills.id, skillIds) }) : [];
+    skillIds.length > 0
+      ? await db.query.skills.findMany({ where: inArray(skills.id, skillIds) })
+      : [];
 
   const counts: ProfileCounts = {
     work: work.length,
@@ -109,7 +127,9 @@ export default async function ProfilePage(): Promise<React.ReactElement> {
                 <h2 className="mt-4 text-xl font-semibold">
                   {profile.stageName ?? `${profile.firstName} ${profile.lastName}`}
                 </h2>
-                {profile.pronouns && <p className="text-muted-foreground text-sm">{profile.pronouns}</p>}
+                {profile.pronouns && (
+                  <p className="text-muted-foreground text-sm">{profile.pronouns}</p>
+                )}
                 {profile.location && (
                   <div className="text-muted-foreground mt-2 flex items-center text-sm">
                     <MapPin className="mr-1 h-4 w-4" />
@@ -119,7 +139,9 @@ export default async function ProfilePage(): Promise<React.ReactElement> {
                 {profile.unionMemberships && profile.unionMemberships.length > 0 && (
                   <div className="mt-4 flex flex-wrap justify-center gap-2">
                     {profile.unionMemberships.map((u) => (
-                      <Badge key={u} variant="secondary">{getUnionLabel(u)}</Badge>
+                      <Badge key={u} variant="secondary">
+                        {getUnionLabel(u)}
+                      </Badge>
                     ))}
                   </div>
                 )}
@@ -147,7 +169,12 @@ export default async function ProfilePage(): Promise<React.ReactElement> {
                   {profile.website && (
                     <div className="flex items-center">
                       <Globe className="text-muted-foreground mr-2 h-4 w-4" />
-                      <a href={profile.website} className="text-primary hover:underline" target="_blank" rel="noopener noreferrer">
+                      <a
+                        href={profile.website}
+                        className="text-primary hover:underline"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                      >
                         {profile.website}
                       </a>
                     </div>
@@ -159,10 +186,22 @@ export default async function ProfilePage(): Promise<React.ReactElement> {
           <Card className="mt-4">
             <CardContent className="pt-6">
               <div className="grid grid-cols-2 gap-4 text-center">
-                <div><div className="text-2xl font-bold">{photos.length}</div><div className="text-muted-foreground text-xs">Headshots</div></div>
-                <div><div className="text-2xl font-bold">{work.length}</div><div className="text-muted-foreground text-xs">Credits</div></div>
-                <div><div className="text-2xl font-bold">{edu.length}</div><div className="text-muted-foreground text-xs">Training</div></div>
-                <div><div className="text-2xl font-bold">{skillDetails.length}</div><div className="text-muted-foreground text-xs">Skills</div></div>
+                <div>
+                  <div className="text-2xl font-bold">{photos.length}</div>
+                  <div className="text-muted-foreground text-xs">Headshots</div>
+                </div>
+                <div>
+                  <div className="text-2xl font-bold">{work.length}</div>
+                  <div className="text-muted-foreground text-xs">Credits</div>
+                </div>
+                <div>
+                  <div className="text-2xl font-bold">{edu.length}</div>
+                  <div className="text-muted-foreground text-xs">Training</div>
+                </div>
+                <div>
+                  <div className="text-2xl font-bold">{skillDetails.length}</div>
+                  <div className="text-muted-foreground text-xs">Skills</div>
+                </div>
               </div>
             </CardContent>
           </Card>
@@ -170,21 +209,35 @@ export default async function ProfilePage(): Promise<React.ReactElement> {
         <div className="space-y-6 lg:col-span-2">
           {profile.bio && (
             <Card>
-              <CardHeader><CardTitle className="text-lg">About</CardTitle></CardHeader>
-              <CardContent><p className="text-muted-foreground whitespace-pre-wrap">{profile.bio}</p></CardContent>
+              <CardHeader>
+                <CardTitle className="text-lg">About</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-muted-foreground whitespace-pre-wrap">{profile.bio}</p>
+              </CardContent>
             </Card>
           )}
           <Card>
             <CardHeader className="flex flex-row items-center justify-between">
-              <CardTitle className="flex items-center text-lg"><Camera className="mr-2 h-5 w-5" />Headshots</CardTitle>
-              <Button variant="outline" size="sm" asChild><Link href="/talent/profile/edit#headshots">Manage</Link></Button>
+              <CardTitle className="flex items-center text-lg">
+                <Camera className="mr-2 h-5 w-5" />
+                Headshots
+              </CardTitle>
+              <Button variant="outline" size="sm" asChild>
+                <Link href="/talent/profile/edit#headshots">Manage</Link>
+              </Button>
             </CardHeader>
             <CardContent>
               {photos.length > 0 ? (
                 <div className="grid grid-cols-3 gap-4 sm:grid-cols-4 md:grid-cols-5">
                   {photos.map((p) => (
                     <div key={p.id} className="relative aspect-[3/4] overflow-hidden rounded-lg">
-                      <Image src={p.thumbnailUrl ?? p.url} alt="Headshot" fill className="object-cover" />
+                      <Image
+                        src={p.thumbnailUrl ?? p.url}
+                        alt="Headshot"
+                        fill
+                        className="object-cover"
+                      />
                     </div>
                   ))}
                 </div>
@@ -195,8 +248,13 @@ export default async function ProfilePage(): Promise<React.ReactElement> {
           </Card>
           <Card>
             <CardHeader className="flex flex-row items-center justify-between">
-              <CardTitle className="flex items-center text-lg"><Briefcase className="mr-2 h-5 w-5" />Work History</CardTitle>
-              <Button variant="outline" size="sm" asChild><Link href="/talent/profile/edit#work-history">Manage</Link></Button>
+              <CardTitle className="flex items-center text-lg">
+                <Briefcase className="mr-2 h-5 w-5" />
+                Work History
+              </CardTitle>
+              <Button variant="outline" size="sm" asChild>
+                <Link href="/talent/profile/edit#work-history">Manage</Link>
+              </Button>
             </CardHeader>
             <CardContent>
               {work.length > 0 ? (
@@ -215,8 +273,13 @@ export default async function ProfilePage(): Promise<React.ReactElement> {
           </Card>
           <Card>
             <CardHeader className="flex flex-row items-center justify-between">
-              <CardTitle className="flex items-center text-lg"><GraduationCap className="mr-2 h-5 w-5" />Education</CardTitle>
-              <Button variant="outline" size="sm" asChild><Link href="/talent/profile/edit#education">Manage</Link></Button>
+              <CardTitle className="flex items-center text-lg">
+                <GraduationCap className="mr-2 h-5 w-5" />
+                Education
+              </CardTitle>
+              <Button variant="outline" size="sm" asChild>
+                <Link href="/talent/profile/edit#education">Manage</Link>
+              </Button>
             </CardHeader>
             <CardContent>
               {edu.length > 0 ? (
@@ -235,13 +298,22 @@ export default async function ProfilePage(): Promise<React.ReactElement> {
           </Card>
           <Card>
             <CardHeader className="flex flex-row items-center justify-between">
-              <CardTitle className="flex items-center text-lg"><Sparkles className="mr-2 h-5 w-5" />Skills</CardTitle>
-              <Button variant="outline" size="sm" asChild><Link href="/talent/profile/edit#skills">Manage</Link></Button>
+              <CardTitle className="flex items-center text-lg">
+                <Sparkles className="mr-2 h-5 w-5" />
+                Skills
+              </CardTitle>
+              <Button variant="outline" size="sm" asChild>
+                <Link href="/talent/profile/edit#skills">Manage</Link>
+              </Button>
             </CardHeader>
             <CardContent>
               {skillDetails.length > 0 ? (
                 <div className="flex flex-wrap gap-2">
-                  {skillDetails.map((s) => (<Badge key={s.id} variant="secondary">{s.name}</Badge>))}
+                  {skillDetails.map((s) => (
+                    <Badge key={s.id} variant="secondary">
+                      {s.name}
+                    </Badge>
+                  ))}
                 </div>
               ) : (
                 <p className="text-muted-foreground py-8 text-center">No skills added yet</p>

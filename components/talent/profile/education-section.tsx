@@ -69,7 +69,11 @@ export function EducationSection({ initialData }: EducationSectionProps): React.
   // eslint-disable-next-line complexity
   const handleSave = async (): Promise<void> => {
     if (!formData.program || !formData.institution) {
-      toast({ variant: "destructive", title: "Error", description: "Program and institution are required" });
+      toast({
+        variant: "destructive",
+        title: "Error",
+        description: "Program and institution are required",
+      });
       return;
     }
 
@@ -94,11 +98,11 @@ export function EducationSection({ initialData }: EducationSectionProps): React.
       });
 
       if (!response.ok) {
-        const errorData: ApiResponse = await response.json() as ApiResponse;
+        const errorData: ApiResponse = (await response.json()) as ApiResponse;
         throw new Error(errorData.error ?? "Failed to save");
       }
 
-      const data: ApiResponse = await response.json() as ApiResponse;
+      const data: ApiResponse = (await response.json()) as ApiResponse;
       const newEducation = data.education;
 
       if (newEducation) {
@@ -130,7 +134,7 @@ export function EducationSection({ initialData }: EducationSectionProps): React.
       const response = await fetch(`/api/talent/education/${id}`, { method: "DELETE" });
 
       if (!response.ok) {
-        const errorData: ApiResponse = await response.json() as ApiResponse;
+        const errorData: ApiResponse = (await response.json()) as ApiResponse;
         throw new Error(errorData.error ?? "Failed to delete");
       }
 
@@ -176,7 +180,9 @@ export function EducationSection({ initialData }: EducationSectionProps): React.
                 </label>
                 <Input
                   value={formData.program}
-                  onChange={(e) => { setFormData({ ...formData, program: e.target.value }); }}
+                  onChange={(e) => {
+                    setFormData({ ...formData, program: e.target.value });
+                  }}
                   placeholder="e.g., BFA Acting"
                 />
               </div>
@@ -184,7 +190,9 @@ export function EducationSection({ initialData }: EducationSectionProps): React.
                 <label className="text-sm font-medium">Degree Type</label>
                 <select
                   value={formData.degree}
-                  onChange={(e) => { setFormData({ ...formData, degree: e.target.value }); }}
+                  onChange={(e) => {
+                    setFormData({ ...formData, degree: e.target.value });
+                  }}
                   className="border-input bg-background flex h-10 w-full rounded-lg border px-3 py-2 text-sm"
                 >
                   <option value="">Select degree type</option>
@@ -204,7 +212,9 @@ export function EducationSection({ initialData }: EducationSectionProps): React.
                 </label>
                 <Input
                   value={formData.institution}
-                  onChange={(e) => { setFormData({ ...formData, institution: e.target.value }); }}
+                  onChange={(e) => {
+                    setFormData({ ...formData, institution: e.target.value });
+                  }}
                   placeholder="e.g., NYU Tisch"
                 />
               </div>
@@ -212,7 +222,9 @@ export function EducationSection({ initialData }: EducationSectionProps): React.
                 <label className="text-sm font-medium">Location</label>
                 <Input
                   value={formData.location}
-                  onChange={(e) => { setFormData({ ...formData, location: e.target.value }); }}
+                  onChange={(e) => {
+                    setFormData({ ...formData, location: e.target.value });
+                  }}
                   placeholder="e.g., New York, NY"
                 />
               </div>
@@ -226,7 +238,9 @@ export function EducationSection({ initialData }: EducationSectionProps): React.
                   min="1900"
                   max="2100"
                   value={formData.startYear}
-                  onChange={(e) => { setFormData({ ...formData, startYear: e.target.value }); }}
+                  onChange={(e) => {
+                    setFormData({ ...formData, startYear: e.target.value });
+                  }}
                   placeholder="e.g., 2018"
                 />
               </div>
@@ -237,7 +251,9 @@ export function EducationSection({ initialData }: EducationSectionProps): React.
                   min="1900"
                   max="2100"
                   value={formData.endYear}
-                  onChange={(e) => { setFormData({ ...formData, endYear: e.target.value }); }}
+                  onChange={(e) => {
+                    setFormData({ ...formData, endYear: e.target.value });
+                  }}
                   placeholder="e.g., 2022"
                 />
               </div>
@@ -247,7 +263,9 @@ export function EducationSection({ initialData }: EducationSectionProps): React.
               <label className="text-sm font-medium">Description</label>
               <textarea
                 value={formData.description}
-                onChange={(e) => { setFormData({ ...formData, description: e.target.value }); }}
+                onChange={(e) => {
+                  setFormData({ ...formData, description: e.target.value });
+                }}
                 placeholder="Notable achievements, focus areas..."
                 className="border-input bg-background focus-visible:ring-ring flex min-h-[80px] w-full rounded-lg border px-3 py-2 text-sm focus-visible:ring-2 focus-visible:outline-none"
               />
@@ -297,7 +315,9 @@ export function EducationSection({ initialData }: EducationSectionProps): React.
                   <Button
                     variant="ghost"
                     size="icon"
-                    onClick={() => { startEditing(entry); }}
+                    onClick={() => {
+                      startEditing(entry);
+                    }}
                     disabled={isLoading}
                   >
                     <Pencil className="h-4 w-4" />

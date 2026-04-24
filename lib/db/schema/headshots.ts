@@ -1,12 +1,4 @@
-import {
-  pgTable,
-  uuid,
-  varchar,
-  timestamp,
-  integer,
-  boolean,
-  index,
-} from "drizzle-orm/pg-core";
+import { pgTable, uuid, varchar, timestamp, integer, boolean, index } from "drizzle-orm/pg-core";
 import { talentProfiles } from "./talent-profiles";
 
 export const headshots = pgTable(

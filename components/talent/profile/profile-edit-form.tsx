@@ -50,7 +50,7 @@ export function ProfileEditForm({ initialProfile }: ProfileEditFormProps): React
       });
 
       if (!response.ok) {
-        const data: ApiErrorResponse = await response.json() as ApiErrorResponse;
+        const data: ApiErrorResponse = (await response.json()) as ApiErrorResponse;
         throw new Error(data.error ?? "Failed to save profile");
       }
 
@@ -132,7 +132,11 @@ export function ProfileEditForm({ initialProfile }: ProfileEditFormProps): React
           </p>
         </div>
         <Button onClick={() => void saveProfile()} disabled={isSaving || !hasChanges}>
-          {isSaving ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : <Save className="mr-2 h-4 w-4" />}
+          {isSaving ? (
+            <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+          ) : (
+            <Save className="mr-2 h-4 w-4" />
+          )}
           Save Changes
         </Button>
       </div>
@@ -150,7 +154,9 @@ export function ProfileEditForm({ initialProfile }: ProfileEditFormProps): React
               <Input
                 id="firstName"
                 value={formData.firstName ?? ""}
-                onChange={(e) => { updateFormData({ firstName: e.target.value }); }}
+                onChange={(e) => {
+                  updateFormData({ firstName: e.target.value });
+                }}
               />
             </div>
             <div className="space-y-2">
@@ -160,7 +166,9 @@ export function ProfileEditForm({ initialProfile }: ProfileEditFormProps): React
               <Input
                 id="lastName"
                 value={formData.lastName ?? ""}
-                onChange={(e) => { updateFormData({ lastName: e.target.value }); }}
+                onChange={(e) => {
+                  updateFormData({ lastName: e.target.value });
+                }}
               />
             </div>
           </div>
@@ -173,7 +181,9 @@ export function ProfileEditForm({ initialProfile }: ProfileEditFormProps): React
               <Input
                 id="stageName"
                 value={formData.stageName ?? ""}
-                onChange={(e) => { updateFormData({ stageName: e.target.value || null }); }}
+                onChange={(e) => {
+                  updateFormData({ stageName: e.target.value || null });
+                }}
               />
             </div>
             <div className="space-y-2">
@@ -183,7 +193,9 @@ export function ProfileEditForm({ initialProfile }: ProfileEditFormProps): React
               <Input
                 id="pronouns"
                 value={formData.pronouns ?? ""}
-                onChange={(e) => { updateFormData({ pronouns: e.target.value || null }); }}
+                onChange={(e) => {
+                  updateFormData({ pronouns: e.target.value || null });
+                }}
               />
             </div>
           </div>
@@ -195,7 +207,9 @@ export function ProfileEditForm({ initialProfile }: ProfileEditFormProps): React
             <Input
               id="location"
               value={formData.location ?? ""}
-              onChange={(e) => { updateFormData({ location: e.target.value || null }); }}
+              onChange={(e) => {
+                updateFormData({ location: e.target.value || null });
+              }}
             />
           </div>
 
@@ -206,7 +220,9 @@ export function ProfileEditForm({ initialProfile }: ProfileEditFormProps): React
             <textarea
               id="bio"
               value={formData.bio ?? ""}
-              onChange={(e) => { updateFormData({ bio: e.target.value || null }); }}
+              onChange={(e) => {
+                updateFormData({ bio: e.target.value || null });
+              }}
               className="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex min-h-[120px] w-full rounded-lg border px-3 py-2 text-sm focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
               maxLength={2000}
             />
@@ -228,7 +244,9 @@ export function ProfileEditForm({ initialProfile }: ProfileEditFormProps): React
                 id="phone"
                 type="tel"
                 value={formData.phone ?? ""}
-                onChange={(e) => { updateFormData({ phone: e.target.value || null }); }}
+                onChange={(e) => {
+                  updateFormData({ phone: e.target.value || null });
+                }}
               />
             </div>
             <div className="space-y-2">
@@ -239,7 +257,9 @@ export function ProfileEditForm({ initialProfile }: ProfileEditFormProps): React
                 id="website"
                 type="url"
                 value={formData.website ?? ""}
-                onChange={(e) => { updateFormData({ website: e.target.value || null }); }}
+                onChange={(e) => {
+                  updateFormData({ website: e.target.value || null });
+                }}
               />
             </div>
           </div>
@@ -252,7 +272,9 @@ export function ProfileEditForm({ initialProfile }: ProfileEditFormProps): React
               <Input
                 id="edit-instagram"
                 value={socialLinks.instagram ?? ""}
-                onChange={(e) => { updateSocialLink("instagram", e.target.value); }}
+                onChange={(e) => {
+                  updateSocialLink("instagram", e.target.value);
+                }}
               />
             </div>
             <div className="space-y-2">
@@ -262,7 +284,9 @@ export function ProfileEditForm({ initialProfile }: ProfileEditFormProps): React
               <Input
                 id="edit-tiktok"
                 value={socialLinks.tiktok ?? ""}
-                onChange={(e) => { updateSocialLink("tiktok", e.target.value); }}
+                onChange={(e) => {
+                  updateSocialLink("tiktok", e.target.value);
+                }}
               />
             </div>
             <div className="space-y-2">
@@ -272,7 +296,9 @@ export function ProfileEditForm({ initialProfile }: ProfileEditFormProps): React
               <Input
                 id="edit-twitter"
                 value={socialLinks.twitter ?? ""}
-                onChange={(e) => { updateSocialLink("twitter", e.target.value); }}
+                onChange={(e) => {
+                  updateSocialLink("twitter", e.target.value);
+                }}
               />
             </div>
             <div className="space-y-2">
@@ -282,7 +308,9 @@ export function ProfileEditForm({ initialProfile }: ProfileEditFormProps): React
               <Input
                 id="edit-imdb"
                 value={socialLinks.imdb ?? ""}
-                onChange={(e) => { updateSocialLink("imdb", e.target.value); }}
+                onChange={(e) => {
+                  updateSocialLink("imdb", e.target.value);
+                }}
               />
             </div>
           </div>
@@ -307,7 +335,9 @@ export function ProfileEditForm({ initialProfile }: ProfileEditFormProps): React
                 <input
                   type="checkbox"
                   checked={(formData.unionMemberships ?? []).includes(union.value)}
-                  onChange={() => { toggleUnion(union.value); }}
+                  onChange={() => {
+                    toggleUnion(union.value);
+                  }}
                   className="text-primary focus:ring-primary h-4 w-4 rounded border-gray-300"
                 />
                 <span className="text-sm font-medium">{union.label}</span>
@@ -330,7 +360,9 @@ export function ProfileEditForm({ initialProfile }: ProfileEditFormProps): React
             <input
               type="checkbox"
               checked={formData.isPublic ?? true}
-              onChange={(e) => { updateFormData({ isPublic: e.target.checked }); }}
+              onChange={(e) => {
+                updateFormData({ isPublic: e.target.checked });
+              }}
               className="text-primary focus:ring-primary h-5 w-5 rounded border-gray-300"
             />
           </label>
@@ -345,7 +377,9 @@ export function ProfileEditForm({ initialProfile }: ProfileEditFormProps): React
             <input
               type="checkbox"
               checked={formData.hideFromSearch ?? false}
-              onChange={(e) => { updateFormData({ hideFromSearch: e.target.checked }); }}
+              onChange={(e) => {
+                updateFormData({ hideFromSearch: e.target.checked });
+              }}
               className="text-primary focus:ring-primary h-5 w-5 rounded border-gray-300"
             />
           </label>

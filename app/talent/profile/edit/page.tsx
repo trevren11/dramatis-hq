@@ -2,7 +2,14 @@ import { redirect } from "next/navigation";
 import Link from "next/link";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
-import { talentProfiles, workHistory, education, headshots, talentSkills, skills } from "@/lib/db/schema";
+import {
+  talentProfiles,
+  workHistory,
+  education,
+  headshots,
+  talentSkills,
+  skills,
+} from "@/lib/db/schema";
 import { eq, asc, inArray } from "drizzle-orm";
 import { ProfileEditForm } from "@/components/talent/profile/profile-edit-form";
 import { WorkHistorySection } from "@/components/talent/profile/work-history-section";
@@ -46,11 +53,12 @@ export default async function ProfileEditPage(): Promise<React.ReactElement> {
   ]);
 
   const skillIds = userSkills.map((s) => s.skillId);
-  const skillDetails = skillIds.length > 0
-    ? await db.query.skills.findMany({
-        where: inArray(skills.id, skillIds),
-      })
-    : [];
+  const skillDetails =
+    skillIds.length > 0
+      ? await db.query.skills.findMany({
+          where: inArray(skills.id, skillIds),
+        })
+      : [];
 
   return (
     <div className="container max-w-3xl py-8">

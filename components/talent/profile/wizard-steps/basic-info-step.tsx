@@ -19,7 +19,9 @@ export function BasicInfoStep({ data, onUpdate }: BasicInfoStepProps): React.Rea
           <Input
             id="firstName"
             value={data.firstName ?? ""}
-            onChange={(e) => { onUpdate({ firstName: e.target.value }); }}
+            onChange={(e) => {
+              onUpdate({ firstName: e.target.value });
+            }}
             placeholder="Your first name"
           />
         </div>
@@ -30,7 +32,9 @@ export function BasicInfoStep({ data, onUpdate }: BasicInfoStepProps): React.Rea
           <Input
             id="lastName"
             value={data.lastName ?? ""}
-            onChange={(e) => { onUpdate({ lastName: e.target.value }); }}
+            onChange={(e) => {
+              onUpdate({ lastName: e.target.value });
+            }}
             placeholder="Your last name"
           />
         </div>
@@ -44,7 +48,9 @@ export function BasicInfoStep({ data, onUpdate }: BasicInfoStepProps): React.Rea
           <Input
             id="stageName"
             value={data.stageName ?? ""}
-            onChange={(e) => { onUpdate({ stageName: e.target.value || null }); }}
+            onChange={(e) => {
+              onUpdate({ stageName: e.target.value || null });
+            }}
             placeholder="Professional name (if different)"
           />
         </div>
@@ -55,7 +61,9 @@ export function BasicInfoStep({ data, onUpdate }: BasicInfoStepProps): React.Rea
           <Input
             id="pronouns"
             value={data.pronouns ?? ""}
-            onChange={(e) => { onUpdate({ pronouns: e.target.value || null }); }}
+            onChange={(e) => {
+              onUpdate({ pronouns: e.target.value || null });
+            }}
             placeholder="e.g., she/her, he/him, they/them"
           />
         </div>
@@ -68,7 +76,9 @@ export function BasicInfoStep({ data, onUpdate }: BasicInfoStepProps): React.Rea
         <Input
           id="location"
           value={data.location ?? ""}
-          onChange={(e) => { onUpdate({ location: e.target.value || null }); }}
+          onChange={(e) => {
+            onUpdate({ location: e.target.value || null });
+          }}
           placeholder="City, State"
         />
       </div>
@@ -80,7 +90,9 @@ export function BasicInfoStep({ data, onUpdate }: BasicInfoStepProps): React.Rea
         <textarea
           id="bio"
           value={data.bio ?? ""}
-          onChange={(e) => { onUpdate({ bio: e.target.value || null }); }}
+          onChange={(e) => {
+            onUpdate({ bio: e.target.value || null });
+          }}
           placeholder="Tell producers about yourself, your training, and your experience..."
           className="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex min-h-[120px] w-full rounded-lg border px-3 py-2 text-sm focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
           maxLength={2000}
