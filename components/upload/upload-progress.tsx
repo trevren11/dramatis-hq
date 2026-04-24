@@ -40,8 +40,8 @@ export function UploadProgress({
 
   return (
     <div className={cn("space-y-2", className)}>
-      {filename && <p className="truncate text-sm text-base-content/70">{filename}</p>}
-      <div className="h-2 w-full overflow-hidden rounded-full bg-base-200">
+      {filename && <p className="text-base-content/70 truncate text-sm">{filename}</p>}
+      <div className="bg-base-200 h-2 w-full overflow-hidden rounded-full">
         <div
           className={cn("h-full transition-all duration-300", statusColor[status])}
           style={{ width: widthValue }}
