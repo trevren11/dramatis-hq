@@ -100,7 +100,11 @@ export function ShowCard({
                   </Link>
                 </DropdownMenuItem>
                 {onDuplicate && (
-                  <DropdownMenuItem onClick={() => onDuplicate(show.id)}>
+                  <DropdownMenuItem
+                    onClick={() => {
+                      onDuplicate(show.id);
+                    }}
+                  >
                     <Copy className="mr-2 h-4 w-4" />
                     Duplicate
                   </DropdownMenuItem>
@@ -108,7 +112,9 @@ export function ShowCard({
                 <DropdownMenuSeparator />
                 {onDelete && (
                   <DropdownMenuItem
-                    onClick={() => onDelete(show.id)}
+                    onClick={() => {
+                      onDelete(show.id);
+                    }}
                     className="text-destructive focus:text-destructive"
                   >
                     <Trash2 className="mr-2 h-4 w-4" />
@@ -122,20 +128,18 @@ export function ShowCard({
       </CardHeader>
       <CardContent className="pt-0">
         <div className="flex items-center gap-6 text-sm">
-          <div className="flex items-center gap-1.5 text-muted-foreground">
+          <div className="text-muted-foreground flex items-center gap-1.5">
             <Calendar className="h-4 w-4" />
             <span>
               {nextDate.label}: {nextDate.date}
             </span>
           </div>
-          <div className="flex items-center gap-1.5 text-muted-foreground">
+          <div className="text-muted-foreground flex items-center gap-1.5">
             <Users className="h-4 w-4" />
             <span>{roleCount} roles</span>
           </div>
         </div>
-        {show.venue && (
-          <p className="text-muted-foreground mt-2 text-sm truncate">{show.venue}</p>
-        )}
+        {show.venue && <p className="text-muted-foreground mt-2 truncate text-sm">{show.venue}</p>}
       </CardContent>
     </Card>
   );

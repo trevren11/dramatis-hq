@@ -36,7 +36,7 @@ export function ReviewStep({ data }: Props): React.ReactElement {
           <dl className="space-y-2">
             <div className="flex justify-between">
               <dt className="text-muted-foreground">Title</dt>
-              <dd className="font-medium">{data.title || "Untitled"}</dd>
+              <dd className="font-medium">{data.title ?? "Untitled"}</dd>
             </div>
             <div className="flex justify-between">
               <dt className="text-muted-foreground">Type</dt>
@@ -58,7 +58,7 @@ export function ReviewStep({ data }: Props): React.ReactElement {
           <dl className="space-y-2">
             <div className="flex justify-between">
               <dt className="text-muted-foreground">Venue</dt>
-              <dd className="font-medium">{data.venue || "Not set"}</dd>
+              <dd className="font-medium">{data.venue ?? "Not set"}</dd>
             </div>
             <div className="flex justify-between">
               <dt className="text-muted-foreground">Rehearsal Start</dt>

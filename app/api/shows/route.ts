@@ -28,18 +28,18 @@ export async function GET(request: Request): Promise<NextResponse> {
     const offset = (page - 1) * limit;
 
     // Build where conditions
-    let whereConditions = eq(shows.organizationId, profile.id);
+    const baseCondition = eq(shows.organizationId, profile.id);
+    const conditions = [baseCondition];
 
     if (status && status !== "all") {
-      whereConditions = and(
-        whereConditions,
-        eq(shows.status, status as typeof shows.status.enumValues[number])
-      )!;
+      conditions.push(eq(shows.status, status as (typeof shows.status.enumValues)[number]));
     }
 
     if (search) {
-      whereConditions = and(whereConditions, ilike(shows.title, `%${search}%`))!;
+      conditions.push(ilike(shows.title, `%${search}%`));
     }
+
+    const whereConditions = conditions.length > 1 ? and(...conditions) : baseCondition;
 
     const results = await db.query.shows.findMany({
       where: whereConditions,

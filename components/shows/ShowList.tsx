@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { ShowCard } from "./ShowCard";
 import { Plus, Search } from "lucide-react";
-import { useToast } from "@/components/ui/toast";
+import { useToast } from "@/components/ui/use-toast";
 import type { Show } from "@/lib/db/schema/shows";
 import { SHOW_STATUS_OPTIONS } from "@/lib/db/schema/shows";
 
@@ -29,7 +29,7 @@ export function ShowList({ initialShows }: ShowListProps): React.ReactElement {
   const [isLoading, setIsLoading] = useState(false);
 
   const fetchShows = useCallback(
-    async (status: string, search: string) => {
+    async (status: string, search: string): Promise<void> => {
       setIsLoading(true);
       try {
         const params = new URLSearchParams();
@@ -54,58 +54,74 @@ export function ShowList({ initialShows }: ShowListProps): React.ReactElement {
     [toast]
   );
 
-  const handleStatusChange = (status: string) => {
-    setStatusFilter(status);
-    fetchShows(status, searchQuery);
-  };
+  const handleStatusChange = useCallback(
+    (status: string): void => {
+      setStatusFilter(status);
+      void fetchShows(status, searchQuery);
+    },
+    [fetchShows, searchQuery]
+  );
 
-  const handleSearch = (e: React.FormEvent) => {
-    e.preventDefault();
-    fetchShows(statusFilter, searchQuery);
-  };
+  const handleSearch = useCallback(
+    (e: React.SyntheticEvent): void => {
+      e.preventDefault();
+      void fetchShows(statusFilter, searchQuery);
+    },
+    [fetchShows, statusFilter, searchQuery]
+  );
 
-  const handleDuplicate = async (id: string) => {
-    try {
-      const response = await fetch(`/api/shows/${id}/duplicate`, { method: "POST" });
-      if (!response.ok) throw new Error("Failed to duplicate show");
+  const handleDuplicate = useCallback(
+    (id: string): void => {
+      void (async (): Promise<void> => {
+        try {
+          const response = await fetch(`/api/shows/${id}/duplicate`, { method: "POST" });
+          if (!response.ok) throw new Error("Failed to duplicate show");
 
-      const data = (await response.json()) as { show: Show };
-      toast({
-        title: "Show duplicated",
-        description: `Created "${data.show.title}"`,
-      });
-      fetchShows(statusFilter, searchQuery);
-    } catch {
-      toast({
-        title: "Error",
-        description: "Failed to duplicate show",
-        variant: "destructive",
-      });
-    }
-  };
+          const data = (await response.json()) as { show: Show };
+          toast({
+            title: "Show duplicated",
+            description: `Created "${data.show.title}"`,
+          });
+          void fetchShows(statusFilter, searchQuery);
+        } catch {
+          toast({
+            title: "Error",
+            description: "Failed to duplicate show",
+            variant: "destructive",
+          });
+        }
+      })();
+    },
+    [toast, fetchShows, statusFilter, searchQuery]
+  );
 
-  const handleDelete = async (id: string) => {
-    if (!confirm("Are you sure you want to delete this show? This action cannot be undone.")) {
-      return;
-    }
+  const handleDelete = useCallback(
+    (id: string): void => {
+      if (!confirm("Are you sure you want to delete this show? This action cannot be undone.")) {
+        return;
+      }
 
-    try {
-      const response = await fetch(`/api/shows/${id}`, { method: "DELETE" });
-      if (!response.ok) throw new Error("Failed to delete show");
+      void (async (): Promise<void> => {
+        try {
+          const response = await fetch(`/api/shows/${id}`, { method: "DELETE" });
+          if (!response.ok) throw new Error("Failed to delete show");
 
-      toast({
-        title: "Show deleted",
-        description: "The show has been deleted",
-      });
-      setShows((prev) => prev.filter((s) => s.id !== id));
-    } catch {
-      toast({
-        title: "Error",
-        description: "Failed to delete show",
-        variant: "destructive",
-      });
-    }
-  };
+          toast({
+            title: "Show deleted",
+            description: "The show has been deleted",
+          });
+          setShows((prev) => prev.filter((s) => s.id !== id));
+        } catch {
+          toast({
+            title: "Error",
+            description: "Failed to delete show",
+            variant: "destructive",
+          });
+        }
+      })();
+    },
+    [toast]
+  );
 
   return (
     <div className="space-y-6">
@@ -115,7 +131,11 @@ export function ShowList({ initialShows }: ShowListProps): React.ReactElement {
           <h1 className="text-3xl font-bold">Productions</h1>
           <p className="text-muted-foreground">Manage your shows and productions</p>
         </div>
-        <Button onClick={() => router.push("/producer/shows/new")}>
+        <Button
+          onClick={() => {
+            router.push("/producer/shows/new");
+          }}
+        >
           <Plus className="mr-2 h-4 w-4" />
           New Production
         </Button>
@@ -130,7 +150,9 @@ export function ShowList({ initialShows }: ShowListProps): React.ReactElement {
               key={tab.value}
               variant={statusFilter === tab.value ? "default" : "outline"}
               size="sm"
-              onClick={() => handleStatusChange(tab.value)}
+              onClick={() => {
+                handleStatusChange(tab.value);
+              }}
             >
               {tab.label}
             </Button>
@@ -144,7 +166,9 @@ export function ShowList({ initialShows }: ShowListProps): React.ReactElement {
             <Input
               placeholder="Search shows..."
               value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
+              onChange={(e) => {
+                setSearchQuery(e.target.value);
+              }}
               className="w-full pl-9 sm:w-64"
             />
           </div>
@@ -164,10 +188,13 @@ export function ShowList({ initialShows }: ShowListProps): React.ReactElement {
       ) : shows.length === 0 ? (
         <div className="border-border rounded-xl border border-dashed p-12 text-center">
           <h3 className="text-lg font-semibold">No productions yet</h3>
-          <p className="text-muted-foreground mt-1">
-            Create your first production to get started
-          </p>
-          <Button onClick={() => router.push("/producer/shows/new")} className="mt-4">
+          <p className="text-muted-foreground mt-1">Create your first production to get started</p>
+          <Button
+            onClick={() => {
+              router.push("/producer/shows/new");
+            }}
+            className="mt-4"
+          >
             <Plus className="mr-2 h-4 w-4" />
             New Production
           </Button>

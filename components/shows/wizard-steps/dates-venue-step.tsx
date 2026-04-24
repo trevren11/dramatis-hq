@@ -23,7 +23,9 @@ export function DatesVenueStep({ data, onUpdate }: Props): React.ReactElement {
         <Input
           id="venue"
           value={data.venue ?? ""}
-          onChange={(e) => onUpdate({ venue: e.target.value || null })}
+          onChange={(e) => {
+            onUpdate({ venue: e.target.value || null });
+          }}
           placeholder="e.g., Broadway Theatre, Community Center Stage"
         />
         <p className="text-muted-foreground text-xs">Where will the production take place?</p>
@@ -39,11 +41,11 @@ export function DatesVenueStep({ data, onUpdate }: Props): React.ReactElement {
               id="rehearsalStart"
               type="date"
               value={formatDateForInput(data.rehearsalStart)}
-              onChange={(e) =>
+              onChange={(e) => {
                 onUpdate({
                   rehearsalStart: e.target.value ? new Date(e.target.value) : null,
-                })
-              }
+                });
+              }}
             />
           </div>
 
@@ -54,11 +56,11 @@ export function DatesVenueStep({ data, onUpdate }: Props): React.ReactElement {
                 id="performanceStart"
                 type="date"
                 value={formatDateForInput(data.performanceStart)}
-                onChange={(e) =>
+                onChange={(e) => {
                   onUpdate({
                     performanceStart: e.target.value ? new Date(e.target.value) : null,
-                  })
-                }
+                  });
+                }}
               />
               <p className="text-muted-foreground text-xs">Opening night</p>
             </div>
@@ -69,11 +71,11 @@ export function DatesVenueStep({ data, onUpdate }: Props): React.ReactElement {
                 id="performanceEnd"
                 type="date"
                 value={formatDateForInput(data.performanceEnd)}
-                onChange={(e) =>
+                onChange={(e) => {
                   onUpdate({
                     performanceEnd: e.target.value ? new Date(e.target.value) : null,
-                  })
-                }
+                  });
+                }}
               />
               <p className="text-muted-foreground text-xs">Closing night</p>
             </div>
