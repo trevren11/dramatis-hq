@@ -1,7 +1,6 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import { generateResumePdf, createSampleProfile } from "@/lib/resume";
-import { talentProfileSchema } from "@/lib/resume/types";
+import { createSampleProfile, talentProfileSchema } from "@/lib/resume";
 
 const previewRequestSchema = z.object({
   profile: talentProfileSchema.optional(),
@@ -14,6 +13,9 @@ const previewRequestSchema = z.object({
 
 export async function POST(request: NextRequest): Promise<NextResponse> {
   try {
+    // Dynamic import to prevent @react-pdf/renderer from being bundled into static pages
+    const { generateResumePdf } = await import("@/lib/resume/generator");
+
     const body: unknown = await request.json();
     const parseResult = previewRequestSchema.safeParse(body);
 
@@ -62,6 +64,9 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
 
 export async function GET(): Promise<NextResponse> {
   try {
+    // Dynamic import to prevent @react-pdf/renderer from being bundled into static pages
+    const { generateResumePdf } = await import("@/lib/resume/generator");
+
     const profile = createSampleProfile();
 
     const { buffer, contentType } = await generateResumePdf({
