@@ -2,6 +2,7 @@
 
 import * as React from "react";
 import { cn } from "@/lib/utils";
+import { Check } from "lucide-react";
 
 export interface CheckboxProps extends Omit<React.InputHTMLAttributes<HTMLInputElement>, "type"> {
   label?: string;
@@ -10,21 +11,30 @@ export interface CheckboxProps extends Omit<React.InputHTMLAttributes<HTMLInputE
 const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
   ({ className, label, id, ...props }, ref) => {
     const generatedId = React.useId();
-    const checkboxId = id ?? generatedId;
+    const inputId = id ?? generatedId;
+
     return (
       <div className="flex items-center gap-2">
-        <input
-          type="checkbox"
-          id={checkboxId}
-          className={cn(
-            "border-input bg-background h-4 w-4 rounded border focus:ring-2 focus:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50",
-            className
-          )}
-          ref={ref}
-          {...props}
-        />
+        <div className="relative">
+          <input type="checkbox" id={inputId} ref={ref} className="peer sr-only" {...props} />
+          <div
+            className={cn(
+              "border-input bg-background peer-focus-visible:ring-ring peer-checked:border-primary peer-checked:bg-primary flex h-4 w-4 shrink-0 cursor-pointer items-center justify-center rounded border peer-focus-visible:ring-2 peer-focus-visible:ring-offset-2 peer-disabled:cursor-not-allowed peer-disabled:opacity-50",
+              className
+            )}
+          >
+            <Check className="text-primary-foreground hidden h-3 w-3 peer-checked:block" />
+          </div>
+          <label
+            htmlFor={inputId}
+            className="absolute inset-0 cursor-pointer peer-disabled:cursor-not-allowed"
+          />
+        </div>
         {label && (
-          <label htmlFor={checkboxId} className="text-sm leading-none font-medium">
+          <label
+            htmlFor={inputId}
+            className="cursor-pointer text-sm leading-none font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+          >
             {label}
           </label>
         )}
