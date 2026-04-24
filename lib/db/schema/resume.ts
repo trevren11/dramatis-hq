@@ -1,7 +1,7 @@
 import { pgTable, uuid, varchar, timestamp, text, boolean, json, index } from "drizzle-orm/pg-core";
 import { users } from "./users";
 
-export const talentProfiles = pgTable(
+export const resumeTalentProfiles = pgTable(
   "talent_profiles",
   {
     id: uuid("id").primaryKey().defaultRandom(),
@@ -28,7 +28,7 @@ export const workHistory = pgTable(
   {
     id: uuid("id").primaryKey().defaultRandom(),
     profileId: uuid("profile_id")
-      .references(() => talentProfiles.id, { onDelete: "cascade" })
+      .references(() => resumeTalentProfiles.id, { onDelete: "cascade" })
       .notNull(),
     category: varchar("category", { length: 50 }).notNull(),
     projectName: varchar("project_name", { length: 255 }).notNull(),
@@ -52,7 +52,7 @@ export const education = pgTable(
   {
     id: uuid("id").primaryKey().defaultRandom(),
     profileId: uuid("profile_id")
-      .references(() => talentProfiles.id, { onDelete: "cascade" })
+      .references(() => resumeTalentProfiles.id, { onDelete: "cascade" })
       .notNull(),
     program: varchar("program", { length: 255 }).notNull(),
     institution: varchar("institution", { length: 255 }).notNull(),
@@ -89,8 +89,8 @@ export const resumeConfigurations = pgTable(
   (table) => [index("resume_configurations_user_id_idx").on(table.userId)]
 );
 
-export type TalentProfileRecord = typeof talentProfiles.$inferSelect;
-export type NewTalentProfile = typeof talentProfiles.$inferInsert;
+export type ResumeTalentProfileRecord = typeof resumeTalentProfiles.$inferSelect;
+export type NewResumeTalentProfile = typeof resumeTalentProfiles.$inferInsert;
 export type WorkHistoryRecord = typeof workHistory.$inferSelect;
 export type NewWorkHistory = typeof workHistory.$inferInsert;
 export type EducationRecord = typeof education.$inferSelect;
