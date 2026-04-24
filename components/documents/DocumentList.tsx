@@ -218,7 +218,12 @@ export function DocumentList({ refreshTrigger = 0 }: DocumentListProps): React.R
                     <Download className="h-4 w-4" />
                   </Button>
                   {doc.isProducerUploaded ? (
-                    <Button variant="outline" size="sm" disabled title="Cannot delete producer-uploaded documents">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      disabled
+                      title="Cannot delete producer-uploaded documents"
+                    >
                       <AlertCircle className="h-4 w-4" />
                     </Button>
                   ) : (

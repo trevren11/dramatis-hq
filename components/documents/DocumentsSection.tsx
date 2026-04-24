@@ -19,8 +19,8 @@ export function DocumentsSection(): React.ReactElement {
         <CardHeader>
           <CardTitle>Upload Document</CardTitle>
           <CardDescription>
-            Upload W-2s, contracts, call sheets, and other important documents.
-            All files are encrypted for your security.
+            Upload W-2s, contracts, call sheets, and other important documents. All files are
+            encrypted for your security.
           </CardDescription>
         </CardHeader>
         <CardContent>
@@ -31,9 +31,7 @@ export function DocumentsSection(): React.ReactElement {
       <Card>
         <CardHeader>
           <CardTitle>My Documents</CardTitle>
-          <CardDescription>
-            View and manage your uploaded documents
-          </CardDescription>
+          <CardDescription>View and manage your uploaded documents</CardDescription>
         </CardHeader>
         <CardContent>
           <DocumentList refreshTrigger={refreshTrigger} />
