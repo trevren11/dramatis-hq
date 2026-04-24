@@ -104,6 +104,17 @@ Before every commit:
 - [ ] No hardcoded secrets or API keys
 - [ ] Database migrations are reversible
 
+**CRITICAL: Fix ALL issues, not just your changes.**
+
+When running lint, tests, or typecheck, you must fix **every** error and warning reported - not just those in files you modified. Common excuses that are NOT acceptable:
+
+- "This error existed before my changes" - Fix it anyway
+- "I didn't touch that file" - Fix it anyway
+- "It's a pre-existing issue" - Fix it anyway
+- "My changes work fine" - The codebase must be clean
+
+The codebase should always be in a passing state. If you encounter existing issues, fixing them is part of your work. Never skip, ignore, or leave issues for someone else.
+
 ## Code Style
 
 ### TypeScript

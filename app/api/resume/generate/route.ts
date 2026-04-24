@@ -1,6 +1,9 @@
 import { type NextRequest, NextResponse } from "next/server";
-import { generateResumePdf, createSampleProfile } from "@/lib/resume";
-import { generateResumeRequestSchema, talentProfileSchema } from "@/lib/resume/types";
+import {
+  createSampleProfile,
+  generateResumeRequestSchema,
+  talentProfileSchema,
+} from "@/lib/resume";
 
 const requestBodySchema = generateResumeRequestSchema.extend({
   profile: talentProfileSchema.optional(),
@@ -8,6 +11,9 @@ const requestBodySchema = generateResumeRequestSchema.extend({
 
 export async function POST(request: NextRequest): Promise<NextResponse> {
   try {
+    // Dynamic import to prevent @react-pdf/renderer from being bundled into static pages
+    const { generateResumePdf } = await import("@/lib/resume/generator");
+
     const body: unknown = await request.json();
 
     const parseResult = requestBodySchema.safeParse(body);
