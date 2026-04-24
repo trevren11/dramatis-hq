@@ -31,10 +31,21 @@ export const profileUnionsSchema = z.object({
   unionMemberships: z.array(z.string()).default([]),
 });
 
+export const publicSectionsSchema = z.object({
+  basicInfo: z.boolean().default(true),
+  bio: z.boolean().default(true),
+  headshots: z.boolean().default(true),
+  workHistory: z.boolean().default(true),
+  education: z.boolean().default(true),
+  skills: z.boolean().default(true),
+  contact: z.boolean().default(false),
+});
+
 export const profileVisibilitySchema = z.object({
   isPublic: z.boolean().default(true),
   hideFromSearch: z.boolean().default(false),
   publicProfileSlug: z.string().max(100).optional().nullable(),
+  publicSections: publicSectionsSchema.optional().nullable(),
 });
 
 export const profileUpdateSchema = z.object({
@@ -111,6 +122,7 @@ export type TalentSkillInput = z.infer<typeof talentSkillSchema>;
 export type HeadshotCreate = z.infer<typeof headshotCreateSchema>;
 export type HeadshotUpdate = z.infer<typeof headshotUpdateSchema>;
 export type AddSkillById = z.infer<typeof addSkillByIdSchema>;
+export type PublicSectionsInput = z.infer<typeof publicSectionsSchema>;
 
 export const UNION_OPTIONS = [
   { value: "aea", label: "AEA (Actors' Equity Association)" },
