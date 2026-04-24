@@ -7,6 +7,7 @@ Theatrical production management platform connecting talent with producers.
 Dramatis-HQ is a comprehensive platform for managing theatrical productions, from talent discovery through casting to production management.
 
 ### For Talent (Free)
+
 - Professional profile with headshots, videos, and resume
 - Searchable skills and work history
 - Calendar availability management
@@ -15,6 +16,7 @@ Dramatis-HQ is a comprehensive platform for managing theatrical productions, fro
 - Profile sharing via QR codes
 
 ### For Producers (Subscription)
+
 - Company profiles with show galleries
 - Full audition management workflow
 - Drag-and-drop casting board
