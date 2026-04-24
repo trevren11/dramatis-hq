@@ -24,6 +24,7 @@ export default defineConfig({
         "components/**",
         "lib/db/**",
         "lib/auth/**",
+        "middleware.ts",
         "next-env.d.ts",
       ],
       thresholds: {
