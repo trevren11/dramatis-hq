@@ -14,6 +14,11 @@ interface WorkHistorySectionProps {
   initialData: WorkHistory[];
 }
 
+interface ApiResponse {
+  workHistory?: WorkHistory;
+  error?: string;
+}
+
 const categoryOptions = WORK_CATEGORIES.map((cat) => ({
   value: cat,
   label: WORK_CATEGORY_LABELS[cat],
@@ -70,6 +75,7 @@ export function WorkHistorySection({ initialData }: WorkHistorySectionProps): Re
     });
   };
 
+  // eslint-disable-next-line complexity
   const handleSave = async (): Promise<void> => {
     if (!formData.showName || !formData.role) {
       toast({ variant: "destructive", title: "Error", description: "Show name and role are required" });
@@ -95,16 +101,19 @@ export function WorkHistorySection({ initialData }: WorkHistorySectionProps): Re
       });
 
       if (!response.ok) {
-        const data = await response.json();
-        throw new Error(data.error ?? "Failed to save");
+        const errorData: ApiResponse = await response.json() as ApiResponse;
+        throw new Error(errorData.error ?? "Failed to save");
       }
 
-      const data = await response.json();
+      const data: ApiResponse = await response.json() as ApiResponse;
+      const newEntry = data.workHistory;
 
-      if (isEdit) {
-        setEntries(entries.map((e) => (e.id === editingId ? data.workHistory : e)));
-      } else {
-        setEntries([...entries, data.workHistory]);
+      if (newEntry) {
+        if (isEdit) {
+          setEntries(entries.map((e) => (e.id === editingId ? newEntry : e)));
+        } else {
+          setEntries([...entries, newEntry]);
+        }
       }
 
       resetForm();
@@ -128,8 +137,8 @@ export function WorkHistorySection({ initialData }: WorkHistorySectionProps): Re
       const response = await fetch(`/api/talent/work-history/${id}`, { method: "DELETE" });
 
       if (!response.ok) {
-        const data = await response.json();
-        throw new Error(data.error ?? "Failed to delete");
+        const errorData: ApiResponse = await response.json() as ApiResponse;
+        throw new Error(errorData.error ?? "Failed to delete");
       }
 
       setEntries(entries.filter((e) => e.id !== id));
@@ -253,7 +262,7 @@ export function WorkHistorySection({ initialData }: WorkHistorySectionProps): Re
                 <X className="mr-2 h-4 w-4" />
                 Cancel
               </Button>
-              <Button onClick={handleSave} disabled={isLoading}>
+              <Button onClick={() => void handleSave()} disabled={isLoading}>
                 {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
                 {editingId ? "Update" : "Add"} Entry
               </Button>
@@ -301,7 +310,7 @@ export function WorkHistorySection({ initialData }: WorkHistorySectionProps): Re
                   <Button
                     variant="ghost"
                     size="icon"
-                    onClick={() => handleDelete(entry.id)}
+                    onClick={() => void handleDelete(entry.id)}
                     disabled={isLoading}
                   >
                     <Trash2 className="h-4 w-4" />

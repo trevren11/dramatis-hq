@@ -25,6 +25,10 @@ interface ProfileWizardProps {
   };
 }
 
+interface ApiErrorResponse {
+  error?: string;
+}
+
 export function ProfileWizard({ initialData }: ProfileWizardProps): React.ReactElement {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
@@ -34,7 +38,7 @@ export function ProfileWizard({ initialData }: ProfileWizardProps): React.ReactE
   const nameParts = initialData?.name?.split(" ") ?? [];
   const [formData, setFormData] = useState<Partial<ProfileUpdate>>({
     firstName: nameParts[0] ?? "",
-    lastName: nameParts.slice(1).join(" ") ?? "",
+    lastName: nameParts.length > 1 ? nameParts.slice(1).join(" ") : "",
     stageName: null,
     pronouns: null,
     bio: null,
@@ -74,8 +78,8 @@ export function ProfileWizard({ initialData }: ProfileWizardProps): React.ReactE
         });
 
         if (!response.ok) {
-          const data = await response.json();
-          setError(data.error ?? "Failed to create profile");
+          const errorData: ApiErrorResponse = await response.json() as ApiErrorResponse;
+          setError(errorData.error ?? "Failed to create profile");
           return;
         }
 

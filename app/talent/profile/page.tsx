@@ -38,6 +38,7 @@ function calculateCompleteness(
   return Math.round((score / 7) * 100);
 }
 
+// eslint-disable-next-line complexity
 export default async function ProfilePage(): Promise<React.ReactElement> {
   const session = await auth();
   if (!session?.user.id) {

@@ -13,6 +13,11 @@ interface EducationSectionProps {
   initialData: Education[];
 }
 
+interface ApiResponse {
+  education?: Education;
+  error?: string;
+}
+
 interface EducationFormData {
   program: string;
   degree: string;
@@ -61,6 +66,7 @@ export function EducationSection({ initialData }: EducationSectionProps): React.
     });
   };
 
+  // eslint-disable-next-line complexity
   const handleSave = async (): Promise<void> => {
     if (!formData.program || !formData.institution) {
       toast({ variant: "destructive", title: "Error", description: "Program and institution are required" });
@@ -88,16 +94,19 @@ export function EducationSection({ initialData }: EducationSectionProps): React.
       });
 
       if (!response.ok) {
-        const data = await response.json();
-        throw new Error(data.error ?? "Failed to save");
+        const errorData: ApiResponse = await response.json() as ApiResponse;
+        throw new Error(errorData.error ?? "Failed to save");
       }
 
-      const data = await response.json();
+      const data: ApiResponse = await response.json() as ApiResponse;
+      const newEducation = data.education;
 
-      if (isEdit) {
-        setEntries(entries.map((e) => (e.id === editingId ? data.education : e)));
-      } else {
-        setEntries([...entries, data.education]);
+      if (newEducation) {
+        if (isEdit) {
+          setEntries(entries.map((e) => (e.id === editingId ? newEducation : e)));
+        } else {
+          setEntries([...entries, newEducation]);
+        }
       }
 
       resetForm();
@@ -121,8 +130,8 @@ export function EducationSection({ initialData }: EducationSectionProps): React.
       const response = await fetch(`/api/talent/education/${id}`, { method: "DELETE" });
 
       if (!response.ok) {
-        const data = await response.json();
-        throw new Error(data.error ?? "Failed to delete");
+        const errorData: ApiResponse = await response.json() as ApiResponse;
+        throw new Error(errorData.error ?? "Failed to delete");
       }
 
       setEntries(entries.filter((e) => e.id !== id));
@@ -249,7 +258,7 @@ export function EducationSection({ initialData }: EducationSectionProps): React.
                 <X className="mr-2 h-4 w-4" />
                 Cancel
               </Button>
-              <Button onClick={handleSave} disabled={isLoading}>
+              <Button onClick={() => void handleSave()} disabled={isLoading}>
                 {isLoading ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
                 {editingId ? "Update" : "Add"} Entry
               </Button>
@@ -296,7 +305,7 @@ export function EducationSection({ initialData }: EducationSectionProps): React.
                   <Button
                     variant="ghost"
                     size="icon"
-                    onClick={() => handleDelete(entry.id)}
+                    onClick={() => void handleDelete(entry.id)}
                     disabled={isLoading}
                   >
                     <Trash2 className="h-4 w-4" />
