@@ -1,3 +1,5 @@
+export const dynamic = "force-dynamic";
+
 import { db } from "@/lib/db";
 import { auditions, shows, producerProfiles } from "@/lib/db/schema";
 import { eq, and, or, gte, lte, desc, sql } from "drizzle-orm";
