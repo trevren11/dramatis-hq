@@ -59,6 +59,6 @@
   }
 
   .gradient-text {
-    @apply bg-gradient-to-r from-primary via-accent to-secondary bg-clip-text text-transparent;
+    @apply from-primary via-accent to-secondary bg-gradient-to-r bg-clip-text text-transparent;
   }
 }

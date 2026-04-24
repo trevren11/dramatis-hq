@@ -1,4 +1,3 @@
-
 # Dramatis-HQ Implementation Plan
 
 ## Comprehensive Implementation Plan for Theatrical Production Management Platform
@@ -44,9 +43,9 @@ Dramatis-HQ is a comprehensive theatrical production management platform that br
 
 The platform serves two primary account types with multiple permission levels within each:
 
-| Account Type | Pricing | Description |
-|--------------|---------|-------------|
-| **Talent** | Free | Performers, actors, musicians, dancers who create profiles and audition for roles |
+| Account Type | Pricing           | Description                                                                         |
+| ------------ | ----------------- | ----------------------------------------------------------------------------------- |
+| **Talent**   | Free              | Performers, actors, musicians, dancers who create profiles and audition for roles   |
 | **Producer** | Paid Subscription | Production companies, theaters, and organizations that manage shows and hire talent |
 
 ---
@@ -54,72 +53,80 @@ The platform serves two primary account types with multiple permission levels wi
 ### 1.4 Talent Capabilities (Free Tier)
 
 #### Profile & Identity
-| Feature | Description |
-|---------|-------------|
-| **Profile Pictures/Headshots** | Upload multiple professional headshots with cropping and optimization |
-| **Video Samples** | Upload and showcase work samples: singing, acting, instrument performances, dance reels |
-| **Social Media Links** | Connect Instagram, TikTok, Facebook, X (Twitter) profiles |
-| **Contact Information** | Email and phone number (visibility controlled by user) |
-| **Public Profile URL** | Shareable link to public-facing profile |
-| **QR Code Generation** | Generate QR codes linking to profile for audition check-in |
+
+| Feature                        | Description                                                                             |
+| ------------------------------ | --------------------------------------------------------------------------------------- |
+| **Profile Pictures/Headshots** | Upload multiple professional headshots with cropping and optimization                   |
+| **Video Samples**              | Upload and showcase work samples: singing, acting, instrument performances, dance reels |
+| **Social Media Links**         | Connect Instagram, TikTok, Facebook, X (Twitter) profiles                               |
+| **Contact Information**        | Email and phone number (visibility controlled by user)                                  |
+| **Public Profile URL**         | Shareable link to public-facing profile                                                 |
+| **QR Code Generation**         | Generate QR codes linking to profile for audition check-in                              |
 
 #### Professional History
-| Feature | Description |
-|---------|-------------|
-| **Society/Union Membership** | Track memberships: AEA, SAG-AFTRA, IATSE, AFM, etc. |
-| **Work History** | Comprehensive project history with categorization |
-| **Project Details** | Show/project name, role/position, location, dates, union/non-union status |
-| **Project Categories** | Categorize as Theater, Film, Television, Commercial, Voice-over, etc. |
-| **Education/Training** | Program name, degree, university/conservatory, years attended |
-| **Special Skills** | Searchable skill tags (similar to LinkedIn skills) |
+
+| Feature                      | Description                                                               |
+| ---------------------------- | ------------------------------------------------------------------------- |
+| **Society/Union Membership** | Track memberships: AEA, SAG-AFTRA, IATSE, AFM, etc.                       |
+| **Work History**             | Comprehensive project history with categorization                         |
+| **Project Details**          | Show/project name, role/position, location, dates, union/non-union status |
+| **Project Categories**       | Categorize as Theater, Film, Television, Commercial, Voice-over, etc.     |
+| **Education/Training**       | Program name, degree, university/conservatory, years attended             |
+| **Special Skills**           | Searchable skill tags (similar to LinkedIn skills)                        |
 
 #### Physical Attributes (Searchable by Producers, Not Public)
-| Attribute | Notes |
-|-----------|-------|
-| Hair Color | Current and natural |
-| Eye Color | — |
-| Height | — |
-| Willingness to Cut Hair | Yes/No/Negotiable |
-| Ethnicity | Self-identified, optional |
-| Age Range | Playable age range |
-| Vocal Range | For singers (e.g., Soprano, Tenor, Baritone) |
-| 18+ Confirmation | Legal verification for mature content |
+
+| Attribute               | Notes                                        |
+| ----------------------- | -------------------------------------------- |
+| Hair Color              | Current and natural                          |
+| Eye Color               | —                                            |
+| Height                  | —                                            |
+| Willingness to Cut Hair | Yes/No/Negotiable                            |
+| Ethnicity               | Self-identified, optional                    |
+| Age Range               | Playable age range                           |
+| Vocal Range             | For singers (e.g., Soprano, Tenor, Baritone) |
+| 18+ Confirmation        | Legal verification for mature content        |
 
 #### Resume Generation
-| Feature | Description |
-|---------|-------------|
+
+| Feature                  | Description                                                                  |
+| ------------------------ | ---------------------------------------------------------------------------- |
 | **Auto-Generate Resume** | Pull profile picture, work history, education, and skills into formatted PDF |
-| **Selective Inclusion** | Checkbox interface to include/exclude specific experiences before generation |
-| **Print-Ready Format** | Industry-standard resume format suitable for printing |
-| **Multiple Versions** | Save different resume configurations for different audition types |
+| **Selective Inclusion**  | Checkbox interface to include/exclude specific experiences before generation |
+| **Print-Ready Format**   | Industry-standard resume format suitable for printing                        |
+| **Multiple Versions**    | Save different resume configurations for different audition types            |
 
 #### Document Storage (Private, SOC 2 Compliant)
-| Document Type | Description |
-|---------------|-------------|
-| **Tax Documents** | W2, 1099 forms (encrypted, user-only access) |
-| **Call Sheets** | Received call sheets from productions |
-| **Contracts** | Employment agreements and deal memos |
-| **Personal Documents** | ID copies, work permits, etc. |
+
+| Document Type          | Description                                  |
+| ---------------------- | -------------------------------------------- |
+| **Tax Documents**      | W2, 1099 forms (encrypted, user-only access) |
+| **Call Sheets**        | Received call sheets from productions        |
+| **Contracts**          | Employment agreements and deal memos         |
+| **Personal Documents** | ID copies, work permits, etc.                |
 
 #### Calendar & Availability
-| Feature | Description |
-|---------|-------------|
-| **Availability Calendar** | Mark available/unavailable dates for auditions and bookings |
-| **Schedule Sync** | Automatic blackout dates when booked on a show (without revealing project details) |
-| **Conflict Detection** | Warn when applying for overlapping commitments |
+
+| Feature                   | Description                                                                        |
+| ------------------------- | ---------------------------------------------------------------------------------- |
+| **Availability Calendar** | Mark available/unavailable dates for auditions and bookings                        |
+| **Schedule Sync**         | Automatic blackout dates when booked on a show (without revealing project details) |
+| **Conflict Detection**    | Warn when applying for overlapping commitments                                     |
 
 #### Communication
-| Feature | Description |
-|---------|-------------|
-| **Message Center** | Send and receive messages to/from producers and other talent |
+
+| Feature                 | Description                                                                  |
+| ----------------------- | ---------------------------------------------------------------------------- |
+| **Message Center**      | Send and receive messages to/from producers and other talent                 |
 | **Email Notifications** | Configurable notifications for messages, audition updates, casting decisions |
-| **Push Notifications** | Mobile alerts for time-sensitive communications |
+| **Push Notifications**  | Mobile alerts for time-sensitive communications                              |
 
 #### Profile Sharing
-| Method | Description |
-|--------|-------------|
-| **Direct Link** | Shareable URL to public profile |
-| **QR Code** | Scannable code for audition check-in |
+
+| Method                | Description                                                 |
+| --------------------- | ----------------------------------------------------------- |
+| **Direct Link**       | Shareable URL to public profile                             |
+| **QR Code**           | Scannable code for audition check-in                        |
 | **Search Visibility** | Opt-in to be discoverable by producers searching for talent |
 
 ---
@@ -127,125 +134,137 @@ The platform serves two primary account types with multiple permission levels wi
 ### 1.5 Producer Capabilities (Paid Subscription)
 
 #### Company Profile
-| Feature | Description |
-|---------|-------------|
-| **Company Logo** | Brand identity display |
-| **About Us** | Company description, mission, history |
-| **Location** | Primary venue/office location |
-| **Website** | Link to company website |
-| **Union Status** | AEA signatory, non-union, or mixed |
-| **Photo Gallery** | Showcase current and past productions |
+
+| Feature             | Description                                        |
+| ------------------- | -------------------------------------------------- |
+| **Company Logo**    | Brand identity display                             |
+| **About Us**        | Company description, mission, history              |
+| **Location**        | Primary venue/office location                      |
+| **Website**         | Link to company website                            |
+| **Union Status**    | AEA signatory, non-union, or mixed                 |
+| **Photo Gallery**   | Showcase current and past productions              |
 | **Upcoming Season** | Announce upcoming shows and audition opportunities |
 
 #### Audition Management
 
 ##### Audition Announcements
-| Feature | Description |
-|---------|-------------|
-| **Public Listings** | Post auditions visible to all talent |
-| **Requirements** | Specify union status, age range, roles available |
-| **Materials Request** | Specify required audition materials (headshot, resume, song, monologue) |
-| **Submission Deadline** | Set application cutoff dates |
+
+| Feature                 | Description                                                             |
+| ----------------------- | ----------------------------------------------------------------------- |
+| **Public Listings**     | Post auditions visible to all talent                                    |
+| **Requirements**        | Specify union status, age range, roles available                        |
+| **Materials Request**   | Specify required audition materials (headshot, resume, song, monologue) |
+| **Submission Deadline** | Set application cutoff dates                                            |
 
 ##### Audition Form Builder
-| Feature | Description |
-|---------|-------------|
-| **Custom Questions** | Build forms asking talent-specific questions beyond profile data |
-| **Required Fields** | Mark questions as required or optional |
-| **Auto-Fill from Profile** | Pre-populate answers from talent's existing profile data |
-| **QR Code Check-In** | Generate unique QR for audition; talent scans to pull their info |
+
+| Feature                    | Description                                                      |
+| -------------------------- | ---------------------------------------------------------------- |
+| **Custom Questions**       | Build forms asking talent-specific questions beyond profile data |
+| **Required Fields**        | Mark questions as required or optional                           |
+| **Auto-Fill from Profile** | Pre-populate answers from talent's existing profile data         |
+| **QR Code Check-In**       | Generate unique QR for audition; talent scans to pull their info |
 
 ##### Audition Day Interface
-| Feature | Description |
-|---------|-------------|
-| **Talent Queue** | View profiles in audition order |
-| **Profile View** | See headshot on first click |
-| **Resume View** | Flip to resume on second click |
-| **Quick Actions** | Sort talent into: Callback, No Thanks, Callback with Role (typeable) |
-| **Notes** | Add private notes per talent |
-| **Future Cast List** | Running view of callback/cast decisions |
+
+| Feature              | Description                                                          |
+| -------------------- | -------------------------------------------------------------------- |
+| **Talent Queue**     | View profiles in audition order                                      |
+| **Profile View**     | See headshot on first click                                          |
+| **Resume View**      | Flip to resume on second click                                       |
+| **Quick Actions**    | Sort talent into: Callback, No Thanks, Callback with Role (typeable) |
+| **Notes**            | Add private notes per talent                                         |
+| **Future Cast List** | Running view of callback/cast decisions                              |
 
 ##### Callback Management
-| Feature | Description |
-|---------|-------------|
-| **Pull from Auditions** | Import callback list from initial auditions |
-| **Same Interface** | Headshot → Resume flip with decision buttons |
-| **Role Assignment** | Assign specific roles being considered |
-| **Save States** | Save to Casting or save to Callback List with updated decisions |
+
+| Feature                 | Description                                                     |
+| ----------------------- | --------------------------------------------------------------- |
+| **Pull from Auditions** | Import callback list from initial auditions                     |
+| **Same Interface**      | Headshot → Resume flip with decision buttons                    |
+| **Role Assignment**     | Assign specific roles being considered                          |
+| **Save States**         | Save to Casting or save to Callback List with updated decisions |
 
 ##### Casting Board (Lucidchart-style Interface)
-| Feature | Description |
-|---------|-------------|
-| **Role Columns** | Left side displays squares for each role to be filled |
-| **Talent Pool** | Right side shows all auditioned talent for drag-and-drop |
-| **Drag & Drop** | Drag talent photos onto role squares; name appears under role |
-| **Eject Button** | Remove talent from role and set aside for reconsideration |
-| **Lock Button** | Lock a role to prevent accidental changes |
-| **Tier/Hide** | Hide leads or ensemble to focus on specific role groups |
-| **Deck Area** | Bottom area to shuffle and organize talent being considered |
-| **Save Draft** | Save current casting state to return later |
-| **Submit Casting** | Finalize casting with confirmation prompt |
-| **Cast Notification** | Email talent their role using merge fields (name, role, show) |
-| **Email Composer** | Customize cast notification emails with merge fields |
-| **Cast List Generation** | Auto-generate cast list with names, roles, contact info |
+
+| Feature                  | Description                                                   |
+| ------------------------ | ------------------------------------------------------------- |
+| **Role Columns**         | Left side displays squares for each role to be filled         |
+| **Talent Pool**          | Right side shows all auditioned talent for drag-and-drop      |
+| **Drag & Drop**          | Drag talent photos onto role squares; name appears under role |
+| **Eject Button**         | Remove talent from role and set aside for reconsideration     |
+| **Lock Button**          | Lock a role to prevent accidental changes                     |
+| **Tier/Hide**            | Hide leads or ensemble to focus on specific role groups       |
+| **Deck Area**            | Bottom area to shuffle and organize talent being considered   |
+| **Save Draft**           | Save current casting state to return later                    |
+| **Submit Casting**       | Finalize casting with confirmation prompt                     |
+| **Cast Notification**    | Email talent their role using merge fields (name, role, show) |
+| **Email Composer**       | Customize cast notification emails with merge fields          |
+| **Cast List Generation** | Auto-generate cast list with names, roles, contact info       |
 
 #### Production Management
 
 ##### Show/Project Creation
-| Feature | Description |
-|---------|-------------|
-| **Project Setup** | Create new production with title, dates, venue |
-| **Role Definition** | Define all roles/positions needed |
-| **Staff Assignment** | Add staff members with specific permissions |
-| **Department Tabs** | Organize by production department |
+
+| Feature              | Description                                    |
+| -------------------- | ---------------------------------------------- |
+| **Project Setup**    | Create new production with title, dates, venue |
+| **Role Definition**  | Define all roles/positions needed              |
+| **Staff Assignment** | Add staff members with specific permissions    |
+| **Department Tabs**  | Organize by production department              |
 
 ##### Document Management
-| Feature | Description |
-|---------|-------------|
-| **W2/I-9 Upload** | Upload employee tax documents; syncs to talent's secure storage |
-| **Call Sheet Storage** | Store and distribute call sheets |
-| **Cast Lists** | Maintain cast contact and role information |
-| **Script Storage** | Master script with version control |
-| **Minus Tracks** | Audio tracks shareable with permission controls (copyright consideration) |
+
+| Feature                | Description                                                               |
+| ---------------------- | ------------------------------------------------------------------------- |
+| **W2/I-9 Upload**      | Upload employee tax documents; syncs to talent's secure storage           |
+| **Call Sheet Storage** | Store and distribute call sheets                                          |
+| **Cast Lists**         | Maintain cast contact and role information                                |
+| **Script Storage**     | Master script with version control                                        |
+| **Minus Tracks**       | Audio tracks shareable with permission controls (copyright consideration) |
 
 ##### Production Notes (Department Tabs)
-| Department | Content |
-|------------|---------|
-| **Lighting** | Light plots, cue sheets, equipment lists |
-| **Director's Vision** | Concept documents, vision statements, research |
-| **Makeup/Hair** | Design documents, character breakdowns |
-| **Costuming** | Costume plots, measurements, fitting schedules |
-| **Scenic** | Set designs, ground plans, construction drawings |
-| **Dramaturg** | Research packets, program notes, historical context |
-| **Assistant Director** | Blocking notes, rehearsal reports |
-| **Props** | Props lists, sourcing documents, tracking |
-| **Choreographer** | Dance notation, video references, spacing charts |
+
+| Department             | Content                                             |
+| ---------------------- | --------------------------------------------------- |
+| **Lighting**           | Light plots, cue sheets, equipment lists            |
+| **Director's Vision**  | Concept documents, vision statements, research      |
+| **Makeup/Hair**        | Design documents, character breakdowns              |
+| **Costuming**          | Costume plots, measurements, fitting schedules      |
+| **Scenic**             | Set designs, ground plans, construction drawings    |
+| **Dramaturg**          | Research packets, program notes, historical context |
+| **Assistant Director** | Blocking notes, rehearsal reports                   |
+| **Props**              | Props lists, sourcing documents, tracking           |
+| **Choreographer**      | Dance notation, video references, spacing charts    |
 
 ##### Calendar & Scheduling
-| Feature | Description |
-|---------|-------------|
-| **Rehearsal Calendar** | Create and manage rehearsal schedule |
-| **Cast Tagging** | Tag which cast members are called for each rehearsal |
-| **Time/Date Edits** | Modify schedule with change tracking |
-| **Push Notifications** | Alert talent of schedule changes |
-| **Email Notifications** | Send schedule updates via email |
-| **Conflict View** | See talent availability conflicts |
+
+| Feature                 | Description                                          |
+| ----------------------- | ---------------------------------------------------- |
+| **Rehearsal Calendar**  | Create and manage rehearsal schedule                 |
+| **Cast Tagging**        | Tag which cast members are called for each rehearsal |
+| **Time/Date Edits**     | Modify schedule with change tracking                 |
+| **Push Notifications**  | Alert talent of schedule changes                     |
+| **Email Notifications** | Send schedule updates via email                      |
+| **Conflict View**       | See talent availability conflicts                    |
 
 ##### Budget & Receipts
-| Feature | Description |
-|---------|-------------|
-| **Budget Tracking** | Track production budget by department |
-| **Receipt Upload** | Upload receipts for expenses |
+
+| Feature                    | Description                             |
+| -------------------------- | --------------------------------------- |
+| **Budget Tracking**        | Track production budget by department   |
+| **Receipt Upload**         | Upload receipts for expenses            |
 | **Reimbursement Requests** | Staff can submit reimbursement requests |
-| **Approval Workflow** | Producers approve/deny reimbursements |
+| **Approval Workflow**      | Producers approve/deny reimbursements   |
 
 #### Communication
-| Feature | Description |
-|---------|-------------|
-| **Message Center** | Send messages to talent, staff, other producers |
-| **Bulk Messaging** | Send to entire cast or filtered groups |
-| **Email Integration** | Messages can be delivered via email |
-| **Announcement Board** | Post updates visible to all show participants |
+
+| Feature                | Description                                     |
+| ---------------------- | ----------------------------------------------- |
+| **Message Center**     | Send messages to talent, staff, other producers |
+| **Bulk Messaging**     | Send to entire cast or filtered groups          |
+| **Email Integration**  | Messages can be delivered via email             |
+| **Announcement Board** | Post updates visible to all show participants   |
 
 ---
 
@@ -255,107 +274,107 @@ The platform implements granular role-based access control (RBAC) to ensure user
 
 #### Producer Organization Roles
 
-| Role | Description | Access Level |
-|------|-------------|--------------|
-| **Owner** | Organization owner/admin | Full access to all features, billing, user management |
-| **Admin** | Organization administrator | Full access except billing and ownership transfer |
-| **Producer** | Production lead | Create/manage shows, full casting access, budget approval |
-| **Associate Producer** | Assistant producer | View all, limited edit on assigned shows |
+| Role                   | Description                | Access Level                                              |
+| ---------------------- | -------------------------- | --------------------------------------------------------- |
+| **Owner**              | Organization owner/admin   | Full access to all features, billing, user management     |
+| **Admin**              | Organization administrator | Full access except billing and ownership transfer         |
+| **Producer**           | Production lead            | Create/manage shows, full casting access, budget approval |
+| **Associate Producer** | Assistant producer         | View all, limited edit on assigned shows                  |
 
 #### Per-Show Roles
 
-| Role | Access | Restrictions |
-|------|--------|--------------|
-| **Director** | Casting board, audition review, production notes (all), schedule, cast communication | No budget, no tax documents |
-| **Music Director** | Casting board (view), audition review, minus tracks, schedule | Limited casting (can recommend, not finalize) |
-| **Choreographer** | Casting board (view), audition review, choreography notes, schedule | No other department notes |
-| **Stage Manager** | Full schedule control, call sheets, cast lists, production notes (all), cast communication | No casting, no budget approval |
-| **Assistant Stage Manager** | Schedule (view/edit), call sheets, cast lists, rehearsal reports | No casting, no budget |
-| **Production Manager** | Budget, receipts, vendor management, schedule | No casting, no artistic notes |
-| **Technical Director** | Scenic notes, lighting notes, schedule | No casting, no budget approval |
-| **Lighting Designer** | Lighting notes (full), other notes (view only) | No casting, no budget |
-| **Sound Designer** | Sound notes (full), minus tracks, other notes (view only) | No casting, no budget |
-| **Costume Designer** | Costume notes (full), cast measurements, other notes (view only) | No casting, no budget |
-| **Scenic Designer** | Scenic notes (full), other notes (view only) | No casting, no budget |
-| **Props Master** | Props notes (full), budget (props line items only) | No casting |
-| **Hair/Makeup Designer** | Hair/Makeup notes (full), other notes (view only) | No casting, no budget |
-| **Dramaturg** | Dramaturg notes (full), director's vision (view), cast communication (limited) | No casting, no budget |
-| **Assistant Director** | AD notes (full), blocking notes, schedule (view), cast list (view) | No budget, recommend only on casting |
-| **Crew Member** | Schedule (own calls only), department notes (assigned department only) | View only, no edit rights |
-| **Cast Member (Talent)** | Own schedule, own call sheets, scripts (if shared), minus tracks (if shared) | No access to other cast info, no production notes |
+| Role                        | Access                                                                                     | Restrictions                                      |
+| --------------------------- | ------------------------------------------------------------------------------------------ | ------------------------------------------------- |
+| **Director**                | Casting board, audition review, production notes (all), schedule, cast communication       | No budget, no tax documents                       |
+| **Music Director**          | Casting board (view), audition review, minus tracks, schedule                              | Limited casting (can recommend, not finalize)     |
+| **Choreographer**           | Casting board (view), audition review, choreography notes, schedule                        | No other department notes                         |
+| **Stage Manager**           | Full schedule control, call sheets, cast lists, production notes (all), cast communication | No casting, no budget approval                    |
+| **Assistant Stage Manager** | Schedule (view/edit), call sheets, cast lists, rehearsal reports                           | No casting, no budget                             |
+| **Production Manager**      | Budget, receipts, vendor management, schedule                                              | No casting, no artistic notes                     |
+| **Technical Director**      | Scenic notes, lighting notes, schedule                                                     | No casting, no budget approval                    |
+| **Lighting Designer**       | Lighting notes (full), other notes (view only)                                             | No casting, no budget                             |
+| **Sound Designer**          | Sound notes (full), minus tracks, other notes (view only)                                  | No casting, no budget                             |
+| **Costume Designer**        | Costume notes (full), cast measurements, other notes (view only)                           | No casting, no budget                             |
+| **Scenic Designer**         | Scenic notes (full), other notes (view only)                                               | No casting, no budget                             |
+| **Props Master**            | Props notes (full), budget (props line items only)                                         | No casting                                        |
+| **Hair/Makeup Designer**    | Hair/Makeup notes (full), other notes (view only)                                          | No casting, no budget                             |
+| **Dramaturg**               | Dramaturg notes (full), director's vision (view), cast communication (limited)             | No casting, no budget                             |
+| **Assistant Director**      | AD notes (full), blocking notes, schedule (view), cast list (view)                         | No budget, recommend only on casting              |
+| **Crew Member**             | Schedule (own calls only), department notes (assigned department only)                     | View only, no edit rights                         |
+| **Cast Member (Talent)**    | Own schedule, own call sheets, scripts (if shared), minus tracks (if shared)               | No access to other cast info, no production notes |
 
 #### Permission Matrix by Feature
 
-| Feature | Owner | Admin | Director | SM | Designer | Crew | Cast |
-|---------|-------|-------|----------|-----|----------|------|------|
-| Billing & Subscription | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ | ❌ |
-| User Management | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ |
-| Create Shows | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ |
-| Audition Management | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
-| Casting Board (Edit) | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
-| Casting Board (View) | ✅ | ✅ | ✅ | ✅ | 👁️ | ❌ | ❌ |
-| Finalize Casting | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ |
-| Schedule (Edit) | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ |
-| Schedule (View) | ✅ | ✅ | ✅ | ✅ | ✅ | 👁️ | 👁️ |
-| Call Sheets | ✅ | ✅ | ✅ | ✅ | ✅ | 👁️ | 👁️ |
-| Cast List (Full) | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ |
-| Cast List (Names Only) | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ | ✅ |
-| Production Notes (All) | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ |
-| Production Notes (Own Dept) | ✅ | ✅ | ✅ | ✅ | ✅ | 👁️ | ❌ |
-| Scripts | ✅ | ✅ | ✅ | ✅ | 👁️ | ❌ | 👁️* |
-| Minus Tracks | ✅ | ✅ | ✅ | ✅ | 👁️ | ❌ | 👁️* |
-| Budget (Full) | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ |
-| Budget (Own Dept) | ✅ | ✅ | ❌ | ❌ | ✅ | ❌ | ❌ |
-| Receipts/Reimbursement | ✅ | ✅ | ❌ | ❌ | ✅ | ❌ | ❌ |
-| W2/I-9 Documents | ✅ | ✅ | ❌ | ❌ | ❌ | ❌ | ❌ |
-| Message Cast | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ |
-| Announcements | ✅ | ✅ | ✅ | ✅ | ❌ | ❌ | ❌ |
+| Feature                     | Owner | Admin | Director | SM  | Designer | Crew | Cast |
+| --------------------------- | ----- | ----- | -------- | --- | -------- | ---- | ---- |
+| Billing & Subscription      | ✅    | ❌    | ❌       | ❌  | ❌       | ❌   | ❌   |
+| User Management             | ✅    | ✅    | ❌       | ❌  | ❌       | ❌   | ❌   |
+| Create Shows                | ✅    | ✅    | ❌       | ❌  | ❌       | ❌   | ❌   |
+| Audition Management         | ✅    | ✅    | ✅       | ❌  | ❌       | ❌   | ❌   |
+| Casting Board (Edit)        | ✅    | ✅    | ✅       | ❌  | ❌       | ❌   | ❌   |
+| Casting Board (View)        | ✅    | ✅    | ✅       | ✅  | 👁️       | ❌   | ❌   |
+| Finalize Casting            | ✅    | ✅    | ✅       | ❌  | ❌       | ❌   | ❌   |
+| Schedule (Edit)             | ✅    | ✅    | ✅       | ✅  | ❌       | ❌   | ❌   |
+| Schedule (View)             | ✅    | ✅    | ✅       | ✅  | ✅       | 👁️   | 👁️   |
+| Call Sheets                 | ✅    | ✅    | ✅       | ✅  | ✅       | 👁️   | 👁️   |
+| Cast List (Full)            | ✅    | ✅    | ✅       | ✅  | ❌       | ❌   | ❌   |
+| Cast List (Names Only)      | ✅    | ✅    | ✅       | ✅  | ✅       | ✅   | ✅   |
+| Production Notes (All)      | ✅    | ✅    | ✅       | ✅  | ❌       | ❌   | ❌   |
+| Production Notes (Own Dept) | ✅    | ✅    | ✅       | ✅  | ✅       | 👁️   | ❌   |
+| Scripts                     | ✅    | ✅    | ✅       | ✅  | 👁️       | ❌   | 👁️\* |
+| Minus Tracks                | ✅    | ✅    | ✅       | ✅  | 👁️       | ❌   | 👁️\* |
+| Budget (Full)               | ✅    | ✅    | ❌       | ❌  | ❌       | ❌   | ❌   |
+| Budget (Own Dept)           | ✅    | ✅    | ❌       | ❌  | ✅       | ❌   | ❌   |
+| Receipts/Reimbursement      | ✅    | ✅    | ❌       | ❌  | ✅       | ❌   | ❌   |
+| W2/I-9 Documents            | ✅    | ✅    | ❌       | ❌  | ❌       | ❌   | ❌   |
+| Message Cast                | ✅    | ✅    | ✅       | ✅  | ❌       | ❌   | ❌   |
+| Announcements               | ✅    | ✅    | ✅       | ✅  | ❌       | ❌   | ❌   |
 
-**Legend:** ✅ = Full Access | 👁️ = View Only | 👁️* = If Shared | ❌ = No Access
+**Legend:** ✅ = Full Access | 👁️ = View Only | 👁️\* = If Shared | ❌ = No Access
 
 #### Multi-Decision Maker Support
 
 For productions with multiple directors or decision-makers during casting:
 
-| Feature | Description |
-|---------|-------------|
-| **Collaborative Casting** | Multiple users can view and edit the casting board simultaneously |
-| **Real-time Sync** | Changes sync across all connected users instantly |
-| **Decision Attribution** | Track who made each casting decision |
-| **Voting/Consensus** | Optional voting mode where multiple decision-makers must agree |
-| **Comments** | Add comments to specific casting choices for discussion |
-| **Lock Override** | Only users with equal or higher permission can unlock a locked role |
+| Feature                   | Description                                                         |
+| ------------------------- | ------------------------------------------------------------------- |
+| **Collaborative Casting** | Multiple users can view and edit the casting board simultaneously   |
+| **Real-time Sync**        | Changes sync across all connected users instantly                   |
+| **Decision Attribution**  | Track who made each casting decision                                |
+| **Voting/Consensus**      | Optional voting mode where multiple decision-makers must agree      |
+| **Comments**              | Add comments to specific casting choices for discussion             |
+| **Lock Override**         | Only users with equal or higher permission can unlock a locked role |
 
 ---
 
 ### 1.7 Security & Compliance Considerations
 
-| Requirement | Implementation |
-|-------------|----------------|
-| **SOC 2 Type II** | Required for storing W2, I-9, and other sensitive documents |
-| **Encryption at Rest** | AES-256 encryption for all stored documents |
-| **Encryption in Transit** | TLS 1.3 for all communications |
-| **Access Logging** | Audit trail for all document access |
-| **Data Residency** | Option for US-only data storage |
-| **GDPR Compliance** | For EU talent; data export, deletion rights |
-| **PCI Compliance** | Via Stripe for payment processing |
-| **Two-Factor Authentication** | Required for producer accounts, optional for talent |
-| **Session Management** | Configurable session timeouts, device management |
+| Requirement                   | Implementation                                              |
+| ----------------------------- | ----------------------------------------------------------- |
+| **SOC 2 Type II**             | Required for storing W2, I-9, and other sensitive documents |
+| **Encryption at Rest**        | AES-256 encryption for all stored documents                 |
+| **Encryption in Transit**     | TLS 1.3 for all communications                              |
+| **Access Logging**            | Audit trail for all document access                         |
+| **Data Residency**            | Option for US-only data storage                             |
+| **GDPR Compliance**           | For EU talent; data export, deletion rights                 |
+| **PCI Compliance**            | Via Stripe for payment processing                           |
+| **Two-Factor Authentication** | Required for producer accounts, optional for talent         |
+| **Session Management**        | Configurable session timeouts, device management            |
 
 ---
 
 ### 1.8 Future Considerations
 
-| Feature | Description | Priority |
-|---------|-------------|----------|
-| **Mobile Apps** | Native iOS/Android apps for talent and producers | Phase 2 |
-| **Video Auditions** | Record and submit video auditions directly in platform | Phase 2 |
-| **AI Casting Suggestions** | Recommend talent based on role requirements and past casting | Phase 3 |
-| **Contract Management** | Digital contract signing with e-signature | Phase 2 |
-| **Payroll Integration** | Connect with payroll providers for direct payment | Phase 3 |
-| **Venue Management** | Manage multiple venues, room booking | Phase 2 |
-| **Ticket Sales Integration** | Connect with box office systems | Phase 3 |
-| **Agent Portal** | Allow talent agents to manage multiple clients | Phase 2 |
+| Feature                      | Description                                                  | Priority |
+| ---------------------------- | ------------------------------------------------------------ | -------- |
+| **Mobile Apps**              | Native iOS/Android apps for talent and producers             | Phase 2  |
+| **Video Auditions**          | Record and submit video auditions directly in platform       | Phase 2  |
+| **AI Casting Suggestions**   | Recommend talent based on role requirements and past casting | Phase 3  |
+| **Contract Management**      | Digital contract signing with e-signature                    | Phase 2  |
+| **Payroll Integration**      | Connect with payroll providers for direct payment            | Phase 3  |
+| **Venue Management**         | Manage multiple venues, room booking                         | Phase 2  |
+| **Ticket Sales Integration** | Connect with box office systems                              | Phase 3  |
+| **Agent Portal**             | Allow talent agents to manage multiple clients               | Phase 2  |
 
 ---
 
@@ -363,55 +382,55 @@ For productions with multiple directors or decision-makers during casting:
 
 ### 2.1 Frontend
 
-| Technology | Version | Purpose |
-|------------|---------|---------|
-| **Next.js** | 16.x | Full-stack React framework with App Router |
-| **React** | 19.x | UI library |
-| **TypeScript** | 5.x | Type safety |
-| **Tailwind CSS** | 4.x | Utility-first styling |
-| **DaisyUI** | 5.x | Component library (theatrical/elegant theming) |
-| **Lucide React** | Latest | Icon system |
-| **React DnD** | Latest | Drag-and-drop for casting board |
-| **FullCalendar** | Latest | Calendar/scheduling views |
-| **React PDF** | Latest | PDF generation for resumes |
-| **QRCode.react** | Latest | QR code generation |
+| Technology       | Version | Purpose                                        |
+| ---------------- | ------- | ---------------------------------------------- |
+| **Next.js**      | 16.x    | Full-stack React framework with App Router     |
+| **React**        | 19.x    | UI library                                     |
+| **TypeScript**   | 5.x     | Type safety                                    |
+| **Tailwind CSS** | 4.x     | Utility-first styling                          |
+| **DaisyUI**      | 5.x     | Component library (theatrical/elegant theming) |
+| **Lucide React** | Latest  | Icon system                                    |
+| **React DnD**    | Latest  | Drag-and-drop for casting board                |
+| **FullCalendar** | Latest  | Calendar/scheduling views                      |
+| **React PDF**    | Latest  | PDF generation for resumes                     |
+| **QRCode.react** | Latest  | QR code generation                             |
 
 ### 2.2 Backend
 
-| Technology | Version | Purpose |
-|------------|---------|---------|
-| **Next.js API Routes** | 16.x | REST API endpoints |
-| **tRPC** | 11.x | Type-safe API layer (optional but recommended) |
-| **Drizzle ORM** | Latest | Type-safe database queries |
-| **PostgreSQL** | 16.x | Primary database |
-| **Redis** | 7.x | Caching, sessions, real-time pub/sub |
-| **Stripe** | Latest | Subscription billing |
-| **Resend** | Latest | Transactional email |
-| **Twilio** | Latest | SMS notifications (optional) |
+| Technology             | Version | Purpose                                        |
+| ---------------------- | ------- | ---------------------------------------------- |
+| **Next.js API Routes** | 16.x    | REST API endpoints                             |
+| **tRPC**               | 11.x    | Type-safe API layer (optional but recommended) |
+| **Drizzle ORM**        | Latest  | Type-safe database queries                     |
+| **PostgreSQL**         | 16.x    | Primary database                               |
+| **Redis**              | 7.x     | Caching, sessions, real-time pub/sub           |
+| **Stripe**             | Latest  | Subscription billing                           |
+| **Resend**             | Latest  | Transactional email                            |
+| **Twilio**             | Latest  | SMS notifications (optional)                   |
 
 ### 2.3 Infrastructure
 
-| Technology | Purpose |
-|------------|---------|
-| **Vercel** | Frontend hosting, edge functions |
-| **Neon** or **Supabase** | Managed PostgreSQL with branching |
-| **Upstash** | Serverless Redis |
+| Technology                      | Purpose                            |
+| ------------------------------- | ---------------------------------- |
+| **Vercel**                      | Frontend hosting, edge functions   |
+| **Neon** or **Supabase**        | Managed PostgreSQL with branching  |
+| **Upstash**                     | Serverless Redis                   |
 | **AWS S3** or **Cloudflare R2** | Object storage for media/documents |
-| **Cloudflare** | CDN, image optimization |
-| **Doppler** or **Infisical** | Secrets management (SOC 2) |
+| **Cloudflare**                  | CDN, image optimization            |
+| **Doppler** or **Infisical**    | Secrets management (SOC 2)         |
 
 ### 2.4 Development Tools
 
-| Technology | Purpose |
-|------------|---------|
-| **pnpm** | Package manager |
-| **Vitest** | Unit/integration testing |
-| **Playwright** | E2E testing |
-| **ESLint 9** | Linting with flat config |
-| **Prettier** | Code formatting |
-| **Husky** | Git hooks |
-| **lint-staged** | Pre-commit checks |
-| **GitHub Actions** | CI/CD |
+| Technology         | Purpose                  |
+| ------------------ | ------------------------ |
+| **pnpm**           | Package manager          |
+| **Vitest**         | Unit/integration testing |
+| **Playwright**     | E2E testing              |
+| **ESLint 9**       | Linting with flat config |
+| **Prettier**       | Code formatting          |
+| **Husky**          | Git hooks                |
+| **lint-staged**    | Pre-commit checks        |
+| **GitHub Actions** | CI/CD                    |
 
 ---
 
@@ -687,47 +706,74 @@ dramatis-hq/
 
 ```typescript
 // lib/db/schema/users.ts
-import { pgTable, uuid, varchar, timestamp, boolean, pgEnum } from 'drizzle-orm/pg-core';
+import { pgTable, uuid, varchar, timestamp, boolean, pgEnum } from "drizzle-orm/pg-core";
 
-export const userTypeEnum = pgEnum('user_type', ['talent', 'producer', 'admin']);
+export const userTypeEnum = pgEnum("user_type", ["talent", "producer", "admin"]);
 
-export const users = pgTable('users', {
-  id: uuid('id').primaryKey().defaultRandom(),
-  email: varchar('email', { length: 255 }).notNull().unique(),
-  passwordHash: varchar('password_hash', { length: 255 }),
-  userType: userTypeEnum('user_type').notNull(),
-  emailVerified: boolean('email_verified').default(false),
-  createdAt: timestamp('created_at').defaultNow().notNull(),
-  updatedAt: timestamp('updated_at').defaultNow().notNull(),
-  deletedAt: timestamp('deleted_at'),
+export const users = pgTable("users", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  email: varchar("email", { length: 255 }).notNull().unique(),
+  passwordHash: varchar("password_hash", { length: 255 }),
+  userType: userTypeEnum("user_type").notNull(),
+  emailVerified: boolean("email_verified").default(false),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+  deletedAt: timestamp("deleted_at"),
 });
 
 // lib/db/schema/talent.ts
-import { pgTable, uuid, varchar, text, jsonb, integer, boolean, timestamp, pgEnum } from 'drizzle-orm/pg-core';
-import { users } from './users';
+import {
+  pgTable,
+  uuid,
+  varchar,
+  text,
+  jsonb,
+  integer,
+  boolean,
+  timestamp,
+  pgEnum,
+} from "drizzle-orm/pg-core";
+import { users } from "./users";
 
-export const genderEnum = pgEnum('gender', ['male', 'female', 'non_binary', 'other', 'prefer_not_to_say']);
-export const ethnicityEnum = pgEnum('ethnicity', [
-  'african_american', 'asian', 'caucasian', 'hispanic_latino', 
-  'middle_eastern', 'native_american', 'pacific_islander', 
-  'south_asian', 'mixed', 'other', 'prefer_not_to_say'
+export const genderEnum = pgEnum("gender", [
+  "male",
+  "female",
+  "non_binary",
+  "other",
+  "prefer_not_to_say",
+]);
+export const ethnicityEnum = pgEnum("ethnicity", [
+  "african_american",
+  "asian",
+  "caucasian",
+  "hispanic_latino",
+  "middle_eastern",
+  "native_american",
+  "pacific_islander",
+  "south_asian",
+  "mixed",
+  "other",
+  "prefer_not_to_say",
 ]);
 
-export const talentProfiles = pgTable('talent_profiles', {
-  id: uuid('id').primaryKey().defaultRandom(),
-  userId: uuid('user_id').references(() => users.id).notNull().unique(),
-  
+export const talentProfiles = pgTable("talent_profiles", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  userId: uuid("user_id")
+    .references(() => users.id)
+    .notNull()
+    .unique(),
+
   // Basic Info
-  firstName: varchar('first_name', { length: 100 }).notNull(),
-  lastName: varchar('last_name', { length: 100 }).notNull(),
-  stageName: varchar('stage_name', { length: 100 }),
-  pronouns: varchar('pronouns', { length: 50 }),
-  bio: text('bio'),
-  
+  firstName: varchar("first_name", { length: 100 }).notNull(),
+  lastName: varchar("last_name", { length: 100 }).notNull(),
+  stageName: varchar("stage_name", { length: 100 }),
+  pronouns: varchar("pronouns", { length: 50 }),
+  bio: text("bio"),
+
   // Contact
-  phone: varchar('phone', { length: 20 }),
-  website: varchar('website', { length: 255 }),
-  socialLinks: jsonb('social_links').$type<{
+  phone: varchar("phone", { length: 20 }),
+  website: varchar("website", { length: 255 }),
+  socialLinks: jsonb("social_links").$type<{
     instagram?: string;
     twitter?: string;
     linkedin?: string;
@@ -735,461 +781,592 @@ export const talentProfiles = pgTable('talent_profiles', {
     tiktok?: string;
     imdb?: string;
   }>(),
-  
+
   // Physical Attributes (private, searchable by producers)
-  heightInches: integer('height_inches'),
-  weightLbs: integer('weight_lbs'),
-  eyeColor: varchar('eye_color', { length: 30 }),
-  hairColor: varchar('hair_color', { length: 30 }),
-  gender: genderEnum('gender'),
-  ethnicity: ethnicityEnum('ethnicity'),
-  ageRangeLow: integer('age_range_low'),
-  ageRangeHigh: integer('age_range_high'),
-  
+  heightInches: integer("height_inches"),
+  weightLbs: integer("weight_lbs"),
+  eyeColor: varchar("eye_color", { length: 30 }),
+  hairColor: varchar("hair_color", { length: 30 }),
+  gender: genderEnum("gender"),
+  ethnicity: ethnicityEnum("ethnicity"),
+  ageRangeLow: integer("age_range_low"),
+  ageRangeHigh: integer("age_range_high"),
+
   // Union Memberships (stored as array)
-  unionMemberships: jsonb('union_memberships').$type<string[]>().default([]),
-  
+  unionMemberships: jsonb("union_memberships").$type<string[]>().default([]),
+
   // Visibility
-  isPublic: boolean('is_public').default(true),
-  publicProfileSlug: varchar('public_profile_slug', { length: 100 }).unique(),
-  
-  createdAt: timestamp('created_at').defaultNow().notNull(),
-  updatedAt: timestamp('updated_at').defaultNow().notNull(),
+  isPublic: boolean("is_public").default(true),
+  publicProfileSlug: varchar("public_profile_slug", { length: 100 }).unique(),
+
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
-export const talentHeadshots = pgTable('talent_headshots', {
-  id: uuid('id').primaryKey().defaultRandom(),
-  talentId: uuid('talent_id').references(() => talentProfiles.id).notNull(),
-  url: varchar('url', { length: 500 }).notNull(),
-  thumbnailUrl: varchar('thumbnail_url', { length: 500 }),
-  isPrimary: boolean('is_primary').default(false),
-  sortOrder: integer('sort_order').default(0),
-  createdAt: timestamp('created_at').defaultNow().notNull(),
+export const talentHeadshots = pgTable("talent_headshots", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  talentId: uuid("talent_id")
+    .references(() => talentProfiles.id)
+    .notNull(),
+  url: varchar("url", { length: 500 }).notNull(),
+  thumbnailUrl: varchar("thumbnail_url", { length: 500 }),
+  isPrimary: boolean("is_primary").default(false),
+  sortOrder: integer("sort_order").default(0),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
-export const talentVideoSamples = pgTable('talent_video_samples', {
-  id: uuid('id').primaryKey().defaultRandom(),
-  talentId: uuid('talent_id').references(() => talentProfiles.id).notNull(),
-  title: varchar('title', { length: 200 }).notNull(),
-  url: varchar('url', { length: 500 }).notNull(),
-  thumbnailUrl: varchar('thumbnail_url', { length: 500 }),
-  durationSeconds: integer('duration_seconds'),
-  sortOrder: integer('sort_order').default(0),
-  createdAt: timestamp('created_at').defaultNow().notNull(),
+export const talentVideoSamples = pgTable("talent_video_samples", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  talentId: uuid("talent_id")
+    .references(() => talentProfiles.id)
+    .notNull(),
+  title: varchar("title", { length: 200 }).notNull(),
+  url: varchar("url", { length: 500 }).notNull(),
+  thumbnailUrl: varchar("thumbnail_url", { length: 500 }),
+  durationSeconds: integer("duration_seconds"),
+  sortOrder: integer("sort_order").default(0),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
-export const workHistoryTypeEnum = pgEnum('work_history_type', ['theater', 'film', 'television', 'commercial', 'voice', 'other']);
+export const workHistoryTypeEnum = pgEnum("work_history_type", [
+  "theater",
+  "film",
+  "television",
+  "commercial",
+  "voice",
+  "other",
+]);
 
-export const talentWorkHistory = pgTable('talent_work_history', {
-  id: uuid('id').primaryKey().defaultRandom(),
-  talentId: uuid('talent_id').references(() => talentProfiles.id).notNull(),
-  type: workHistoryTypeEnum('type').notNull(),
-  title: varchar('title', { length: 200 }).notNull(), // Show/Film name
-  role: varchar('role', { length: 200 }).notNull(),
-  company: varchar('company', { length: 200 }), // Theater/Production company
-  director: varchar('director', { length: 200 }),
-  year: integer('year'),
-  location: varchar('location', { length: 200 }),
-  notes: text('notes'),
-  sortOrder: integer('sort_order').default(0),
-  createdAt: timestamp('created_at').defaultNow().notNull(),
+export const talentWorkHistory = pgTable("talent_work_history", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  talentId: uuid("talent_id")
+    .references(() => talentProfiles.id)
+    .notNull(),
+  type: workHistoryTypeEnum("type").notNull(),
+  title: varchar("title", { length: 200 }).notNull(), // Show/Film name
+  role: varchar("role", { length: 200 }).notNull(),
+  company: varchar("company", { length: 200 }), // Theater/Production company
+  director: varchar("director", { length: 200 }),
+  year: integer("year"),
+  location: varchar("location", { length: 200 }),
+  notes: text("notes"),
+  sortOrder: integer("sort_order").default(0),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
-export const talentEducation = pgTable('talent_education', {
-  id: uuid('id').primaryKey().defaultRandom(),
-  talentId: uuid('talent_id').references(() => talentProfiles.id).notNull(),
-  institution: varchar('institution', { length: 200 }).notNull(),
-  degree: varchar('degree', { length: 200 }),
-  field: varchar('field', { length: 200 }),
-  yearCompleted: integer('year_completed'),
-  notes: text('notes'),
-  sortOrder: integer('sort_order').default(0),
-  createdAt: timestamp('created_at').defaultNow().notNull(),
+export const talentEducation = pgTable("talent_education", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  talentId: uuid("talent_id")
+    .references(() => talentProfiles.id)
+    .notNull(),
+  institution: varchar("institution", { length: 200 }).notNull(),
+  degree: varchar("degree", { length: 200 }),
+  field: varchar("field", { length: 200 }),
+  yearCompleted: integer("year_completed"),
+  notes: text("notes"),
+  sortOrder: integer("sort_order").default(0),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
-export const talentSkills = pgTable('talent_skills', {
-  id: uuid('id').primaryKey().defaultRandom(),
-  talentId: uuid('talent_id').references(() => talentProfiles.id).notNull(),
-  skillId: uuid('skill_id').references(() => skills.id).notNull(),
-  proficiency: varchar('proficiency', { length: 50 }), // beginner, intermediate, advanced, expert
-  createdAt: timestamp('created_at').defaultNow().notNull(),
+export const talentSkills = pgTable("talent_skills", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  talentId: uuid("talent_id")
+    .references(() => talentProfiles.id)
+    .notNull(),
+  skillId: uuid("skill_id")
+    .references(() => skills.id)
+    .notNull(),
+  proficiency: varchar("proficiency", { length: 50 }), // beginner, intermediate, advanced, expert
+  createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
-export const skills = pgTable('skills', {
-  id: uuid('id').primaryKey().defaultRandom(),
-  name: varchar('name', { length: 100 }).notNull().unique(),
-  category: varchar('category', { length: 100 }).notNull(), // dance, music, combat, language, accent, etc.
-  isActive: boolean('is_active').default(true),
+export const skills = pgTable("skills", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  name: varchar("name", { length: 100 }).notNull().unique(),
+  category: varchar("category", { length: 100 }).notNull(), // dance, music, combat, language, accent, etc.
+  isActive: boolean("is_active").default(true),
 });
 
-export const talentAvailability = pgTable('talent_availability', {
-  id: uuid('id').primaryKey().defaultRandom(),
-  talentId: uuid('talent_id').references(() => talentProfiles.id).notNull(),
-  date: timestamp('date').notNull(),
-  isAvailable: boolean('is_available').default(true),
-  notes: text('notes'),
-  createdAt: timestamp('created_at').defaultNow().notNull(),
+export const talentAvailability = pgTable("talent_availability", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  talentId: uuid("talent_id")
+    .references(() => talentProfiles.id)
+    .notNull(),
+  date: timestamp("date").notNull(),
+  isAvailable: boolean("is_available").default(true),
+  notes: text("notes"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
 // lib/db/schema/producers.ts
-import { pgTable, uuid, varchar, text, jsonb, boolean, timestamp } from 'drizzle-orm/pg-core';
-import { users } from './users';
+import { pgTable, uuid, varchar, text, jsonb, boolean, timestamp } from "drizzle-orm/pg-core";
+import { users } from "./users";
 
-export const producers = pgTable('producers', {
-  id: uuid('id').primaryKey().defaultRandom(),
-  userId: uuid('user_id').references(() => users.id).notNull().unique(),
-  
+export const producers = pgTable("producers", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  userId: uuid("user_id")
+    .references(() => users.id)
+    .notNull()
+    .unique(),
+
   // Company Info
-  companyName: varchar('company_name', { length: 200 }).notNull(),
-  companySlug: varchar('company_slug', { length: 100 }).notNull().unique(),
-  logoUrl: varchar('logo_url', { length: 500 }),
-  about: text('about'),
-  location: varchar('location', { length: 200 }),
-  website: varchar('website', { length: 255 }),
-  
+  companyName: varchar("company_name", { length: 200 }).notNull(),
+  companySlug: varchar("company_slug", { length: 100 }).notNull().unique(),
+  logoUrl: varchar("logo_url", { length: 500 }),
+  about: text("about"),
+  location: varchar("location", { length: 200 }),
+  website: varchar("website", { length: 255 }),
+
   // Union Status
-  unionAffiliations: jsonb('union_affiliations').$type<string[]>().default([]),
-  
+  unionAffiliations: jsonb("union_affiliations").$type<string[]>().default([]),
+
   // Subscription
-  stripeCustomerId: varchar('stripe_customer_id', { length: 100 }),
-  subscriptionStatus: varchar('subscription_status', { length: 50 }).default('inactive'),
-  subscriptionTier: varchar('subscription_tier', { length: 50 }),
-  subscriptionEndsAt: timestamp('subscription_ends_at'),
-  
-  createdAt: timestamp('created_at').defaultNow().notNull(),
-  updatedAt: timestamp('updated_at').defaultNow().notNull(),
+  stripeCustomerId: varchar("stripe_customer_id", { length: 100 }),
+  subscriptionStatus: varchar("subscription_status", { length: 50 }).default("inactive"),
+  subscriptionTier: varchar("subscription_tier", { length: 50 }),
+  subscriptionEndsAt: timestamp("subscription_ends_at"),
+
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
-export const producerGalleryImages = pgTable('producer_gallery_images', {
-  id: uuid('id').primaryKey().defaultRandom(),
-  producerId: uuid('producer_id').references(() => producers.id).notNull(),
-  url: varchar('url', { length: 500 }).notNull(),
-  caption: varchar('caption', { length: 500 }),
-  showId: uuid('show_id').references(() => shows.id),
-  sortOrder: integer('sort_order').default(0),
-  createdAt: timestamp('created_at').defaultNow().notNull(),
+export const producerGalleryImages = pgTable("producer_gallery_images", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  producerId: uuid("producer_id")
+    .references(() => producers.id)
+    .notNull(),
+  url: varchar("url", { length: 500 }).notNull(),
+  caption: varchar("caption", { length: 500 }),
+  showId: uuid("show_id").references(() => shows.id),
+  sortOrder: integer("sort_order").default(0),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
-export const producerStaff = pgTable('producer_staff', {
-  id: uuid('id').primaryKey().defaultRandom(),
-  producerId: uuid('producer_id').references(() => producers.id).notNull(),
-  userId: uuid('user_id').references(() => users.id).notNull(),
-  role: varchar('role', { length: 100 }).notNull(), // admin, casting_director, stage_manager, etc.
-  permissions: jsonb('permissions').$type<string[]>().default([]),
-  createdAt: timestamp('created_at').defaultNow().notNull(),
+export const producerStaff = pgTable("producer_staff", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  producerId: uuid("producer_id")
+    .references(() => producers.id)
+    .notNull(),
+  userId: uuid("user_id")
+    .references(() => users.id)
+    .notNull(),
+  role: varchar("role", { length: 100 }).notNull(), // admin, casting_director, stage_manager, etc.
+  permissions: jsonb("permissions").$type<string[]>().default([]),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
 // lib/db/schema/shows.ts
-import { pgTable, uuid, varchar, text, jsonb, timestamp, boolean, integer } from 'drizzle-orm/pg-core';
-import { producers } from './producers';
+import {
+  pgTable,
+  uuid,
+  varchar,
+  text,
+  jsonb,
+  timestamp,
+  boolean,
+  integer,
+} from "drizzle-orm/pg-core";
+import { producers } from "./producers";
 
-export const showStatusEnum = pgEnum('show_status', ['planning', 'auditions', 'rehearsal', 'production', 'closed']);
+export const showStatusEnum = pgEnum("show_status", [
+  "planning",
+  "auditions",
+  "rehearsal",
+  "production",
+  "closed",
+]);
 
-export const shows = pgTable('shows', {
-  id: uuid('id').primaryKey().defaultRandom(),
-  producerId: uuid('producer_id').references(() => producers.id).notNull(),
-  
-  title: varchar('title', { length: 200 }).notNull(),
-  description: text('description'),
-  playwright: varchar('playwright', { length: 200 }),
-  director: varchar('director', { length: 200 }),
-  
-  status: showStatusEnum('status').default('planning'),
-  
+export const shows = pgTable("shows", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  producerId: uuid("producer_id")
+    .references(() => producers.id)
+    .notNull(),
+
+  title: varchar("title", { length: 200 }).notNull(),
+  description: text("description"),
+  playwright: varchar("playwright", { length: 200 }),
+  director: varchar("director", { length: 200 }),
+
+  status: showStatusEnum("status").default("planning"),
+
   // Dates
-  rehearsalStartDate: timestamp('rehearsal_start_date'),
-  openingDate: timestamp('opening_date'),
-  closingDate: timestamp('closing_date'),
-  
+  rehearsalStartDate: timestamp("rehearsal_start_date"),
+  openingDate: timestamp("opening_date"),
+  closingDate: timestamp("closing_date"),
+
   // Venue
-  venue: varchar('venue', { length: 200 }),
-  venueAddress: text('venue_address'),
-  
+  venue: varchar("venue", { length: 200 }),
+  venueAddress: text("venue_address"),
+
   // Media
-  posterUrl: varchar('poster_url', { length: 500 }),
-  
-  isPublic: boolean('is_public').default(false),
-  
-  createdAt: timestamp('created_at').defaultNow().notNull(),
-  updatedAt: timestamp('updated_at').defaultNow().notNull(),
+  posterUrl: varchar("poster_url", { length: 500 }),
+
+  isPublic: boolean("is_public").default(false),
+
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
-export const roles = pgTable('roles', {
-  id: uuid('id').primaryKey().defaultRandom(),
-  showId: uuid('show_id').references(() => shows.id).notNull(),
-  name: varchar('name', { length: 200 }).notNull(),
-  description: text('description'),
-  tier: varchar('tier', { length: 50 }).default('ensemble'), // lead, supporting, ensemble
-  isVisible: boolean('is_visible').default(true),
-  sortOrder: integer('sort_order').default(0),
-  createdAt: timestamp('created_at').defaultNow().notNull(),
+export const roles = pgTable("roles", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  showId: uuid("show_id")
+    .references(() => shows.id)
+    .notNull(),
+  name: varchar("name", { length: 200 }).notNull(),
+  description: text("description"),
+  tier: varchar("tier", { length: 50 }).default("ensemble"), // lead, supporting, ensemble
+  isVisible: boolean("is_visible").default(true),
+  sortOrder: integer("sort_order").default(0),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
-export const castMembers = pgTable('cast_members', {
-  id: uuid('id').primaryKey().defaultRandom(),
-  roleId: uuid('role_id').references(() => roles.id).notNull(),
-  talentId: uuid('talent_id').references(() => talentProfiles.id).notNull(),
-  status: varchar('status', { length: 50 }).default('cast'), // cast, understudy, swing
-  castDate: timestamp('cast_date').defaultNow(),
-  notes: text('notes'),
-  createdAt: timestamp('created_at').defaultNow().notNull(),
+export const castMembers = pgTable("cast_members", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  roleId: uuid("role_id")
+    .references(() => roles.id)
+    .notNull(),
+  talentId: uuid("talent_id")
+    .references(() => talentProfiles.id)
+    .notNull(),
+  status: varchar("status", { length: 50 }).default("cast"), // cast, understudy, swing
+  castDate: timestamp("cast_date").defaultNow(),
+  notes: text("notes"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
 // lib/db/schema/auditions.ts
-import { pgTable, uuid, varchar, text, jsonb, timestamp, boolean, integer } from 'drizzle-orm/pg-core';
-import { shows } from './shows';
-import { talentProfiles } from './talent';
+import {
+  pgTable,
+  uuid,
+  varchar,
+  text,
+  jsonb,
+  timestamp,
+  boolean,
+  integer,
+} from "drizzle-orm/pg-core";
+import { shows } from "./shows";
+import { talentProfiles } from "./talent";
 
-export const auditionStatusEnum = pgEnum('audition_status', ['draft', 'open', 'closed', 'cancelled']);
+export const auditionStatusEnum = pgEnum("audition_status", [
+  "draft",
+  "open",
+  "closed",
+  "cancelled",
+]);
 
-export const auditions = pgTable('auditions', {
-  id: uuid('id').primaryKey().defaultRandom(),
-  showId: uuid('show_id').references(() => shows.id).notNull(),
-  
-  title: varchar('title', { length: 200 }).notNull(),
-  description: text('description'),
-  
-  status: auditionStatusEnum('status').default('draft'),
-  
+export const auditions = pgTable("auditions", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  showId: uuid("show_id")
+    .references(() => shows.id)
+    .notNull(),
+
+  title: varchar("title", { length: 200 }).notNull(),
+  description: text("description"),
+
+  status: auditionStatusEnum("status").default("draft"),
+
   // Dates
-  auditionDate: timestamp('audition_date'),
-  callbackDate: timestamp('callback_date'),
-  submissionDeadline: timestamp('submission_deadline'),
-  
+  auditionDate: timestamp("audition_date"),
+  callbackDate: timestamp("callback_date"),
+  submissionDeadline: timestamp("submission_deadline"),
+
   // Location
-  location: varchar('location', { length: 200 }),
-  address: text('address'),
-  isVirtual: boolean('is_virtual').default(false),
-  virtualLink: varchar('virtual_link', { length: 500 }),
-  
+  location: varchar("location", { length: 200 }),
+  address: text("address"),
+  isVirtual: boolean("is_virtual").default(false),
+  virtualLink: varchar("virtual_link", { length: 500 }),
+
   // Form Configuration
-  formConfig: jsonb('form_config').$type<{
+  formConfig: jsonb("form_config").$type<{
     questions: Array<{
       id: string;
-      type: 'text' | 'textarea' | 'select' | 'multiselect' | 'file' | 'checkbox';
+      type: "text" | "textarea" | "select" | "multiselect" | "file" | "checkbox";
       label: string;
       required: boolean;
       options?: string[];
     }>;
   }>(),
-  
+
   // Check-in QR Code
-  checkInCode: varchar('check_in_code', { length: 50 }).unique(),
-  
-  isPublic: boolean('is_public').default(true),
-  
-  createdAt: timestamp('created_at').defaultNow().notNull(),
-  updatedAt: timestamp('updated_at').defaultNow().notNull(),
+  checkInCode: varchar("check_in_code", { length: 50 }).unique(),
+
+  isPublic: boolean("is_public").default(true),
+
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
-export const auditionSubmissionStatusEnum = pgEnum('audition_submission_status', [
-  'submitted', 'checked_in', 'reviewed', 'callback', 'callback_with_role', 'rejected', 'cast'
+export const auditionSubmissionStatusEnum = pgEnum("audition_submission_status", [
+  "submitted",
+  "checked_in",
+  "reviewed",
+  "callback",
+  "callback_with_role",
+  "rejected",
+  "cast",
 ]);
 
-export const auditionSubmissions = pgTable('audition_submissions', {
-  id: uuid('id').primaryKey().defaultRandom(),
-  auditionId: uuid('audition_id').references(() => auditions.id).notNull(),
-  talentId: uuid('talent_id').references(() => talentProfiles.id).notNull(),
-  
-  status: auditionSubmissionStatusEnum('status').default('submitted'),
-  
+export const auditionSubmissions = pgTable("audition_submissions", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  auditionId: uuid("audition_id")
+    .references(() => auditions.id)
+    .notNull(),
+  talentId: uuid("talent_id")
+    .references(() => talentProfiles.id)
+    .notNull(),
+
+  status: auditionSubmissionStatusEnum("status").default("submitted"),
+
   // Form Responses
-  formResponses: jsonb('form_responses').$type<Record<string, unknown>>(),
-  
+  formResponses: jsonb("form_responses").$type<Record<string, unknown>>(),
+
   // Casting Board Position
-  roleId: uuid('role_id').references(() => roles.id), // For callback_with_role
-  boardPosition: jsonb('board_position').$type<{
+  roleId: uuid("role_id").references(() => roles.id), // For callback_with_role
+  boardPosition: jsonb("board_position").$type<{
     column: string; // role_id or 'deck'
     order: number;
   }>(),
-  
+
   // Review
-  notes: text('notes'),
-  rating: integer('rating'), // 1-5
-  reviewedBy: uuid('reviewed_by').references(() => users.id),
-  reviewedAt: timestamp('reviewed_at'),
-  
+  notes: text("notes"),
+  rating: integer("rating"), // 1-5
+  reviewedBy: uuid("reviewed_by").references(() => users.id),
+  reviewedAt: timestamp("reviewed_at"),
+
   // Timestamps
-  submittedAt: timestamp('submitted_at').defaultNow(),
-  checkedInAt: timestamp('checked_in_at'),
-  
-  createdAt: timestamp('created_at').defaultNow().notNull(),
-  updatedAt: timestamp('updated_at').defaultNow().notNull(),
+  submittedAt: timestamp("submitted_at").defaultNow(),
+  checkedInAt: timestamp("checked_in_at"),
+
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
 // lib/db/schema/documents.ts
-import { pgTable, uuid, varchar, text, timestamp, boolean, integer } from 'drizzle-orm/pg-core';
-import { users } from './users';
+import { pgTable, uuid, varchar, text, timestamp, boolean, integer } from "drizzle-orm/pg-core";
+import { users } from "./users";
 
-export const documentTypeEnum = pgEnum('document_type', ['w2', 'i9', 'contract', 'call_sheet', 'script', 'minus_track', 'other']);
+export const documentTypeEnum = pgEnum("document_type", [
+  "w2",
+  "i9",
+  "contract",
+  "call_sheet",
+  "script",
+  "minus_track",
+  "other",
+]);
 
-export const documents = pgTable('documents', {
-  id: uuid('id').primaryKey().defaultRandom(),
-  ownerId: uuid('owner_id').references(() => users.id).notNull(),
-  uploadedBy: uuid('uploaded_by').references(() => users.id).notNull(),
-  
-  type: documentTypeEnum('type').notNull(),
-  name: varchar('name', { length: 255 }).notNull(),
-  description: text('description'),
-  
+export const documents = pgTable("documents", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  ownerId: uuid("owner_id")
+    .references(() => users.id)
+    .notNull(),
+  uploadedBy: uuid("uploaded_by")
+    .references(() => users.id)
+    .notNull(),
+
+  type: documentTypeEnum("type").notNull(),
+  name: varchar("name", { length: 255 }).notNull(),
+  description: text("description"),
+
   // Storage (encrypted for sensitive docs)
-  storageKey: varchar('storage_key', { length: 500 }).notNull(),
-  encryptionKeyId: varchar('encryption_key_id', { length: 100 }), // For SOC 2 compliance
-  mimeType: varchar('mime_type', { length: 100 }),
-  sizeBytes: integer('size_bytes'),
-  
+  storageKey: varchar("storage_key", { length: 500 }).notNull(),
+  encryptionKeyId: varchar("encryption_key_id", { length: 100 }), // For SOC 2 compliance
+  mimeType: varchar("mime_type", { length: 100 }),
+  sizeBytes: integer("size_bytes"),
+
   // Access Control
-  isEncrypted: boolean('is_encrypted').default(false),
-  
+  isEncrypted: boolean("is_encrypted").default(false),
+
   // Linking (for producer-uploaded docs)
-  showId: uuid('show_id').references(() => shows.id),
-  
-  createdAt: timestamp('created_at').defaultNow().notNull(),
-  updatedAt: timestamp('updated_at').defaultNow().notNull(),
-  deletedAt: timestamp('deleted_at'),
+  showId: uuid("show_id").references(() => shows.id),
+
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+  deletedAt: timestamp("deleted_at"),
 });
 
-export const documentAccess = pgTable('document_access', {
-  id: uuid('id').primaryKey().defaultRandom(),
-  documentId: uuid('document_id').references(() => documents.id).notNull(),
-  userId: uuid('user_id').references(() => users.id).notNull(),
-  canView: boolean('can_view').default(true),
-  canDownload: boolean('can_download').default(false),
-  grantedBy: uuid('granted_by').references(() => users.id).notNull(),
-  grantedAt: timestamp('granted_at').defaultNow().notNull(),
-  expiresAt: timestamp('expires_at'),
+export const documentAccess = pgTable("document_access", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  documentId: uuid("document_id")
+    .references(() => documents.id)
+    .notNull(),
+  userId: uuid("user_id")
+    .references(() => users.id)
+    .notNull(),
+  canView: boolean("can_view").default(true),
+  canDownload: boolean("can_download").default(false),
+  grantedBy: uuid("granted_by")
+    .references(() => users.id)
+    .notNull(),
+  grantedAt: timestamp("granted_at").defaultNow().notNull(),
+  expiresAt: timestamp("expires_at"),
 });
 
 // lib/db/schema/messages.ts
-import { pgTable, uuid, text, timestamp, boolean } from 'drizzle-orm/pg-core';
-import { users } from './users';
+import { pgTable, uuid, text, timestamp, boolean } from "drizzle-orm/pg-core";
+import { users } from "./users";
 
-export const conversations = pgTable('conversations', {
-  id: uuid('id').primaryKey().defaultRandom(),
-  createdAt: timestamp('created_at').defaultNow().notNull(),
-  updatedAt: timestamp('updated_at').defaultNow().notNull(),
+export const conversations = pgTable("conversations", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
-export const conversationParticipants = pgTable('conversation_participants', {
-  id: uuid('id').primaryKey().defaultRandom(),
-  conversationId: uuid('conversation_id').references(() => conversations.id).notNull(),
-  userId: uuid('user_id').references(() => users.id).notNull(),
-  lastReadAt: timestamp('last_read_at'),
-  createdAt: timestamp('created_at').defaultNow().notNull(),
+export const conversationParticipants = pgTable("conversation_participants", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  conversationId: uuid("conversation_id")
+    .references(() => conversations.id)
+    .notNull(),
+  userId: uuid("user_id")
+    .references(() => users.id)
+    .notNull(),
+  lastReadAt: timestamp("last_read_at"),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
-export const messages = pgTable('messages', {
-  id: uuid('id').primaryKey().defaultRandom(),
-  conversationId: uuid('conversation_id').references(() => conversations.id).notNull(),
-  senderId: uuid('sender_id').references(() => users.id).notNull(),
-  content: text('content').notNull(),
-  isRead: boolean('is_read').default(false),
-  createdAt: timestamp('created_at').defaultNow().notNull(),
+export const messages = pgTable("messages", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  conversationId: uuid("conversation_id")
+    .references(() => conversations.id)
+    .notNull(),
+  senderId: uuid("sender_id")
+    .references(() => users.id)
+    .notNull(),
+  content: text("content").notNull(),
+  isRead: boolean("is_read").default(false),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
 // lib/db/schema/schedules.ts
-import { pgTable, uuid, varchar, text, timestamp, jsonb } from 'drizzle-orm/pg-core';
-import { shows } from './shows';
+import { pgTable, uuid, varchar, text, timestamp, jsonb } from "drizzle-orm/pg-core";
+import { shows } from "./shows";
 
-export const scheduleEventTypeEnum = pgEnum('schedule_event_type', [
-  'rehearsal', 'performance', 'tech_rehearsal', 'dress_rehearsal', 
-  'fitting', 'meeting', 'photo_call', 'other'
+export const scheduleEventTypeEnum = pgEnum("schedule_event_type", [
+  "rehearsal",
+  "performance",
+  "tech_rehearsal",
+  "dress_rehearsal",
+  "fitting",
+  "meeting",
+  "photo_call",
+  "other",
 ]);
 
-export const scheduleEvents = pgTable('schedule_events', {
-  id: uuid('id').primaryKey().defaultRandom(),
-  showId: uuid('show_id').references(() => shows.id).notNull(),
-  
-  type: scheduleEventTypeEnum('type').notNull(),
-  title: varchar('title', { length: 200 }).notNull(),
-  description: text('description'),
-  
-  startTime: timestamp('start_time').notNull(),
-  endTime: timestamp('end_time').notNull(),
-  
-  location: varchar('location', { length: 200 }),
-  
+export const scheduleEvents = pgTable("schedule_events", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  showId: uuid("show_id")
+    .references(() => shows.id)
+    .notNull(),
+
+  type: scheduleEventTypeEnum("type").notNull(),
+  title: varchar("title", { length: 200 }).notNull(),
+  description: text("description"),
+
+  startTime: timestamp("start_time").notNull(),
+  endTime: timestamp("end_time").notNull(),
+
+  location: varchar("location", { length: 200 }),
+
   // Who's called
-  calledRoles: jsonb('called_roles').$type<string[]>().default([]),
-  calledDepartments: jsonb('called_departments').$type<string[]>().default([]),
-  
+  calledRoles: jsonb("called_roles").$type<string[]>().default([]),
+  calledDepartments: jsonb("called_departments").$type<string[]>().default([]),
+
   // Notification settings
-  reminderSent: boolean('reminder_sent').default(false),
-  reminderMinutes: integer('reminder_minutes').default(60),
-  
-  createdAt: timestamp('created_at').defaultNow().notNull(),
-  updatedAt: timestamp('updated_at').defaultNow().notNull(),
+  reminderSent: boolean("reminder_sent").default(false),
+  reminderMinutes: integer("reminder_minutes").default(60),
+
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 
 // lib/db/schema/production_notes.ts
-import { pgTable, uuid, varchar, text, timestamp, jsonb } from 'drizzle-orm/pg-core';
-import { shows } from './shows';
-import { users } from './users';
+import { pgTable, uuid, varchar, text, timestamp, jsonb } from "drizzle-orm/pg-core";
+import { shows } from "./shows";
+import { users } from "./users";
 
-export const departmentEnum = pgEnum('department', [
-  'lighting', 'makeup_hair', 'costuming', 'scenic', 
-  'dramaturg', 'ad_notes', 'props', 'choreographer', 'sound', 'general'
+export const departmentEnum = pgEnum("department", [
+  "lighting",
+  "makeup_hair",
+  "costuming",
+  "scenic",
+  "dramaturg",
+  "ad_notes",
+  "props",
+  "choreographer",
+  "sound",
+  "general",
 ]);
 
-export const productionNotes = pgTable('production_notes', {
-  id: uuid('id').primaryKey().defaultRandom(),
-  showId: uuid('show_id').references(() => shows.id).notNull(),
-  department: departmentEnum('department').notNull(),
-  
-  title: varchar('title', { length: 200 }).notNull(),
-  content: text('content').notNull(),
-  
+export const productionNotes = pgTable("production_notes", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  showId: uuid("show_id")
+    .references(() => shows.id)
+    .notNull(),
+  department: departmentEnum("department").notNull(),
+
+  title: varchar("title", { length: 200 }).notNull(),
+  content: text("content").notNull(),
+
   // Linking
-  sceneReference: varchar('scene_reference', { length: 100 }),
-  pageReference: varchar('page_reference', { length: 50 }),
-  
+  sceneReference: varchar("scene_reference", { length: 100 }),
+  pageReference: varchar("page_reference", { length: 50 }),
+
   // Status
-  status: varchar('status', { length: 50 }).default('open'), // open, in_progress, resolved
-  priority: varchar('priority', { length: 50 }).default('normal'), // low, normal, high, urgent
-  
-  createdBy: uuid('created_by').references(() => users.id).notNull(),
-  assignedTo: uuid('assigned_to').references(() => users.id),
-  
-  createdAt: timestamp('created_at').defaultNow().notNull(),
-  updatedAt: timestamp('updated_at').defaultNow().notNull(),
-  resolvedAt: timestamp('resolved_at'),
+  status: varchar("status", { length: 50 }).default("open"), // open, in_progress, resolved
+  priority: varchar("priority", { length: 50 }).default("normal"), // low, normal, high, urgent
+
+  createdBy: uuid("created_by")
+    .references(() => users.id)
+    .notNull(),
+  assignedTo: uuid("assigned_to").references(() => users.id),
+
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+  resolvedAt: timestamp("resolved_at"),
 });
 
 // lib/db/schema/budget.ts
-import { pgTable, uuid, varchar, text, timestamp, decimal, boolean } from 'drizzle-orm/pg-core';
-import { shows } from './shows';
-import { users } from './users';
+import { pgTable, uuid, varchar, text, timestamp, decimal, boolean } from "drizzle-orm/pg-core";
+import { shows } from "./shows";
+import { users } from "./users";
 
-export const budgetCategories = pgTable('budget_categories', {
-  id: uuid('id').primaryKey().defaultRandom(),
-  showId: uuid('show_id').references(() => shows.id).notNull(),
-  name: varchar('name', { length: 200 }).notNull(),
-  budgetAmount: decimal('budget_amount', { precision: 10, scale: 2 }),
-  sortOrder: integer('sort_order').default(0),
-  createdAt: timestamp('created_at').defaultNow().notNull(),
+export const budgetCategories = pgTable("budget_categories", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  showId: uuid("show_id")
+    .references(() => shows.id)
+    .notNull(),
+  name: varchar("name", { length: 200 }).notNull(),
+  budgetAmount: decimal("budget_amount", { precision: 10, scale: 2 }),
+  sortOrder: integer("sort_order").default(0),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
-export const expenses = pgTable('expenses', {
-  id: uuid('id').primaryKey().defaultRandom(),
-  categoryId: uuid('category_id').references(() => budgetCategories.id).notNull(),
-  
-  description: varchar('description', { length: 500 }).notNull(),
-  amount: decimal('amount', { precision: 10, scale: 2 }).notNull(),
-  date: timestamp('date').notNull(),
-  
-  vendor: varchar('vendor', { length: 200 }),
-  receiptUrl: varchar('receipt_url', { length: 500 }),
-  
+export const expenses = pgTable("expenses", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  categoryId: uuid("category_id")
+    .references(() => budgetCategories.id)
+    .notNull(),
+
+  description: varchar("description", { length: 500 }).notNull(),
+  amount: decimal("amount", { precision: 10, scale: 2 }).notNull(),
+  date: timestamp("date").notNull(),
+
+  vendor: varchar("vendor", { length: 200 }),
+  receiptUrl: varchar("receipt_url", { length: 500 }),
+
   // Reimbursement
-  isReimbursement: boolean('is_reimbursement').default(false),
-  reimburseTo: uuid('reimburse_to').references(() => users.id),
-  reimbursementStatus: varchar('reimbursement_status', { length: 50 }).default('pending'),
-  
-  submittedBy: uuid('submitted_by').references(() => users.id).notNull(),
-  approvedBy: uuid('approved_by').references(() => users.id),
-  
-  createdAt: timestamp('created_at').defaultNow().notNull(),
-  updatedAt: timestamp('updated_at').defaultNow().notNull(),
+  isReimbursement: boolean("is_reimbursement").default(false),
+  reimburseTo: uuid("reimburse_to").references(() => users.id),
+  reimbursementStatus: varchar("reimbursement_status", { length: 50 }).default("pending"),
+
+  submittedBy: uuid("submitted_by")
+    .references(() => users.id)
+    .notNull(),
+  approvedBy: uuid("approved_by").references(() => users.id),
+
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
 ```
 
@@ -1198,19 +1375,19 @@ export const expenses = pgTable('expenses', {
 ```typescript
 // Add indexes for common query patterns
 export const talentProfilesIndexes = {
-  publicSlug: index('talent_profiles_public_slug_idx').on(talentProfiles.publicProfileSlug),
-  userId: index('talent_profiles_user_id_idx').on(talentProfiles.userId),
+  publicSlug: index("talent_profiles_public_slug_idx").on(talentProfiles.publicProfileSlug),
+  userId: index("talent_profiles_user_id_idx").on(talentProfiles.userId),
 };
 
 export const auditionSubmissionsIndexes = {
-  auditionId: index('audition_submissions_audition_id_idx').on(auditionSubmissions.auditionId),
-  talentId: index('audition_submissions_talent_id_idx').on(auditionSubmissions.talentId),
-  status: index('audition_submissions_status_idx').on(auditionSubmissions.status),
+  auditionId: index("audition_submissions_audition_id_idx").on(auditionSubmissions.auditionId),
+  talentId: index("audition_submissions_talent_id_idx").on(auditionSubmissions.talentId),
+  status: index("audition_submissions_status_idx").on(auditionSubmissions.status),
 };
 
 export const showsIndexes = {
-  producerId: index('shows_producer_id_idx').on(shows.producerId),
-  status: index('shows_status_idx').on(shows.status),
+  producerId: index("shows_producer_id_idx").on(shows.producerId),
+  status: index("shows_status_idx").on(shows.status),
 };
 ```
 
@@ -1220,12 +1397,12 @@ Use Drizzle Kit for migrations:
 
 ```typescript
 // drizzle.config.ts
-import type { Config } from 'drizzle-kit';
+import type { Config } from "drizzle-kit";
 
 export default {
-  schema: './lib/db/schema/index.ts',
-  out: './lib/db/migrations',
-  driver: 'pg',
+  schema: "./lib/db/schema/index.ts",
+  out: "./lib/db/migrations",
+  driver: "pg",
   dbCredentials: {
     connectionString: process.env.DATABASE_URL!,
   },
@@ -1233,6 +1410,7 @@ export default {
 ```
 
 Migration commands in `package.json`:
+
 ```json
 {
   "scripts": {
@@ -1254,15 +1432,15 @@ Use **tRPC** for type-safe API communication with Next.js App Router:
 
 ```typescript
 // lib/trpc/router.ts
-import { initTRPC, TRPCError } from '@trpc/server';
-import { Context } from './context';
-import { talentRouter } from './procedures/talent';
-import { producerRouter } from './procedures/producer';
-import { auditionRouter } from './procedures/audition';
-import { castingRouter } from './procedures/casting';
-import { messagingRouter } from './procedures/messaging';
-import { documentRouter } from './procedures/documents';
-import { scheduleRouter } from './procedures/schedule';
+import { initTRPC, TRPCError } from "@trpc/server";
+import { Context } from "./context";
+import { talentRouter } from "./procedures/talent";
+import { producerRouter } from "./procedures/producer";
+import { auditionRouter } from "./procedures/audition";
+import { castingRouter } from "./procedures/casting";
+import { messagingRouter } from "./procedures/messaging";
+import { documentRouter } from "./procedures/documents";
+import { scheduleRouter } from "./procedures/schedule";
 
 const t = initTRPC.context<Context>().create();
 
@@ -1271,21 +1449,21 @@ export const publicProcedure = t.procedure;
 
 export const protectedProcedure = t.procedure.use(async ({ ctx, next }) => {
   if (!ctx.session) {
-    throw new TRPCError({ code: 'UNAUTHORIZED' });
+    throw new TRPCError({ code: "UNAUTHORIZED" });
   }
   return next({ ctx: { ...ctx, session: ctx.session } });
 });
 
 export const talentProcedure = protectedProcedure.use(async ({ ctx, next }) => {
-  if (ctx.session.user.type !== 'talent') {
-    throw new TRPCError({ code: 'FORBIDDEN' });
+  if (ctx.session.user.type !== "talent") {
+    throw new TRPCError({ code: "FORBIDDEN" });
   }
   return next({ ctx });
 });
 
 export const producerProcedure = protectedProcedure.use(async ({ ctx, next }) => {
-  if (ctx.session.user.type !== 'producer') {
-    throw new TRPCError({ code: 'FORBIDDEN' });
+  if (ctx.session.user.type !== "producer") {
+    throw new TRPCError({ code: "FORBIDDEN" });
   }
   return next({ ctx });
 });
@@ -1307,11 +1485,11 @@ export type AppRouter = typeof appRouter;
 
 ```typescript
 // lib/trpc/procedures/talent.ts
-import { z } from 'zod';
-import { router, talentProcedure, publicProcedure } from '../router';
-import { db } from '@/lib/db';
-import { talentProfiles, talentSkills, talentWorkHistory } from '@/lib/db/schema';
-import { eq } from 'drizzle-orm';
+import { z } from "zod";
+import { router, talentProcedure, publicProcedure } from "../router";
+import { db } from "@/lib/db";
+import { talentProfiles, talentSkills, talentWorkHistory } from "@/lib/db/schema";
+import { eq } from "drizzle-orm";
 
 export const talentRouter = router({
   // Get current user's profile
@@ -1331,24 +1509,28 @@ export const talentRouter = router({
 
   // Update profile
   updateProfile: talentProcedure
-    .input(z.object({
-      firstName: z.string().min(1).max(100),
-      lastName: z.string().min(1).max(100),
-      stageName: z.string().max(100).optional(),
-      bio: z.string().max(5000).optional(),
-      phone: z.string().max(20).optional(),
-      website: z.string().url().optional(),
-      socialLinks: z.object({
-        instagram: z.string().optional(),
-        twitter: z.string().optional(),
-        linkedin: z.string().optional(),
-        youtube: z.string().optional(),
-        tiktok: z.string().optional(),
-        imdb: z.string().optional(),
-      }).optional(),
-      heightInches: z.number().min(36).max(96).optional(),
-      // ... other fields
-    }))
+    .input(
+      z.object({
+        firstName: z.string().min(1).max(100),
+        lastName: z.string().min(1).max(100),
+        stageName: z.string().max(100).optional(),
+        bio: z.string().max(5000).optional(),
+        phone: z.string().max(20).optional(),
+        website: z.string().url().optional(),
+        socialLinks: z
+          .object({
+            instagram: z.string().optional(),
+            twitter: z.string().optional(),
+            linkedin: z.string().optional(),
+            youtube: z.string().optional(),
+            tiktok: z.string().optional(),
+            imdb: z.string().optional(),
+          })
+          .optional(),
+        heightInches: z.number().min(36).max(96).optional(),
+        // ... other fields
+      })
+    )
     .mutation(async ({ ctx, input }) => {
       const updated = await db
         .update(talentProfiles)
@@ -1373,11 +1555,11 @@ export const talentRouter = router({
           },
         },
       });
-      
+
       if (!profile || !profile.isPublic) {
-        throw new TRPCError({ code: 'NOT_FOUND' });
+        throw new TRPCError({ code: "NOT_FOUND" });
       }
-      
+
       // Remove private fields (physical attributes)
       const { heightInches, weightLbs, ...publicProfile } = profile;
       return publicProfile;
@@ -1385,36 +1567,41 @@ export const talentRouter = router({
 
   // Add work history entry
   addWorkHistory: talentProcedure
-    .input(z.object({
-      type: z.enum(['theater', 'film', 'television', 'commercial', 'voice', 'other']),
-      title: z.string().min(1).max(200),
-      role: z.string().min(1).max(200),
-      company: z.string().max(200).optional(),
-      director: z.string().max(200).optional(),
-      year: z.number().min(1900).max(2100).optional(),
-      location: z.string().max(200).optional(),
-    }))
+    .input(
+      z.object({
+        type: z.enum(["theater", "film", "television", "commercial", "voice", "other"]),
+        title: z.string().min(1).max(200),
+        role: z.string().min(1).max(200),
+        company: z.string().max(200).optional(),
+        director: z.string().max(200).optional(),
+        year: z.number().min(1900).max(2100).optional(),
+        location: z.string().max(200).optional(),
+      })
+    )
     .mutation(async ({ ctx, input }) => {
       const profile = await db.query.talentProfiles.findFirst({
         where: eq(talentProfiles.userId, ctx.session.user.id),
       });
-      
-      if (!profile) throw new TRPCError({ code: 'NOT_FOUND' });
-      
-      return db.insert(talentWorkHistory).values({
-        talentId: profile.id,
-        ...input,
-      }).returning();
+
+      if (!profile) throw new TRPCError({ code: "NOT_FOUND" });
+
+      return db
+        .insert(talentWorkHistory)
+        .values({
+          talentId: profile.id,
+          ...input,
+        })
+        .returning();
     }),
 });
 
 // lib/trpc/procedures/casting.ts
-import { z } from 'zod';
-import { router, producerProcedure } from '../router';
-import { db } from '@/lib/db';
-import { auditionSubmissions, roles, castMembers } from '@/lib/db/schema';
-import { eq, and } from 'drizzle-orm';
-import { sendCastingEmail } from '@/lib/email/templates/cast-announcement';
+import { z } from "zod";
+import { router, producerProcedure } from "../router";
+import { db } from "@/lib/db";
+import { auditionSubmissions, roles, castMembers } from "@/lib/db/schema";
+import { eq, and } from "drizzle-orm";
+import { sendCastingEmail } from "@/lib/email/templates/cast-announcement";
 
 export const castingRouter = router({
   // Get casting board state
@@ -1430,17 +1617,17 @@ export const castingRouter = router({
           },
         },
       });
-      
+
       if (!audition || audition.show.producer.userId !== ctx.session.user.id) {
-        throw new TRPCError({ code: 'FORBIDDEN' });
+        throw new TRPCError({ code: "FORBIDDEN" });
       }
-      
+
       // Get all roles and submissions
       const showRoles = await db.query.roles.findMany({
         where: eq(roles.showId, audition.showId),
         orderBy: (r, { asc }) => [asc(r.sortOrder)],
       });
-      
+
       const submissions = await db.query.auditionSubmissions.findMany({
         where: eq(auditionSubmissions.auditionId, input.auditionId),
         with: {
@@ -1449,26 +1636,28 @@ export const castingRouter = router({
           },
         },
       });
-      
+
       return { roles: showRoles, submissions };
     }),
 
   // Update casting board position (drag and drop)
   updateBoardPosition: producerProcedure
-    .input(z.object({
-      submissionId: z.string().uuid(),
-      position: z.object({
-        column: z.string(), // role_id or 'deck'
-        order: z.number(),
-      }),
-    }))
+    .input(
+      z.object({
+        submissionId: z.string().uuid(),
+        position: z.object({
+          column: z.string(), // role_id or 'deck'
+          order: z.number(),
+        }),
+      })
+    )
     .mutation(async ({ ctx, input }) => {
       // Update position
       return db
         .update(auditionSubmissions)
         .set({
           boardPosition: input.position,
-          roleId: input.position.column === 'deck' ? null : input.position.column,
+          roleId: input.position.column === "deck" ? null : input.position.column,
           updatedAt: new Date(),
         })
         .where(eq(auditionSubmissions.id, input.submissionId))
@@ -1477,10 +1666,12 @@ export const castingRouter = router({
 
   // Lock a role (finalize casting)
   lockRole: producerProcedure
-    .input(z.object({
-      roleId: z.string().uuid(),
-      locked: z.boolean(),
-    }))
+    .input(
+      z.object({
+        roleId: z.string().uuid(),
+        locked: z.boolean(),
+      })
+    )
     .mutation(async ({ ctx, input }) => {
       return db
         .update(roles)
@@ -1491,53 +1682,55 @@ export const castingRouter = router({
 
   // Finalize casting and send notifications
   finalizeCasting: producerProcedure
-    .input(z.object({
-      auditionId: z.string().uuid(),
-      emailTemplate: z.object({
-        subject: z.string(),
-        body: z.string(), // Supports merge fields: {{name}}, {{role}}
-      }),
-    }))
+    .input(
+      z.object({
+        auditionId: z.string().uuid(),
+        emailTemplate: z.object({
+          subject: z.string(),
+          body: z.string(), // Supports merge fields: {{name}}, {{role}}
+        }),
+      })
+    )
     .mutation(async ({ ctx, input }) => {
       // Get all submissions with role assignments
       const submissions = await db.query.auditionSubmissions.findMany({
         where: and(
           eq(auditionSubmissions.auditionId, input.auditionId),
-          eq(auditionSubmissions.status, 'callback_with_role'),
+          eq(auditionSubmissions.status, "callback_with_role")
         ),
         with: {
           talent: { with: { user: true } },
           role: true,
         },
       });
-      
+
       // Create cast members and send emails
       for (const submission of submissions) {
         // Create cast member
         await db.insert(castMembers).values({
           roleId: submission.roleId!,
           talentId: submission.talentId,
-          status: 'cast',
+          status: "cast",
         });
-        
+
         // Update submission status
         await db
           .update(auditionSubmissions)
-          .set({ status: 'cast' })
+          .set({ status: "cast" })
           .where(eq(auditionSubmissions.id, submission.id));
-        
+
         // Send email with merge fields
         const emailBody = input.emailTemplate.body
-          .replace('{{name}}', submission.talent.firstName)
-          .replace('{{role}}', submission.role!.name);
-        
+          .replace("{{name}}", submission.talent.firstName)
+          .replace("{{role}}", submission.role!.name);
+
         await sendCastingEmail({
           to: submission.talent.user.email,
           subject: input.emailTemplate.subject,
           body: emailBody,
         });
       }
-      
+
       return { castCount: submissions.length };
     }),
 });
@@ -1547,83 +1740,78 @@ export const castingRouter = router({
 
 ```typescript
 // app/api/webhooks/stripe/route.ts
-import { NextRequest, NextResponse } from 'next/server';
-import Stripe from 'stripe';
-import { db } from '@/lib/db';
-import { producers } from '@/lib/db/schema';
-import { eq } from 'drizzle-orm';
+import { NextRequest, NextResponse } from "next/server";
+import Stripe from "stripe";
+import { db } from "@/lib/db";
+import { producers } from "@/lib/db/schema";
+import { eq } from "drizzle-orm";
 
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!);
 const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET!;
 
 export async function POST(req: NextRequest) {
   const body = await req.text();
-  const signature = req.headers.get('stripe-signature')!;
-  
+  const signature = req.headers.get("stripe-signature")!;
+
   let event: Stripe.Event;
-  
+
   try {
     event = stripe.webhooks.constructEvent(body, signature, webhookSecret);
   } catch (err) {
-    return NextResponse.json({ error: 'Invalid signature' }, { status: 400 });
+    return NextResponse.json({ error: "Invalid signature" }, { status: 400 });
   }
-  
+
   switch (event.type) {
-    case 'customer.subscription.created':
-    case 'customer.subscription.updated': {
+    case "customer.subscription.created":
+    case "customer.subscription.updated": {
       const subscription = event.data.object as Stripe.Subscription;
       await db
         .update(producers)
         .set({
           subscriptionStatus: subscription.status,
-          subscriptionTier: subscription.items.data[0]?.price.lookup_key ?? 'basic',
+          subscriptionTier: subscription.items.data[0]?.price.lookup_key ?? "basic",
           subscriptionEndsAt: new Date(subscription.current_period_end * 1000),
         })
         .where(eq(producers.stripeCustomerId, subscription.customer as string));
       break;
     }
-    
-    case 'customer.subscription.deleted': {
+
+    case "customer.subscription.deleted": {
       const subscription = event.data.object as Stripe.Subscription;
       await db
         .update(producers)
         .set({
-          subscriptionStatus: 'cancelled',
+          subscriptionStatus: "cancelled",
           subscriptionEndsAt: new Date(),
         })
         .where(eq(producers.stripeCustomerId, subscription.customer as string));
       break;
     }
   }
-  
+
   return NextResponse.json({ received: true });
 }
 
 // app/api/qr/[code]/route.ts
-import { NextRequest, NextResponse } from 'next/server';
-import { db } from '@/lib/db';
-import { auditions } from '@/lib/db/schema';
-import { eq } from 'drizzle-orm';
+import { NextRequest, NextResponse } from "next/server";
+import { db } from "@/lib/db";
+import { auditions } from "@/lib/db/schema";
+import { eq } from "drizzle-orm";
 
-export async function GET(
-  req: NextRequest,
-  { params }: { params: { code: string } }
-) {
+export async function GET(req: NextRequest, { params }: { params: { code: string } }) {
   const audition = await db.query.auditions.findFirst({
     where: eq(auditions.checkInCode, params.code),
     with: {
       show: { columns: { title: true, venue: true } },
     },
   });
-  
+
   if (!audition) {
-    return NextResponse.redirect(new URL('/not-found', req.url));
+    return NextResponse.redirect(new URL("/not-found", req.url));
   }
-  
+
   // Redirect to audition check-in page
-  return NextResponse.redirect(
-    new URL(`/auditions/${audition.id}/check-in`, req.url)
-  );
+  return NextResponse.redirect(new URL(`/auditions/${audition.id}/check-in`, req.url));
 }
 ```
 
@@ -1631,14 +1819,14 @@ export async function GET(
 
 ```typescript
 // lib/auth/config.ts
-import NextAuth from 'next-auth';
-import { DrizzleAdapter } from '@auth/drizzle-adapter';
-import Google from 'next-auth/providers/google';
-import Credentials from 'next-auth/providers/credentials';
-import { db } from '@/lib/db';
-import { users } from '@/lib/db/schema';
-import { eq } from 'drizzle-orm';
-import bcrypt from 'bcryptjs';
+import NextAuth from "next-auth";
+import { DrizzleAdapter } from "@auth/drizzle-adapter";
+import Google from "next-auth/providers/google";
+import Credentials from "next-auth/providers/credentials";
+import { db } from "@/lib/db";
+import { users } from "@/lib/db/schema";
+import { eq } from "drizzle-orm";
+import bcrypt from "bcryptjs";
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   adapter: DrizzleAdapter(db),
@@ -1649,25 +1837,22 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     }),
     Credentials({
       credentials: {
-        email: { type: 'email' },
-        password: { type: 'password' },
+        email: { type: "email" },
+        password: { type: "password" },
       },
       async authorize(credentials) {
         if (!credentials?.email || !credentials?.password) return null;
-        
+
         const user = await db.query.users.findFirst({
           where: eq(users.email, credentials.email as string),
         });
-        
+
         if (!user || !user.passwordHash) return null;
-        
-        const isValid = await bcrypt.compare(
-          credentials.password as string,
-          user.passwordHash
-        );
-        
+
+        const isValid = await bcrypt.compare(credentials.password as string, user.passwordHash);
+
         if (!isValid) return null;
-        
+
         return {
           id: user.id,
           email: user.email,
@@ -1685,13 +1870,13 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
     },
     session({ session, token }) {
       session.user.id = token.sub!;
-      session.user.type = token.userType as 'talent' | 'producer';
+      session.user.type = token.userType as "talent" | "producer";
       return session;
     },
   },
   pages: {
-    signIn: '/login',
-    newUser: '/signup',
+    signIn: "/login",
+    newUser: "/signup",
   },
 });
 ```
@@ -1743,7 +1928,7 @@ interface CastingBoardProps {
 
 export function CastingBoard({ auditionId }: CastingBoardProps) {
   const [activeId, setActiveId] = useState<string | null>(null);
-  
+
   const { data, refetch } = trpc.casting.getCastingBoard.useQuery({ auditionId });
   const updatePosition = trpc.casting.updateBoardPosition.useMutation({
     onSuccess: () => refetch(),
@@ -1751,60 +1936,60 @@ export function CastingBoard({ auditionId }: CastingBoardProps) {
   const lockRole = trpc.casting.lockRole.useMutation({
     onSuccess: () => refetch(),
   });
-  
+
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
     })
   );
-  
+
   const handleDragStart = useCallback((event: DragStartEvent) => {
     setActiveId(event.active.id as string);
   }, []);
-  
+
   const handleDragEnd = useCallback((event: DragEndEvent) => {
     const { active, over } = event;
     setActiveId(null);
-    
+
     if (!over) return;
-    
+
     const submissionId = active.id as string;
     const targetColumn = over.data.current?.columnId ?? 'deck';
     const targetOrder = over.data.current?.order ?? 0;
-    
+
     updatePosition.mutate({
       submissionId,
       position: { column: targetColumn, order: targetOrder },
     });
   }, [updatePosition]);
-  
+
   if (!data) {
     return <CastingBoardSkeleton />;
   }
-  
+
   const { roles, submissions } = data;
-  
+
   // Organize submissions by column
   const submissionsByColumn = new Map<string, AuditionSubmission[]>();
   submissionsByColumn.set('deck', []);
-  
+
   for (const role of roles) {
     submissionsByColumn.set(role.id, []);
   }
-  
+
   for (const submission of submissions) {
     const column = submission.boardPosition?.column ?? 'deck';
     submissionsByColumn.get(column)?.push(submission);
   }
-  
+
   // Sort by order within each column
   for (const [_, subs] of submissionsByColumn) {
     subs.sort((a, b) => (a.boardPosition?.order ?? 0) - (b.boardPosition?.order ?? 0));
   }
-  
+
   const activeSubmission = submissions.find(s => s.id === activeId);
-  
+
   return (
     <div className="h-full flex flex-col">
       <div className="flex justify-between items-center p-4 border-b">
@@ -1824,7 +2009,7 @@ export function CastingBoard({ auditionId }: CastingBoardProps) {
           </button>
         </div>
       </div>
-      
+
       <DndContext
         sensors={sensors}
         collisionDetection={closestCenter}
@@ -1843,11 +2028,11 @@ export function CastingBoard({ auditionId }: CastingBoardProps) {
                 onLockToggle={(locked) => lockRole.mutate({ roleId: role.id, locked })}
               />
             ))}
-          
+
           {/* Deck area (unassigned) */}
           <DeckArea submissions={submissionsByColumn.get('deck') ?? []} />
         </div>
-        
+
         <DragOverlay>
           {activeSubmission && (
             <TalentCard submission={activeSubmission} isDragging />
@@ -1891,22 +2076,22 @@ const NotificationContext = createContext<NotificationContextType | null>(null);
 
 export function NotificationProvider({ children }: { children: ReactNode }) {
   const [notifications, setNotifications] = useState<Notification[]>([]);
-  
+
   const addNotification = useCallback((notification: Omit<Notification, 'id'>) => {
     const id = crypto.randomUUID();
     setNotifications(prev => [...prev, { ...notification, id }]);
-    
+
     if (notification.duration !== 0) {
       setTimeout(() => {
         setNotifications(prev => prev.filter(n => n.id !== id));
       }, notification.duration ?? 5000);
     }
   }, []);
-  
+
   const removeNotification = useCallback((id: string) => {
     setNotifications(prev => prev.filter(n => n.id !== id));
   }, []);
-  
+
   return (
     <NotificationContext.Provider value={{ notifications, addNotification, removeNotification }}>
       {children}
@@ -1931,9 +2116,9 @@ export function useNotifications() {
 
 ```typescript
 // lib/storage/encryption.ts
-import { createCipheriv, createDecipheriv, randomBytes, scrypt } from 'crypto';
-import { promisify } from 'util';
-import { S3Client, PutObjectCommand, GetObjectCommand } from '@aws-sdk/client-s3';
+import { createCipheriv, createDecipheriv, randomBytes, scrypt } from "crypto";
+import { promisify } from "util";
+import { S3Client, PutObjectCommand, GetObjectCommand } from "@aws-sdk/client-s3";
 
 const scryptAsync = promisify(scrypt);
 
@@ -1943,12 +2128,12 @@ export async function encryptDocument(
   documentId: string
 ): Promise<{ encrypted: Buffer; keyId: string }> {
   // Generate unique key for this document
-  const keyId = randomBytes(16).toString('hex');
+  const keyId = randomBytes(16).toString("hex");
   const salt = randomBytes(16);
   const key = (await scryptAsync(process.env.DOCUMENT_ENCRYPTION_SECRET!, salt, 32)) as Buffer;
   const iv = randomBytes(16);
-  
-  const cipher = createCipheriv('aes-256-gcm', key, iv);
+
+  const cipher = createCipheriv("aes-256-gcm", key, iv);
   const encrypted = Buffer.concat([
     salt,
     iv,
@@ -1956,28 +2141,25 @@ export async function encryptDocument(
     cipher.final(),
     cipher.getAuthTag(),
   ]);
-  
+
   // Store key reference in KMS (AWS KMS, HashiCorp Vault, etc.)
-  await storeKeyReference(keyId, { salt: salt.toString('hex'), documentId });
-  
+  await storeKeyReference(keyId, { salt: salt.toString("hex"), documentId });
+
   return { encrypted, keyId };
 }
 
-export async function decryptDocument(
-  encrypted: Buffer,
-  keyId: string
-): Promise<Buffer> {
+export async function decryptDocument(encrypted: Buffer, keyId: string): Promise<Buffer> {
   const keyRef = await getKeyReference(keyId);
-  const salt = Buffer.from(keyRef.salt, 'hex');
-  
+  const salt = Buffer.from(keyRef.salt, "hex");
+
   const key = (await scryptAsync(process.env.DOCUMENT_ENCRYPTION_SECRET!, salt, 32)) as Buffer;
   const iv = encrypted.subarray(16, 32);
   const authTag = encrypted.subarray(-16);
   const data = encrypted.subarray(32, -16);
-  
-  const decipher = createDecipheriv('aes-256-gcm', key, iv);
+
+  const decipher = createDecipheriv("aes-256-gcm", key, iv);
   decipher.setAuthTag(authTag);
-  
+
   return Buffer.concat([decipher.update(data), decipher.final()]);
 }
 
@@ -1985,7 +2167,7 @@ export async function decryptDocument(
 export async function logDocumentAccess(params: {
   documentId: string;
   userId: string;
-  action: 'view' | 'download' | 'upload' | 'delete';
+  action: "view" | "download" | "upload" | "delete";
   ipAddress: string;
   userAgent: string;
 }): Promise<void> {
@@ -2000,35 +2182,35 @@ export async function logDocumentAccess(params: {
 
 ```typescript
 // lib/auth/middleware.ts
-import { NextRequest, NextResponse } from 'next/server';
-import { auth } from './config';
+import { NextRequest, NextResponse } from "next/server";
+import { auth } from "./config";
 
 // Protected routes middleware
 export async function middleware(req: NextRequest) {
   const session = await auth();
   const pathname = req.nextUrl.pathname;
-  
+
   // Public routes
-  const publicRoutes = ['/', '/login', '/signup', '/talent/', '/company/', '/auditions/'];
-  if (publicRoutes.some(route => pathname.startsWith(route))) {
+  const publicRoutes = ["/", "/login", "/signup", "/talent/", "/company/", "/auditions/"];
+  if (publicRoutes.some((route) => pathname.startsWith(route))) {
     return NextResponse.next();
   }
-  
+
   // Require authentication
   if (!session) {
-    return NextResponse.redirect(new URL('/login', req.url));
+    return NextResponse.redirect(new URL("/login", req.url));
   }
-  
+
   // Role-based access
-  if (pathname.startsWith('/producer') && session.user.type !== 'producer') {
-    return NextResponse.redirect(new URL('/dashboard', req.url));
+  if (pathname.startsWith("/producer") && session.user.type !== "producer") {
+    return NextResponse.redirect(new URL("/dashboard", req.url));
   }
-  
+
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: ['/((?!api|_next/static|_next/image|favicon.ico).*)'],
+  matcher: ["/((?!api|_next/static|_next/image|favicon.ico).*)"],
 };
 ```
 
@@ -2038,28 +2220,29 @@ export const config = {
 // next.config.mjs
 const securityHeaders = [
   {
-    key: 'X-DNS-Prefetch-Control',
-    value: 'on',
+    key: "X-DNS-Prefetch-Control",
+    value: "on",
   },
   {
-    key: 'Strict-Transport-Security',
-    value: 'max-age=63072000; includeSubDomains; preload',
+    key: "Strict-Transport-Security",
+    value: "max-age=63072000; includeSubDomains; preload",
   },
   {
-    key: 'X-Frame-Options',
-    value: 'SAMEORIGIN',
+    key: "X-Frame-Options",
+    value: "SAMEORIGIN",
   },
   {
-    key: 'X-Content-Type-Options',
-    value: 'nosniff',
+    key: "X-Content-Type-Options",
+    value: "nosniff",
   },
   {
-    key: 'Referrer-Policy',
-    value: 'strict-origin-when-cross-origin',
+    key: "Referrer-Policy",
+    value: "strict-origin-when-cross-origin",
   },
   {
-    key: 'Content-Security-Policy',
-    value: "default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' https:;",
+    key: "Content-Security-Policy",
+    value:
+      "default-src 'self'; script-src 'self' 'unsafe-eval' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' https:;",
   },
 ];
 
@@ -2068,7 +2251,7 @@ const nextConfig = {
   async headers() {
     return [
       {
-        source: '/:path*',
+        source: "/:path*",
         headers: securityHeaders,
       },
     ];
@@ -2084,36 +2267,39 @@ Use Zod schemas consistently across frontend and backend:
 
 ```typescript
 // lib/utils/validation.ts
-import { z } from 'zod';
+import { z } from "zod";
 
 export const talentProfileSchema = z.object({
-  firstName: z.string()
-    .min(1, 'First name is required')
-    .max(100, 'First name too long')
-    .regex(/^[a-zA-Z\s'-]+$/, 'Invalid characters'),
-  lastName: z.string()
-    .min(1, 'Last name is required')
-    .max(100, 'Last name too long'),
-  email: z.string().email('Invalid email'),
-  phone: z.string()
-    .regex(/^\+?[\d\s-()]+$/, 'Invalid phone number')
+  firstName: z
+    .string()
+    .min(1, "First name is required")
+    .max(100, "First name too long")
+    .regex(/^[a-zA-Z\s'-]+$/, "Invalid characters"),
+  lastName: z.string().min(1, "Last name is required").max(100, "Last name too long"),
+  email: z.string().email("Invalid email"),
+  phone: z
+    .string()
+    .regex(/^\+?[\d\s-()]+$/, "Invalid phone number")
     .optional(),
   bio: z.string().max(5000).optional(),
   // Prevent XSS in text fields
-  website: z.string()
+  website: z
+    .string()
     .url()
-    .refine(url => url.startsWith('https://'), 'Must use HTTPS')
+    .refine((url) => url.startsWith("https://"), "Must use HTTPS")
     .optional(),
 });
 
 export const fileUploadSchema = z.object({
   file: z.object({
     name: z.string(),
-    size: z.number().max(10 * 1024 * 1024, 'File too large (max 10MB)'),
-    type: z.string().refine(
-      type => ['image/jpeg', 'image/png', 'image/webp', 'application/pdf'].includes(type),
-      'Invalid file type'
-    ),
+    size: z.number().max(10 * 1024 * 1024, "File too large (max 10MB)"),
+    type: z
+      .string()
+      .refine(
+        (type) => ["image/jpeg", "image/png", "image/webp", "application/pdf"].includes(type),
+        "Invalid file type"
+      ),
   }),
 });
 ```
@@ -2135,8 +2321,8 @@ on:
     branches: [main]
 
 env:
-  NODE_VERSION: '22'
-  PNPM_VERSION: '9'
+  NODE_VERSION: "22"
+  PNPM_VERSION: "9"
 
 jobs:
   lint:
@@ -2367,7 +2553,7 @@ jobs:
           vercel-token: ${{ secrets.VERCEL_TOKEN }}
           vercel-org-id: ${{ secrets.VERCEL_ORG_ID }}
           vercel-project-id: ${{ secrets.VERCEL_PROJECT_ID }}
-          vercel-args: '--prod'
+          vercel-args: "--prod"
           github-token: ${{ secrets.GITHUB_TOKEN }}
 ```
 
@@ -2416,42 +2602,51 @@ const eslintConfig = defineConfig([
     rules: {
       // File size limit
       "local/max-file-size": "error",
-      
+
       // Complexity limits
-      "complexity": ["error", 15], // Stricter than default
+      complexity: ["error", 15], // Stricter than default
       "max-depth": ["error", 4],
       "max-lines-per-function": ["warn", { max: 100, skipBlankLines: true, skipComments: true }],
       "max-params": ["warn", 5],
-      
+
       // Console logging
       "no-console": "error",
-      
+
       // TypeScript strictness
-      "@typescript-eslint/no-unused-vars": ["error", {
-        argsIgnorePattern: "^_",
-        varsIgnorePattern: "^_",
-      }],
+      "@typescript-eslint/no-unused-vars": [
+        "error",
+        {
+          argsIgnorePattern: "^_",
+          varsIgnorePattern: "^_",
+        },
+      ],
       "@typescript-eslint/no-explicit-any": "error",
-      "@typescript-eslint/explicit-function-return-type": ["warn", {
-        allowExpressions: true,
-        allowTypedFunctionExpressions: true,
-      }],
+      "@typescript-eslint/explicit-function-return-type": [
+        "warn",
+        {
+          allowExpressions: true,
+          allowTypedFunctionExpressions: true,
+        },
+      ],
       "@typescript-eslint/strict-boolean-expressions": "off", // Too strict for practical use
-      
+
       // React best practices
       "react/button-has-type": "warn",
       "react/jsx-no-useless-fragment": "warn",
       "react/jsx-curly-brace-presence": ["warn", { props: "never", children: "never" }],
       "react/self-closing-comp": "warn",
-      
+
       // Import organization
-      "import/order": ["warn", {
-        groups: ["builtin", "external", "internal", "parent", "sibling", "index"],
-        "newlines-between": "always",
-        alphabetize: { order: "asc", caseInsensitive: true },
-      }],
+      "import/order": [
+        "warn",
+        {
+          groups: ["builtin", "external", "internal", "parent", "sibling", "index"],
+          "newlines-between": "always",
+          alphabetize: { order: "asc", caseInsensitive: true },
+        },
+      ],
       "import/no-duplicates": "error",
-      
+
       // Security
       "no-eval": "error",
       "no-implied-eval": "error",
@@ -2460,12 +2655,7 @@ const eslintConfig = defineConfig([
   },
   // Allow console in specific locations
   {
-    files: [
-      "__tests__/**",
-      "e2e/**",
-      "scripts/**",
-      "lib/logger/**",
-    ],
+    files: ["__tests__/**", "e2e/**", "scripts/**", "lib/logger/**"],
     rules: {
       "no-console": "off",
     },
@@ -2625,6 +2815,7 @@ Use Conventional Commits:
 ```
 
 **Types:**
+
 - `feat`: New feature
 - `fix`: Bug fix
 - `docs`: Documentation
@@ -2635,6 +2826,7 @@ Use Conventional Commits:
 - `chore`: Maintenance
 
 **Examples:**
+
 ```
 feat(casting-board): add drag-and-drop role assignment
 fix(auth): resolve session expiration redirect loop
@@ -2678,13 +2870,8 @@ pnpm exec commitlint --edit $1
 // package.json (partial)
 {
   "lint-staged": {
-    "*.{ts,tsx,js,jsx}": [
-      "prettier --write",
-      "eslint --max-warnings 0"
-    ],
-    "*.{json,md,css,html,yaml,yml}": [
-      "prettier --write"
-    ]
+    "*.{ts,tsx,js,jsx}": ["prettier --write", "eslint --max-warnings 0"],
+    "*.{json,md,css,html,yaml,yml}": ["prettier --write"]
   }
 }
 ```
@@ -2693,33 +2880,41 @@ pnpm exec commitlint --edit $1
 
 ```markdown
 <!-- .github/PULL_REQUEST_TEMPLATE.md -->
+
 ## Summary
+
 <!-- Brief description of changes -->
 
 ## Type of Change
+
 - [ ] Bug fix (non-breaking change which fixes an issue)
 - [ ] New feature (non-breaking change which adds functionality)
 - [ ] Breaking change (fix or feature that would cause existing functionality to change)
 - [ ] Documentation update
 
 ## Related Issues
+
 <!-- Link to related issues: Closes #123 -->
 
 ## Changes Made
-- 
-- 
-- 
+
+-
+-
+-
 
 ## Testing
+
 - [ ] Unit tests added/updated
 - [ ] Integration tests added/updated
 - [ ] E2E tests added/updated (if applicable)
 - [ ] Manual testing performed
 
 ## Screenshots (if applicable)
+
 <!-- Add screenshots for UI changes -->
 
 ## Checklist
+
 - [ ] My code follows the project's code style
 - [ ] I have performed a self-review
 - [ ] I have added comments where necessary
@@ -2802,7 +2997,7 @@ SENTRY_DSN=""
 
 ```yaml
 # docker-compose.yml
-version: '3.8'
+version: "3.8"
 
 services:
   postgres:
@@ -2847,6 +3042,7 @@ volumes:
 **Goals:** Project setup, authentication, basic UI framework
 
 **Tasks:**
+
 1. Initialize Next.js 16 project with TypeScript
 2. Configure ESLint, Prettier, Husky, lint-staged
 3. Set up CI/CD pipeline (GitHub Actions)
@@ -2857,6 +3053,7 @@ volumes:
 8. Create landing page
 
 **Deliverables:**
+
 - Working authentication (Google OAuth + credentials)
 - Basic responsive layout
 - CI/CD pipeline running on all PRs
@@ -2867,6 +3064,7 @@ volumes:
 **Goals:** Complete talent profile and discovery features
 
 **Tasks:**
+
 1. Profile creation/editing flow
 2. Headshot upload with image optimization
 3. Video sample integration
@@ -2878,6 +3076,7 @@ volumes:
 9. Profile search (for producers)
 
 **Deliverables:**
+
 - Complete talent profile system
 - Media upload working (S3/R2)
 - Resume PDF generation
@@ -2888,6 +3087,7 @@ volumes:
 **Goals:** Production company features and show management
 
 **Tasks:**
+
 1. Producer signup with subscription (Stripe)
 2. Company profile management
 3. Photo gallery
@@ -2897,6 +3097,7 @@ volumes:
 7. Season announcements
 
 **Deliverables:**
+
 - Stripe subscription integration
 - Complete show management
 - Role-based access control
@@ -2907,6 +3108,7 @@ volumes:
 **Goals:** Full audition workflow
 
 **Tasks:**
+
 1. Audition creation wizard
 2. Form builder for questions
 3. QR code check-in system
@@ -2916,6 +3118,7 @@ volumes:
 7. Audition listing page
 
 **Deliverables:**
+
 - End-to-end audition flow
 - QR check-in working
 - Form builder functional
@@ -2926,6 +3129,7 @@ volumes:
 **Goals:** Drag-and-drop casting interface
 
 **Tasks:**
+
 1. Casting board UI (react-dnd)
 2. Role columns with talent cards
 3. Deck area for unassigned
@@ -2935,6 +3139,7 @@ volumes:
 7. Auto-generate cast lists
 
 **Deliverables:**
+
 - Fully functional casting board
 - Real-time collaboration
 - Cast list generation
@@ -2945,6 +3150,7 @@ volumes:
 **Goals:** Schedule, notes, documents, budget
 
 **Tasks:**
+
 1. Rehearsal calendar (FullCalendar)
 2. Push notification integration
 3. Production notes with departments
@@ -2954,6 +3160,7 @@ volumes:
 7. Budget tracking/reimbursements
 
 **Deliverables:**
+
 - Complete scheduling system
 - Production notes working
 - SOC 2 compliant document storage
@@ -2964,6 +3171,7 @@ volumes:
 **Goals:** Communication and final polish
 
 **Tasks:**
+
 1. Message center (conversations)
 2. Real-time notifications
 3. Mobile responsive polish
@@ -2973,6 +3181,7 @@ volumes:
 7. Documentation completion
 
 **Deliverables:**
+
 - Messaging system
 - PWA capabilities
 - WCAG 2.1 AA compliance
@@ -2983,6 +3192,7 @@ volumes:
 **Goals:** Production deployment and monitoring
 
 **Tasks:**
+
 1. Production environment setup
 2. Monitoring (Sentry, analytics)
 3. Load testing
@@ -2992,6 +3202,7 @@ volumes:
 7. Launch marketing
 
 **Deliverables:**
+
 - Production deployment
 - Monitoring dashboards
 - Beta feedback incorporated
