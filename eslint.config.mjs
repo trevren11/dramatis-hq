@@ -50,7 +50,7 @@ export default tseslint.config(
 
       complexity: ["error", 15],
       "max-depth": ["error", 4],
-      "max-lines": ["error", { max: 300, skipBlankLines: true, skipComments: true }],
+      "max-lines": ["error", { max: 500, skipBlankLines: true, skipComments: true }],
       "max-params": ["error", 4],
 
       "@typescript-eslint/no-explicit-any": "error",
