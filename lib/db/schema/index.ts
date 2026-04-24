@@ -7,3 +7,4 @@ export * from "./education";
 export * from "./skills";
 export * from "./headshots";
 export * from "./documents";
+export * from "./calendar";
