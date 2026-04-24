@@ -69,12 +69,12 @@ __tests__/
 
 #### Coverage Requirements
 
-| Type | Minimum | Target |
-|------|---------|--------|
-| Statements | 80% | 90% |
-| Branches | 75% | 85% |
-| Functions | 80% | 90% |
-| Lines | 80% | 90% |
+| Type       | Minimum | Target |
+| ---------- | ------- | ------ |
+| Statements | 80%     | 90%    |
+| Branches   | 75%     | 85%    |
+| Functions  | 80%     | 90%    |
+| Lines      | 80%     | 90%    |
 
 ```bash
 pnpm test:coverage              # Run with coverage report
@@ -118,15 +118,15 @@ Before every commit:
 ```typescript
 // Good
 const STATUS = {
-  ACTIVE: 'active',
-  INACTIVE: 'inactive',
+  ACTIVE: "active",
+  INACTIVE: "inactive",
 } as const;
-type Status = typeof STATUS[keyof typeof STATUS];
+type Status = (typeof STATUS)[keyof typeof STATUS];
 
 // Avoid
 enum Status {
-  ACTIVE = 'active',
-  INACTIVE = 'inactive',
+  ACTIVE = "active",
+  INACTIVE = "inactive",
 }
 ```
 
@@ -173,9 +173,7 @@ function ProfileCard({ user }: { user: User }) {
 
 ```typescript
 // Standard API response format
-type ApiResponse<T> = 
-  | { success: true; data: T }
-  | { success: false; error: string; code: string };
+type ApiResponse<T> = { success: true; data: T } | { success: false; error: string; code: string };
 ```
 
 ### Security
@@ -238,6 +236,7 @@ __tests__/                      # All test files (mirrors src structure)
 ```
 
 Examples:
+
 - `trenshaw/DRM-123-talent-profile-upload`
 - `trenshaw/DRM-456-casting-board-drag-drop`
 
@@ -290,17 +289,17 @@ If you need to verify pre-existing state, check main branch separately or ask th
 - Test edge cases and error conditions
 
 ```typescript
-describe('validateEmail', () => {
-  it('returns true for valid email', () => {
-    expect(validateEmail('user@example.com')).toBe(true);
+describe("validateEmail", () => {
+  it("returns true for valid email", () => {
+    expect(validateEmail("user@example.com")).toBe(true);
   });
 
-  it('returns false for email without @', () => {
-    expect(validateEmail('userexample.com')).toBe(false);
+  it("returns false for email without @", () => {
+    expect(validateEmail("userexample.com")).toBe(false);
   });
 
-  it('returns false for empty string', () => {
-    expect(validateEmail('')).toBe(false);
+  it("returns false for empty string", () => {
+    expect(validateEmail("")).toBe(false);
   });
 });
 ```
@@ -320,9 +319,9 @@ describe('validateEmail', () => {
 - Include accessibility checks
 
 ```typescript
-test('talent can create profile and generate resume', async ({ page }) => {
-  await page.goto('/signup/talent');
-  await page.fill('[name="email"]', 'talent@example.com');
+test("talent can create profile and generate resume", async ({ page }) => {
+  await page.goto("/signup/talent");
+  await page.fill('[name="email"]', "talent@example.com");
   // ... complete flow
   await expect(page.locator('[data-testid="resume-pdf"]')).toBeVisible();
 });
@@ -335,17 +334,17 @@ test('talent can create profile and generate resume', async ({ page }) => {
 ```typescript
 // Use consistent error codes
 const ERROR_CODES = {
-  UNAUTHORIZED: 'UNAUTHORIZED',
-  FORBIDDEN: 'FORBIDDEN',
-  NOT_FOUND: 'NOT_FOUND',
-  VALIDATION_ERROR: 'VALIDATION_ERROR',
-  RATE_LIMITED: 'RATE_LIMITED',
-  INTERNAL_ERROR: 'INTERNAL_ERROR',
+  UNAUTHORIZED: "UNAUTHORIZED",
+  FORBIDDEN: "FORBIDDEN",
+  NOT_FOUND: "NOT_FOUND",
+  VALIDATION_ERROR: "VALIDATION_ERROR",
+  RATE_LIMITED: "RATE_LIMITED",
+  INTERNAL_ERROR: "INTERNAL_ERROR",
 } as const;
 
 // Return structured errors
 return Response.json(
-  { success: false, error: 'Invalid email format', code: 'VALIDATION_ERROR' },
+  { success: false, error: "Invalid email format", code: "VALIDATION_ERROR" },
   { status: 400 }
 );
 ```
@@ -402,10 +401,10 @@ STRIPE_PUBLISHABLE_KEY=
 
 <!-- Entries added via project feedback commands -->
 
-*No feedback recorded yet.*
+_No feedback recorded yet._
 
 ## Fixes & Troubleshooting
 
 <!-- Entries added when issues are resolved -->
 
-*No fixes recorded yet.*
+_No fixes recorded yet._
