@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { documents, documentAccessLogs, users } from "@/lib/db/schema";
-import { uploadToS3, generateDocumentKey } from "@/lib/storage";
+import { uploadDocument, generateDocumentKey } from "@/lib/storage/document-storage";
 import { encryptDocument } from "@/lib/encryption";
 import {
   producerDocumentUploadSchema,
@@ -43,7 +43,7 @@ async function createDocumentRecord(
   const documentId = crypto.randomUUID();
   const s3Key = generateDocumentKey(parsed.data.talentUserId, documentId, file.name);
 
-  await uploadToS3(s3Key, encryptedData, "application/octet-stream", {
+  await uploadDocument(s3Key, encryptedData, "application/octet-stream", {
     originalMimeType: file.type,
     documentId,
     uploadedBy: uploaderId,

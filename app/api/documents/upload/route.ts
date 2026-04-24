@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { documents, documentAccessLogs } from "@/lib/db/schema";
-import { uploadToS3, generateDocumentKey } from "@/lib/storage";
+import { uploadDocument, generateDocumentKey } from "@/lib/storage/document-storage";
 import { encryptDocument } from "@/lib/encryption";
 import {
   documentUploadSchema,
@@ -73,7 +73,7 @@ export async function POST(request: Request): Promise<NextResponse> {
     const s3Key = generateDocumentKey(session.user.id, documentId, file.name);
 
     // Upload encrypted content to S3
-    await uploadToS3(s3Key, encryptedData, "application/octet-stream", {
+    await uploadDocument(s3Key, encryptedData, "application/octet-stream", {
       originalMimeType: file.type,
       documentId,
     });
