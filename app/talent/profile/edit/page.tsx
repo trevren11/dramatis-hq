@@ -11,15 +11,11 @@ import { SkillsSection } from "@/components/talent/profile/skills-section";
 import { HeadshotsSection } from "@/components/talent/profile/headshots-section";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
-import type { WorkHistory } from "@/lib/db/schema/work-history";
-import type { Education } from "@/lib/db/schema/education";
-import type { Headshot } from "@/lib/db/schema/headshots";
-import type { Skill } from "@/lib/db/schema/skills";
 
 export default async function ProfileEditPage(): Promise<React.ReactElement> {
   const session = await auth();
 
-  if (!session?.user?.id) {
+  if (!session?.user.id) {
     redirect("/login");
   }
 
