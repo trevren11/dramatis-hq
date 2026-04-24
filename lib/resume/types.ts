@@ -72,13 +72,9 @@ export const resumeConfigurationSchema = z.object({
   selectedWorkHistory: z.array(z.string().uuid()).default([]),
   selectedEducation: z.array(z.string().uuid()).default([]),
   selectedSkills: z.array(z.string()).default([]),
-  sectionOrder: z.array(resumeSectionSchema).default([
-    "header",
-    "theater",
-    "film_television",
-    "training",
-    "skills",
-  ]),
+  sectionOrder: z
+    .array(resumeSectionSchema)
+    .default(["header", "theater", "film_television", "training", "skills"]),
   includeHeadshot: z.boolean().default(true),
   includeContact: z.boolean().default(true),
   createdAt: z.date(),
