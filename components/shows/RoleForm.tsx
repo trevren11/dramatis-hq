@@ -18,7 +18,9 @@ export function RoleForm({ data, onUpdate }: RoleFormProps): React.ReactElement 
         <Input
           id="name"
           value={data.name ?? ""}
-          onChange={(e) => onUpdate({ name: e.target.value })}
+          onChange={(e) => {
+            onUpdate({ name: e.target.value });
+          }}
           placeholder="e.g., Eliza Hamilton, Ensemble Member"
         />
       </div>
@@ -29,7 +31,9 @@ export function RoleForm({ data, onUpdate }: RoleFormProps): React.ReactElement 
           <select
             id="type"
             value={data.type ?? "supporting"}
-            onChange={(e) => onUpdate({ type: e.target.value as RoleCreate["type"] })}
+            onChange={(e) => {
+              onUpdate({ type: e.target.value as RoleCreate["type"] });
+            }}
             className="border-input bg-background flex h-10 w-full rounded-md border px-3 py-2 text-sm"
           >
             {ROLE_TYPE_OPTIONS.map((option) => (
@@ -47,7 +51,9 @@ export function RoleForm({ data, onUpdate }: RoleFormProps): React.ReactElement 
             type="number"
             min={1}
             value={data.positionCount ?? 1}
-            onChange={(e) => onUpdate({ positionCount: parseInt(e.target.value) || 1 })}
+            onChange={(e) => {
+              onUpdate({ positionCount: parseInt(e.target.value) || 1 });
+            }}
           />
           <p className="text-muted-foreground text-xs">How many actors needed for this role</p>
         </div>
@@ -58,7 +64,9 @@ export function RoleForm({ data, onUpdate }: RoleFormProps): React.ReactElement 
         <textarea
           id="description"
           value={data.description ?? ""}
-          onChange={(e) => onUpdate({ description: e.target.value || null })}
+          onChange={(e) => {
+            onUpdate({ description: e.target.value || null });
+          }}
           placeholder="Character description, personality traits, key scenes..."
           className="border-input bg-background flex min-h-[80px] w-full rounded-md border px-3 py-2 text-sm"
         />
@@ -73,9 +81,9 @@ export function RoleForm({ data, onUpdate }: RoleFormProps): React.ReactElement 
             min={0}
             max={120}
             value={data.ageRangeMin ?? ""}
-            onChange={(e) =>
-              onUpdate({ ageRangeMin: e.target.value ? parseInt(e.target.value) : null })
-            }
+            onChange={(e) => {
+              onUpdate({ ageRangeMin: e.target.value ? parseInt(e.target.value) : null });
+            }}
             placeholder="e.g., 25"
           />
         </div>
@@ -88,9 +96,9 @@ export function RoleForm({ data, onUpdate }: RoleFormProps): React.ReactElement 
             min={0}
             max={120}
             value={data.ageRangeMax ?? ""}
-            onChange={(e) =>
-              onUpdate({ ageRangeMax: e.target.value ? parseInt(e.target.value) : null })
-            }
+            onChange={(e) => {
+              onUpdate({ ageRangeMax: e.target.value ? parseInt(e.target.value) : null });
+            }}
             placeholder="e.g., 35"
           />
         </div>
@@ -100,7 +108,9 @@ export function RoleForm({ data, onUpdate }: RoleFormProps): React.ReactElement 
           <Input
             id="vocalRange"
             value={data.vocalRange ?? ""}
-            onChange={(e) => onUpdate({ vocalRange: e.target.value || null })}
+            onChange={(e) => {
+              onUpdate({ vocalRange: e.target.value || null });
+            }}
             placeholder="e.g., Alto, Tenor"
           />
         </div>
@@ -111,7 +121,9 @@ export function RoleForm({ data, onUpdate }: RoleFormProps): React.ReactElement 
         <textarea
           id="notes"
           value={data.notes ?? ""}
-          onChange={(e) => onUpdate({ notes: e.target.value || null })}
+          onChange={(e) => {
+            onUpdate({ notes: e.target.value || null });
+          }}
           placeholder="Additional casting requirements, special skills needed..."
           className="border-input bg-background flex min-h-[60px] w-full rounded-md border px-3 py-2 text-sm"
         />

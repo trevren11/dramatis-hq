@@ -98,7 +98,7 @@ export async function POST(
       .values({
         ...parsed.data,
         showId,
-        sortOrder: parsed.data.sortOrder ?? nextSortOrder,
+        sortOrder: nextSortOrder,
       })
       .returning();
 

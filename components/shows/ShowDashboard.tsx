@@ -77,7 +77,7 @@ export function ShowDashboard({ show, roles }: ShowDashboardProps): React.ReactE
             <MapPin className="text-muted-foreground h-4 w-4" />
           </CardHeader>
           <CardContent>
-            <div className="text-lg font-bold truncate">{show.venue || "TBD"}</div>
+            <div className="truncate text-lg font-bold">{show.venue ?? "TBD"}</div>
           </CardContent>
         </Card>
 

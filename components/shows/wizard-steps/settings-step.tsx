@@ -33,9 +33,9 @@ export function SettingsStep({ data, onUpdate }: Props): React.ReactElement {
                 name="unionStatus"
                 value={option.value}
                 checked={data.unionStatus === option.value}
-                onChange={(e) =>
-                  onUpdate({ unionStatus: e.target.value as ShowCreate["unionStatus"] })
-                }
+                onChange={(e) => {
+                  onUpdate({ unionStatus: e.target.value as ShowCreate["unionStatus"] });
+                }}
                 className="sr-only"
               />
               <div
@@ -69,7 +69,9 @@ export function SettingsStep({ data, onUpdate }: Props): React.ReactElement {
           <input
             type="checkbox"
             checked={data.isPublic ?? true}
-            onChange={(e) => onUpdate({ isPublic: e.target.checked })}
+            onChange={(e) => {
+              onUpdate({ isPublic: e.target.checked });
+            }}
             className="h-5 w-5 rounded border-gray-300"
           />
         </label>

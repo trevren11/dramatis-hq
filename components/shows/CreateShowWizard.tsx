@@ -167,7 +167,13 @@ export function CreateShowWizard(): React.ReactElement {
             <Button
               type="button"
               variant="outline"
-              onClick={currentStep === 0 ? () => router.back() : handleBack}
+              onClick={
+                currentStep === 0
+                  ? () => {
+                      router.back();
+                    }
+                  : handleBack
+              }
               disabled={isPending}
             >
               {currentStep === 0 ? "Cancel" : "Back"}

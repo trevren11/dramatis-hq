@@ -124,10 +124,21 @@ export function RoleFormDialog({
           <div className="bg-destructive/10 text-destructive rounded-lg p-3 text-sm">{error}</div>
         )}
 
-        <RoleForm data={formData} onUpdate={(data) => setFormData({ ...formData, ...data })} />
+        <RoleForm
+          data={formData}
+          onUpdate={(data) => {
+            setFormData({ ...formData, ...data });
+          }}
+        />
 
         <ModalFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)} disabled={isPending}>
+          <Button
+            variant="outline"
+            onClick={() => {
+              onOpenChange(false);
+            }}
+            disabled={isPending}
+          >
             Cancel
           </Button>
           <Button onClick={handleSubmit} disabled={!isValid || isPending}>

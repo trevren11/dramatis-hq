@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { Button } from "@/components/ui/button";
 import { ShowDashboard } from "./ShowDashboard";
 import { ShowSettings } from "./ShowSettings";
 import { RoleList } from "./RoleList";
@@ -74,15 +73,17 @@ export function ShowDetailClient({
           {TABS.map((tab) => (
             <button
               key={tab.id}
-              onClick={() => handleTabChange(tab.id)}
+              onClick={() => {
+                handleTabChange(tab.id);
+              }}
               className={`border-b-2 pb-3 text-sm font-medium transition-colors ${
                 activeTab === tab.id
                   ? "border-primary text-primary"
-                  : "border-transparent text-muted-foreground hover:text-foreground"
+                  : "text-muted-foreground hover:text-foreground border-transparent"
               }`}
             >
               {tab.label}
-              {tab.id === "roles" && ` (${roles.length})`}
+              {tab.id === "roles" && ` (${String(roles.length)})`}
             </button>
           ))}
         </nav>

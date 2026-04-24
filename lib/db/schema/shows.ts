@@ -86,4 +86,10 @@ export const SHOW_STATUS_OPTIONS = [
   { value: "closed", label: "Closed" },
 ] as const;
 
-export const SHOW_STATUS_VALUES = ["planning", "auditions", "rehearsal", "running", "closed"] as const;
+export const SHOW_STATUS_VALUES = [
+  "planning",
+  "auditions",
+  "rehearsal",
+  "running",
+  "closed",
+] as const;

@@ -22,6 +22,7 @@ Enable producers to create and manage theatrical productions/shows with role def
 Create Drizzle ORM schemas for shows and roles:
 
 **shows table:**
+
 - id (uuid, primary key)
 - organizationId (uuid, references producer_profiles)
 - title (varchar 255, required)
@@ -37,6 +38,7 @@ Create Drizzle ORM schemas for shows and roles:
 - createdAt, updatedAt (timestamps)
 
 **roles table:**
+
 - id (uuid, primary key)
 - showId (uuid, references shows, cascade delete)
 - name (varchar 255, required)
@@ -58,6 +60,7 @@ Add indexes on showId, organizationId, status, and isPublic.
 
 **Task**:
 Create validation schemas following the pattern in lib/validations/company.ts:
+
 - showCreateSchema (all required fields)
 - showUpdateSchema (partial, for edits)
 - roleCreateSchema
@@ -76,23 +79,28 @@ Include proper constraints matching the database schema (max lengths, enum value
 Create RESTful API endpoints:
 
 **GET /api/shows** - List shows for current producer
+
 - Filter by status (query param)
 - Search by title (query param)
 - Pagination support
 
 **POST /api/shows** - Create new show
+
 - Validate with showCreateSchema
 - Set organizationId from authenticated user's producer profile
 
 **GET /api/shows/[id]** - Get show details
+
 - Include roles in response
 
 **PUT /api/shows/[id]** - Update show
+
 - Validate ownership
 
 **DELETE /api/shows/[id]** - Delete show (soft delete or hard with confirmation)
 
 **POST /api/shows/[id]/duplicate** - Duplicate show
+
 - Copy show and all roles
 - Reset status to "planning"
 - Append "(Copy)" to title
@@ -122,6 +130,7 @@ Create role management endpoints:
 
 **Task**:
 Create the show list view:
+
 - Grid/list of ShowCard components
 - Status filter tabs (All, Planning, Auditions, Rehearsal, Running, Closed)
 - Search input for title filtering
@@ -129,6 +138,7 @@ Create the show list view:
 - Empty state when no shows
 
 ShowCard should display:
+
 - Title and type
 - Status badge (color-coded)
 - Key dates (next upcoming date)
@@ -144,24 +154,29 @@ ShowCard should display:
 Create multi-step wizard following SetupWizard pattern:
 
 **Step 1: Basic Info**
+
 - Title (required)
 - Show type dropdown
 - Description textarea
 
 **Step 2: Dates & Venue**
+
 - Venue input
 - Rehearsal start date picker
 - Performance start/end date range picker
 
 **Step 3: Settings**
+
 - Union status (reuse component from company setup)
 - Visibility toggle (public/private)
 
 **Step 4: Review**
+
 - Summary of all fields
 - Submit button
 
 Wizard steps in: components/shows/wizard-steps/
+
 - basic-info-step.tsx
 - dates-venue-step.tsx
 - settings-step.tsx
@@ -176,15 +191,18 @@ Wizard steps in: components/shows/wizard-steps/
 Create show detail page with tabs:
 
 **Overview Tab (ShowDashboard)**:
+
 - Show header with title, type, status badge
 - Key dates section
 - Cast progress (X/Y roles filled - placeholder for future casting)
 - Quick actions: Edit Show, Add Role, View Auditions (future)
 
 **Roles Tab**:
+
 - Use RoleList component from Task 8
 
 **Settings Tab (ShowSettings)**:
+
 - Edit all show fields (inline or modal)
 - Delete show with confirmation dialog
 - Duplicate show button
@@ -198,17 +216,20 @@ Create show detail page with tabs:
 Create role management UI:
 
 **RoleList**:
+
 - Drag-and-drop sortable list (use @dnd-kit/sortable or similar)
 - "Add Role" button at bottom
 - Empty state
 
 **RoleCard**:
+
 - Role name, type badge
 - Character details (age range, vocal range)
 - Position count indicator
 - Edit/Delete actions
 
 **RoleForm**:
+
 - Name input (required)
 - Role type select (Lead, Supporting, Ensemble, Understudy, Swing)
 - Description textarea
@@ -218,24 +239,27 @@ Create role management UI:
 - Position count number input
 
 **RoleFormDialog**:
+
 - Modal wrapper for RoleForm
 - Create/Edit modes
 
 ### Task 9: Tests
 
 **Complexity**: medium
-**Files**: lib/validations/__tests__/shows.test.ts, components/shows/__tests__/
+**Files**: lib/validations/**tests**/shows.test.ts, components/shows/**tests**/
 
 **Task**:
 Write tests following existing patterns:
 
-**Validation tests** (lib/validations/__tests__/shows.test.ts):
+**Validation tests** (lib/validations/**tests**/shows.test.ts):
+
 - showCreateSchema validation
 - showUpdateSchema partial updates
 - roleCreateSchema validation
 - Edge cases (empty strings, invalid dates, etc.)
 
 **Component tests** (if time permits):
+
 - ShowCard renders correctly
 - RoleForm validation
 - Wizard navigation
@@ -256,7 +280,7 @@ Write tests following existing patterns:
 
 ### Unit Tests
 
-- **Validations**: Test all schema validations in lib/validations/__tests__/shows.test.ts
+- **Validations**: Test all schema validations in lib/validations/**tests**/shows.test.ts
 - **Coverage**: Aim for 80%+ on validation schemas
 
 ### Integration Tests

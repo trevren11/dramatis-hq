@@ -37,8 +37,8 @@ export function RoleCard({
   const roleType = ROLE_TYPE_OPTIONS.find((t) => t.value === role.type);
 
   const ageRange =
-    role.ageRangeMin || role.ageRangeMax
-      ? `${role.ageRangeMin ?? "?"}-${role.ageRangeMax ?? "?"}`
+    role.ageRangeMin != null || role.ageRangeMax != null
+      ? `${String(role.ageRangeMin ?? "?")}-${String(role.ageRangeMax ?? "?")}`
       : null;
 
   return (
@@ -82,7 +82,7 @@ export function RoleCard({
           </div>
 
           {role.description && (
-            <p className="text-muted-foreground mt-1 text-sm line-clamp-2">{role.description}</p>
+            <p className="text-muted-foreground mt-1 line-clamp-2 text-sm">{role.description}</p>
           )}
 
           <div className="text-muted-foreground mt-2 flex flex-wrap gap-3 text-xs">
