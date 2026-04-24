@@ -8,3 +8,4 @@ export * from "./skills";
 export * from "./headshots";
 export * from "./documents";
 export * from "./calendar";
+export * from "./messages";

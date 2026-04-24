@@ -16,6 +16,12 @@ export default function DashboardLayout({
           </Link>
           <div className="flex items-center gap-4">
             <Link
+              href="/messages"
+              className="text-muted-foreground hover:text-foreground text-sm font-medium"
+            >
+              Messages
+            </Link>
+            <Link
               href="/talent/calendar"
               className="text-muted-foreground hover:text-foreground text-sm font-medium"
             >
