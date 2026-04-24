@@ -1,18 +1,6 @@
-import {
-  pgTable,
-  uuid,
-  varchar,
-  timestamp,
-  pgEnum,
-  text,
-  index,
-} from "drizzle-orm/pg-core";
+import { pgTable, uuid, varchar, timestamp, pgEnum, text, index } from "drizzle-orm/pg-core";
 
-export const userTypeEnum = pgEnum("user_type", [
-  "talent",
-  "producer",
-  "admin",
-]);
+export const userTypeEnum = pgEnum("user_type", ["talent", "producer", "admin"]);
 
 export const users = pgTable(
   "users",
@@ -31,7 +19,7 @@ export const users = pgTable(
   (table) => [
     index("users_email_idx").on(table.email),
     index("users_user_type_idx").on(table.userType),
-  ],
+  ]
 );
 
 export const accounts = pgTable(
@@ -54,7 +42,7 @@ export const accounts = pgTable(
     idToken: text("id_token"),
     sessionState: varchar("session_state", { length: 255 }),
   },
-  (table) => [index("accounts_user_id_idx").on(table.userId)],
+  (table) => [index("accounts_user_id_idx").on(table.userId)]
 );
 
 export const sessions = pgTable(
@@ -67,7 +55,7 @@ export const sessions = pgTable(
       .notNull(),
     expires: timestamp("expires", { mode: "date" }).notNull(),
   },
-  (table) => [index("sessions_user_id_idx").on(table.userId)],
+  (table) => [index("sessions_user_id_idx").on(table.userId)]
 );
 
 export const verificationTokens = pgTable("verification_tokens", {

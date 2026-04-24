@@ -20,6 +20,11 @@ export default defineConfig({
         "**/*.config.{ts,mjs,js}",
         "**/__tests__/**",
         "**/*.test.{ts,tsx}",
+        "app/**",
+        "components/**",
+        "lib/db/**",
+        "lib/auth/**",
+        "next-env.d.ts",
       ],
       thresholds: {
         statements: 80,

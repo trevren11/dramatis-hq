@@ -16,9 +16,7 @@ export default function LoginPage(): React.ReactElement {
     <Card className="w-full max-w-md">
       <CardHeader className="text-center">
         <CardTitle className="text-2xl">Welcome Back</CardTitle>
-        <CardDescription>
-          Sign in to your account to continue
-        </CardDescription>
+        <CardDescription>Sign in to your account to continue</CardDescription>
       </CardHeader>
       <CardContent>
         <form className="space-y-4">
@@ -26,31 +24,18 @@ export default function LoginPage(): React.ReactElement {
             <label htmlFor="email" className="text-sm font-medium">
               Email
             </label>
-            <Input
-              id="email"
-              type="email"
-              placeholder="you@example.com"
-              required
-            />
+            <Input id="email" type="email" placeholder="you@example.com" required />
           </div>
           <div className="space-y-2">
             <div className="flex items-center justify-between">
               <label htmlFor="password" className="text-sm font-medium">
                 Password
               </label>
-              <Link
-                href="/forgot-password"
-                className="text-sm text-primary hover:underline"
-              >
+              <Link href="/forgot-password" className="text-primary text-sm hover:underline">
                 Forgot password?
               </Link>
             </div>
-            <Input
-              id="password"
-              type="password"
-              placeholder="Enter your password"
-              required
-            />
+            <Input id="password" type="password" placeholder="Enter your password" required />
           </div>
           <Button type="submit" className="w-full">
             Sign In
@@ -59,12 +44,10 @@ export default function LoginPage(): React.ReactElement {
 
         <div className="relative my-6">
           <div className="absolute inset-0 flex items-center">
-            <div className="w-full border-t border-border" />
+            <div className="border-border w-full border-t" />
           </div>
           <div className="relative flex justify-center text-xs uppercase">
-            <span className="bg-card px-2 text-muted-foreground">
-              Or continue with
-            </span>
+            <span className="bg-card text-muted-foreground px-2">Or continue with</span>
           </div>
         </div>
 
@@ -90,9 +73,9 @@ export default function LoginPage(): React.ReactElement {
           Continue with Google
         </Button>
 
-        <p className="mt-6 text-center text-sm text-muted-foreground">
+        <p className="text-muted-foreground mt-6 text-center text-sm">
           Don&apos;t have an account?{" "}
-          <Link href="/signup" className="font-medium text-primary hover:underline">
+          <Link href="/signup" className="text-primary font-medium hover:underline">
             Sign up
           </Link>
         </p>

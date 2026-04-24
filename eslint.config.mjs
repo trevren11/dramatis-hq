@@ -47,26 +47,35 @@ export default tseslint.config(
       ...reactHooksPlugin.configs.recommended.rules,
       ...nextPlugin.configs.recommended.rules,
       ...nextPlugin.configs["core-web-vitals"].rules,
-      
-      "complexity": ["error", 15],
+
+      complexity: ["error", 15],
       "max-depth": ["error", 4],
       "max-lines": ["error", { max: 300, skipBlankLines: true, skipComments: true }],
       "max-params": ["error", 4],
-      
+
       "@typescript-eslint/no-explicit-any": "error",
-      "@typescript-eslint/explicit-function-return-type": ["error", { 
-        allowExpressions: true,
-        allowTypedFunctionExpressions: true,
-        allowHigherOrderFunctions: true,
-      }],
-      "@typescript-eslint/no-unused-vars": ["error", { 
-        argsIgnorePattern: "^_",
-        varsIgnorePattern: "^_",
-      }],
-      "@typescript-eslint/consistent-type-imports": ["error", {
-        prefer: "type-imports",
-      }],
-      
+      "@typescript-eslint/explicit-function-return-type": [
+        "error",
+        {
+          allowExpressions: true,
+          allowTypedFunctionExpressions: true,
+          allowHigherOrderFunctions: true,
+        },
+      ],
+      "@typescript-eslint/no-unused-vars": [
+        "error",
+        {
+          argsIgnorePattern: "^_",
+          varsIgnorePattern: "^_",
+        },
+      ],
+      "@typescript-eslint/consistent-type-imports": [
+        "error",
+        {
+          prefer: "type-imports",
+        },
+      ],
+
       "react/prop-types": "off",
       "react/react-in-jsx-scope": "off",
     },
