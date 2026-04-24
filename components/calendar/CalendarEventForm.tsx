@@ -3,13 +3,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import {
-  Modal,
-  ModalContent,
-  ModalHeader,
-  ModalTitle,
-  ModalFooter,
-} from "@/components/ui/modal";
+import { Modal, ModalContent, ModalHeader, ModalTitle, ModalFooter } from "@/components/ui/modal";
 import { useToast } from "@/components/ui/use-toast";
 import { Loader2, Trash2 } from "lucide-react";
 import {
@@ -173,7 +167,12 @@ export function CalendarEventForm({
   };
 
   return (
-    <Modal open={true} onOpenChange={(open) => { if (!open) onClose(); }}>
+    <Modal
+      open={true}
+      onOpenChange={(open) => {
+        if (!open) onClose();
+      }}
+    >
       <ModalContent>
         <ModalHeader>
           <ModalTitle>{mode === "edit" ? "Edit Availability" : "Add Availability"}</ModalTitle>
@@ -188,7 +187,9 @@ export function CalendarEventForm({
                 <button
                   key={status}
                   type="button"
-                  onClick={() => { setFormData({ ...formData, status }); }}
+                  onClick={() => {
+                    setFormData({ ...formData, status });
+                  }}
                   className={`flex-1 rounded-lg border-2 px-3 py-2 text-sm font-medium transition-colors ${
                     formData.status === status
                       ? "border-current"
@@ -214,7 +215,9 @@ export function CalendarEventForm({
             <label className="text-sm font-medium">Title (optional)</label>
             <Input
               value={formData.title}
-              onChange={(e) => { setFormData({ ...formData, title: e.target.value }); }}
+              onChange={(e) => {
+                setFormData({ ...formData, title: e.target.value });
+              }}
               placeholder="e.g., Vacation, Rehearsal conflict..."
             />
           </div>
@@ -226,7 +229,9 @@ export function CalendarEventForm({
               <Input
                 type="date"
                 value={formData.startDate}
-                onChange={(e) => { setFormData({ ...formData, startDate: e.target.value }); }}
+                onChange={(e) => {
+                  setFormData({ ...formData, startDate: e.target.value });
+                }}
               />
             </div>
             <div className="space-y-2">
@@ -234,7 +239,9 @@ export function CalendarEventForm({
               <Input
                 type="date"
                 value={formData.endDate}
-                onChange={(e) => { setFormData({ ...formData, endDate: e.target.value }); }}
+                onChange={(e) => {
+                  setFormData({ ...formData, endDate: e.target.value });
+                }}
               />
             </div>
           </div>
@@ -244,7 +251,9 @@ export function CalendarEventForm({
             <label className="text-sm font-medium">Repeat</label>
             <select
               value={formData.recurrencePattern}
-              onChange={(e) => { setFormData({ ...formData, recurrencePattern: e.target.value }); }}
+              onChange={(e) => {
+                setFormData({ ...formData, recurrencePattern: e.target.value });
+              }}
               className="border-input bg-background flex h-10 w-full rounded-lg border px-3 py-2 text-sm"
             >
               {RECURRENCE_PATTERNS.map((pattern) => (
@@ -261,7 +270,9 @@ export function CalendarEventForm({
               <Input
                 type="date"
                 value={formData.recurrenceEndDate}
-                onChange={(e) => { setFormData({ ...formData, recurrenceEndDate: e.target.value }); }}
+                onChange={(e) => {
+                  setFormData({ ...formData, recurrenceEndDate: e.target.value });
+                }}
               />
             </div>
           )}
@@ -271,7 +282,9 @@ export function CalendarEventForm({
             <label className="text-sm font-medium">Notes</label>
             <textarea
               value={formData.notes}
-              onChange={(e) => { setFormData({ ...formData, notes: e.target.value }); }}
+              onChange={(e) => {
+                setFormData({ ...formData, notes: e.target.value });
+              }}
               placeholder="Additional details..."
               className="border-input bg-background focus-visible:ring-ring flex min-h-[80px] w-full rounded-lg border px-3 py-2 text-sm focus-visible:ring-2 focus-visible:outline-none"
             />
