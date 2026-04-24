@@ -36,7 +36,9 @@ export function BasicInfoStep({ data, onUpdate }: Props): React.ReactElement {
         <Input
           id="companyName"
           value={data.companyName ?? ""}
-          onChange={(e) => handleNameChange(e.target.value)}
+          onChange={(e) => {
+            handleNameChange(e.target.value);
+          }}
           placeholder="Your Production Company"
         />
       </div>
@@ -48,7 +50,9 @@ export function BasicInfoStep({ data, onUpdate }: Props): React.ReactElement {
           <Input
             id="slug"
             value={data.slug ?? ""}
-            onChange={(e) => onUpdate({ slug: e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, "") })}
+            onChange={(e) => {
+              onUpdate({ slug: e.target.value.toLowerCase().replace(/[^a-z0-9-]/g, "") });
+            }}
             placeholder="your-company"
             className="flex-1"
           />
@@ -63,7 +67,9 @@ export function BasicInfoStep({ data, onUpdate }: Props): React.ReactElement {
         <textarea
           id="description"
           value={data.description ?? ""}
-          onChange={(e) => onUpdate({ description: e.target.value })}
+          onChange={(e) => {
+            onUpdate({ description: e.target.value });
+          }}
           placeholder="Tell us about your production company, your mission, and the types of productions you create..."
           className="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex min-h-[120px] w-full rounded-md border px-3 py-2 text-sm focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
         />

@@ -18,7 +18,9 @@ export function DetailsStep({ data, onUpdate }: Props): React.ReactElement {
         <Input
           id="location"
           value={data.location ?? ""}
-          onChange={(e) => onUpdate({ location: e.target.value })}
+          onChange={(e) => {
+            onUpdate({ location: e.target.value });
+          }}
           placeholder="New York, NY"
         />
       </div>
@@ -29,7 +31,9 @@ export function DetailsStep({ data, onUpdate }: Props): React.ReactElement {
           id="website"
           type="url"
           value={data.website ?? ""}
-          onChange={(e) => onUpdate({ website: e.target.value })}
+          onChange={(e) => {
+            onUpdate({ website: e.target.value });
+          }}
           placeholder="https://www.yourcompany.com"
         />
       </div>
@@ -39,7 +43,9 @@ export function DetailsStep({ data, onUpdate }: Props): React.ReactElement {
         <select
           id="unionStatus"
           value={data.unionStatus ?? ""}
-          onChange={(e) => onUpdate({ unionStatus: e.target.value as CompanyProfile["unionStatus"] })}
+          onChange={(e) => {
+            onUpdate({ unionStatus: e.target.value as CompanyProfile["unionStatus"] });
+          }}
           className="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex h-10 w-full rounded-md border px-3 py-2 text-sm focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
         >
           <option value="">Select union status...</option>
@@ -58,7 +64,9 @@ export function DetailsStep({ data, onUpdate }: Props): React.ReactElement {
             type="checkbox"
             id="isPublic"
             checked={data.isPublic ?? true}
-            onChange={(e) => onUpdate({ isPublic: e.target.checked })}
+            onChange={(e) => {
+              onUpdate({ isPublic: e.target.checked });
+            }}
             className="h-4 w-4 rounded border-gray-300"
           />
           <label htmlFor="isPublic" className="text-sm">
