@@ -1,4 +1,13 @@
-import { pgTable, uuid, varchar, timestamp, integer, boolean, text, index } from "drizzle-orm/pg-core";
+import {
+  pgTable,
+  uuid,
+  varchar,
+  timestamp,
+  integer,
+  boolean,
+  text,
+  index,
+} from "drizzle-orm/pg-core";
 import { producerProfiles } from "./producer-profiles";
 
 export const productionPhotos = pgTable(
