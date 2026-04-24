@@ -1,310 +1,301 @@
 <!-- IMPLEMENTATION_PLAN_START -->
 
-# Implementation Plan: [DRM-015] Show Management
+# Implementation Plan: DRM-017 Audition Announcements
 
 ## Overview
 
-Enable producers to create and manage theatrical productions/shows with role definitions, show dashboards, and production lifecycle management. This builds on the existing producer profile system to add show/production CRUD functionality.
+Build a complete audition announcement system enabling producers to create, publish, and manage auditions. Talent can discover, filter, and apply to auditions with their profile materials. This feature requires new database tables, API routes, and both public and authenticated UI components.
 
-## Repositories
+## Repository
 
-- **dramatis-hq**: All changes in single repository
-  - **Branch**: `dramatis-hq-15`
+- **dramatis-hq**: Full-stack Next.js application
+  - **Branch**: `trenshaw/dramatis-hq-17`
 
 ## Detailed Plan
 
-### Task 1: Database Schema for Shows and Roles
+### Phase 1: Database Schema
 
 **Complexity**: medium
-**Files**: lib/db/schema/shows.ts, lib/db/schema/roles.ts, lib/db/schema/index.ts
+**Files**: lib/db/schema/auditions.ts, lib/db/schema/index.ts
 
 **Task**:
-Create Drizzle ORM schemas for shows and roles:
+Create three new tables following existing patterns from shows.ts and roles.ts:
 
-**shows table:**
+1. **auditions table**
+   - id, showId, organizationId (foreign keys)
+   - title, description, slug (unique)
+   - location, isVirtual (boolean)
+   - auditionDates (jsonb array of date/time objects)
+   - submissionDeadline (timestamp)
+   - requirements (jsonb - union status, age range, gender, etc.)
+   - materials (jsonb - what applicants must submit)
+   - visibility enum: 'public' | 'private' | 'unlisted'
+   - publishAt (timestamp, nullable for immediate)
+   - status enum: 'draft' | 'open' | 'closed' | 'cancelled'
+   - createdAt, updatedAt
 
-- id (uuid, primary key)
-- organizationId (uuid, references producer_profiles)
-- title (varchar 255, required)
-- type (enum: musical, play, opera, dance, concert, other)
-- description (text)
-- venue (varchar 255)
-- rehearsalStart (timestamp)
-- performanceStart (timestamp)
-- performanceEnd (timestamp)
-- unionStatus (reuse unionStatusEnum from producer-profiles)
-- status (enum: planning, auditions, rehearsal, running, closed)
-- isPublic (boolean, default true)
-- createdAt, updatedAt (timestamps)
+2. **audition_roles junction table**
+   - auditionId, roleId (composite primary key)
+   - Links auditions to specific roles being cast
 
-**roles table:**
+3. **audition_applications table**
+   - id, auditionId, talentProfileId
+   - status enum: 'submitted' | 'reviewed' | 'callback' | 'rejected' | 'cast'
+   - materials (jsonb - uploaded files/links)
+   - notes (text - producer notes)
+   - submittedAt, reviewedAt (timestamps)
 
-- id (uuid, primary key)
-- showId (uuid, references shows, cascade delete)
-- name (varchar 255, required)
-- description (text)
-- type (enum: lead, supporting, ensemble, understudy, swing)
-- ageRangeMin, ageRangeMax (integer)
-- vocalRange (varchar 100)
-- notes (text)
-- positionCount (integer, default 1)
-- sortOrder (integer)
-- createdAt, updatedAt (timestamps)
+Add indexes on: auditionId, talentProfileId, status, slug, publishAt, submissionDeadline
 
-Add indexes on showId, organizationId, status, and isPublic.
+---
 
-### Task 2: Zod Validation Schemas
+### Phase 2: Validation Schemas
 
 **Complexity**: simple
-**Files**: lib/validations/shows.ts
+**Files**: lib/validations/auditions.ts
 
 **Task**:
-Create validation schemas following the pattern in lib/validations/company.ts:
+Create Zod schemas following patterns from shows.ts:
 
-- showCreateSchema (all required fields)
-- showUpdateSchema (partial, for edits)
-- roleCreateSchema
-- roleUpdateSchema
-- roleBulkCreateSchema (for adding multiple roles)
-- roleBulkUpdateSchema (for reordering)
+- auditionCreateSchema (for creating new auditions)
+- auditionUpdateSchema (for editing)
+- auditionSearchSchema (for filtering/browse)
+- applicationSubmitSchema (for talent applications)
 
-Include proper constraints matching the database schema (max lengths, enum values).
+Validate: required fields, date ordering (deadline before audition dates), slug format, materials structure.
 
-### Task 3: Show API Routes
+---
+
+### Phase 3: API Routes - Producer Side
 
 **Complexity**: medium
-**Files**: app/api/shows/route.ts, app/api/shows/[id]/route.ts, app/api/shows/[id]/duplicate/route.ts
+**Files**:
+
+- app/api/auditions/route.ts (GET list, POST create)
+- app/api/auditions/[id]/route.ts (GET, PUT, DELETE)
+- app/api/auditions/[id]/applications/route.ts (GET applications)
+- app/api/auditions/[id]/applications/[applicationId]/route.ts (PUT update status)
 
 **Task**:
-Create RESTful API endpoints:
+Following patterns from app/api/shows/route.ts:
 
-**GET /api/shows** - List shows for current producer
+1. **GET /api/auditions** - List producer's auditions with filters (status, showId)
+2. **POST /api/auditions** - Create new audition (requires producer profile)
+3. **GET /api/auditions/[id]** - Get audition details (producer view with applications)
+4. **PUT /api/auditions/[id]** - Update audition
+5. **DELETE /api/auditions/[id]** - Cancel/delete audition
+6. **GET /api/auditions/[id]/applications** - List applications with pagination
+7. **PUT /api/auditions/[id]/applications/[applicationId]** - Update application status
 
-- Filter by status (query param)
-- Search by title (query param)
-- Pagination support
+All routes verify producer owns the audition's organization.
 
-**POST /api/shows** - Create new show
+---
 
-- Validate with showCreateSchema
-- Set organizationId from authenticated user's producer profile
-
-**GET /api/shows/[id]** - Get show details
-
-- Include roles in response
-
-**PUT /api/shows/[id]** - Update show
-
-- Validate ownership
-
-**DELETE /api/shows/[id]** - Delete show (soft delete or hard with confirmation)
-
-**POST /api/shows/[id]/duplicate** - Duplicate show
-
-- Copy show and all roles
-- Reset status to "planning"
-- Append "(Copy)" to title
-
-### Task 4: Role API Routes
+### Phase 4: API Routes - Public/Talent Side
 
 **Complexity**: medium
-**Files**: app/api/shows/[id]/roles/route.ts, app/api/shows/[id]/roles/[roleId]/route.ts, app/api/shows/[id]/roles/reorder/route.ts
+**Files**:
+
+- app/api/auditions/browse/route.ts (public browse)
+- app/api/auditions/[slug]/public/route.ts (public audition page)
+- app/api/auditions/[id]/apply/route.ts (submit application)
+- app/api/talent/applications/route.ts (talent's applications)
 
 **Task**:
-Create role management endpoints:
 
-**GET /api/shows/[id]/roles** - List roles for a show
+1. **GET /api/auditions/browse** - Public listing with filters:
+   - location (with "near me" geocoding)
+   - dateRange
+   - unionStatus
+   - roleType
+   - search (title, company name)
+   - Pagination, only shows published & open auditions
 
-**POST /api/shows/[id]/roles** - Add role to show
+2. **GET /api/auditions/[slug]/public** - Public audition detail page
+   - Returns audition + show + organization info
+   - No auth required, but checks visibility
 
-**PUT /api/shows/[id]/roles/[roleId]** - Update role
+3. **POST /api/auditions/[id]/apply** - Submit application
+   - Requires talent profile
+   - Validates materials against audition requirements
+   - Checks deadline not passed
+   - Prevents duplicate applications
 
-**DELETE /api/shows/[id]/roles/[roleId]** - Delete role
+4. **GET /api/talent/applications** - Talent's submitted applications
+   - Status tracking across all applications
 
-**PUT /api/shows/[id]/roles/reorder** - Bulk update sortOrder for drag-and-drop
+---
 
-### Task 5: Show List Page
-
-**Complexity**: medium
-**Files**: app/(dashboard)/producer/shows/page.tsx, components/shows/ShowList.tsx, components/shows/ShowCard.tsx
-
-**Task**:
-Create the show list view:
-
-- Grid/list of ShowCard components
-- Status filter tabs (All, Planning, Auditions, Rehearsal, Running, Closed)
-- Search input for title filtering
-- "New Production" button
-- Empty state when no shows
-
-ShowCard should display:
-
-- Title and type
-- Status badge (color-coded)
-- Key dates (next upcoming date)
-- Quick stats (open roles / total roles)
-- Actions dropdown (Edit, Duplicate, Delete)
-
-### Task 6: Show Creation Wizard
+### Phase 5: Producer UI Components
 
 **Complexity**: complex
-**Files**: app/(dashboard)/producer/shows/new/page.tsx, components/shows/CreateShowWizard.tsx, components/shows/wizard-steps/
+**Files**:
+
+- components/auditions/AuditionList.tsx
+- components/auditions/AuditionCard.tsx
+- components/auditions/CreateAuditionWizard.tsx
+- components/auditions/AuditionSettings.tsx
+- components/auditions/ApplicationList.tsx
+- components/auditions/ApplicationCard.tsx
+- components/auditions/ApplicationReviewDialog.tsx
+- components/auditions/wizard-steps/ (4-5 step components)
+- components/auditions/index.ts
 
 **Task**:
-Create multi-step wizard following SetupWizard pattern:
+Following patterns from components/shows/:
 
-**Step 1: Basic Info**
+1. **AuditionList** - List view with filters, status badges, action menu
+2. **AuditionCard** - Summary card showing key details, applicant count
+3. **CreateAuditionWizard** - Multi-step form:
+   - Step 1: Select show, title, description
+   - Step 2: Dates, times, location
+   - Step 3: Select roles, requirements
+   - Step 4: Materials needed, instructions
+   - Step 5: Visibility, publish date, deadline
+4. **AuditionSettings** - Edit existing audition
+5. **ApplicationList** - Table/list of applications with sorting
+6. **ApplicationCard** - Application summary with talent info
+7. **ApplicationReviewDialog** - Review materials, update status, add notes
 
-- Title (required)
-- Show type dropdown
-- Description textarea
+---
 
-**Step 2: Dates & Venue**
-
-- Venue input
-- Rehearsal start date picker
-- Performance start/end date range picker
-
-**Step 3: Settings**
-
-- Union status (reuse component from company setup)
-- Visibility toggle (public/private)
-
-**Step 4: Review**
-
-- Summary of all fields
-- Submit button
-
-Wizard steps in: components/shows/wizard-steps/
-
-- basic-info-step.tsx
-- dates-venue-step.tsx
-- settings-step.tsx
-- review-step.tsx
-
-### Task 7: Show Detail/Edit Page
+### Phase 6: Public Audition Pages
 
 **Complexity**: medium
-**Files**: app/(dashboard)/producer/shows/[id]/page.tsx, components/shows/ShowDashboard.tsx, components/shows/ShowSettings.tsx
+**Files**:
+
+- app/auditions/page.tsx (browse page)
+- app/auditions/[slug]/page.tsx (detail page)
+- components/auditions/AuditionBrowse.tsx
+- components/auditions/AuditionFilters.tsx
+- components/auditions/AuditionPublicCard.tsx
+- components/auditions/AuditionDetail.tsx
 
 **Task**:
-Create show detail page with tabs:
 
-**Overview Tab (ShowDashboard)**:
+1. **Browse Page** (/auditions)
+   - Filter sidebar: location, date, union, role type
+   - Search bar
+   - Grid/list toggle
+   - Pagination
+   - Save/bookmark functionality
 
-- Show header with title, type, status badge
-- Key dates section
-- Cast progress (X/Y roles filled - placeholder for future casting)
-- Quick actions: Edit Show, Add Role, View Auditions (future)
+2. **Detail Page** (/auditions/[slug])
+   - Audition info, dates, location
+   - Roles being cast with descriptions
+   - Requirements and materials needed
+   - Company sidebar with logo, about
+   - Apply button (or login prompt)
+   - Share buttons
 
-**Roles Tab**:
+---
 
-- Use RoleList component from Task 8
-
-**Settings Tab (ShowSettings)**:
-
-- Edit all show fields (inline or modal)
-- Delete show with confirmation dialog
-- Duplicate show button
-
-### Task 8: Role Management Components
-
-**Complexity**: complex
-**Files**: components/shows/RoleList.tsx, components/shows/RoleCard.tsx, components/shows/RoleForm.tsx, components/shows/RoleFormDialog.tsx
-
-**Task**:
-Create role management UI:
-
-**RoleList**:
-
-- Drag-and-drop sortable list (use @dnd-kit/sortable or similar)
-- "Add Role" button at bottom
-- Empty state
-
-**RoleCard**:
-
-- Role name, type badge
-- Character details (age range, vocal range)
-- Position count indicator
-- Edit/Delete actions
-
-**RoleForm**:
-
-- Name input (required)
-- Role type select (Lead, Supporting, Ensemble, Understudy, Swing)
-- Description textarea
-- Age range inputs (min/max)
-- Vocal range input
-- Notes textarea
-- Position count number input
-
-**RoleFormDialog**:
-
-- Modal wrapper for RoleForm
-- Create/Edit modes
-
-### Task 9: Tests
+### Phase 7: Talent Application Flow
 
 **Complexity**: medium
-**Files**: lib/validations/**tests**/shows.test.ts, components/shows/**tests**/
+**Files**:
+
+- components/auditions/ApplyDialog.tsx
+- components/auditions/ApplicationForm.tsx
+- components/auditions/ApplicationStatus.tsx
+- app/(dashboard)/talent/applications/page.tsx
 
 **Task**:
-Write tests following existing patterns:
 
-**Validation tests** (lib/validations/**tests**/shows.test.ts):
+1. **ApplyDialog** - Modal opened from audition detail:
+   - Shows current profile completeness
+   - Validates required materials are available
+   - Upload additional materials if needed
+   - Fill custom questions
+   - Review before submit
 
-- showCreateSchema validation
-- showUpdateSchema partial updates
-- roleCreateSchema validation
-- Edge cases (empty strings, invalid dates, etc.)
+2. **ApplicationForm** - Main form component:
+   - Auto-fills from talent profile (headshot, resume)
+   - Dynamic fields based on audition requirements
+   - File upload for requested materials
+   - Confirm submission
 
-**Component tests** (if time permits):
+3. **ApplicationStatus** - Status display component:
+   - Badge for current status
+   - Timeline of status changes
+   - Any producer notes shared
 
-- ShowCard renders correctly
-- RoleForm validation
-- Wizard navigation
+4. **Talent Applications Page** - Dashboard view:
+   - List all applications
+   - Filter by status
+   - Quick view of audition details
+   - Status tracking
+
+---
+
+### Phase 8: Dashboard Integration
+
+**Complexity**: simple
+**Files**:
+
+- app/(dashboard)/producer/auditions/page.tsx
+- app/(dashboard)/producer/auditions/[id]/page.tsx
+- app/(dashboard)/producer/auditions/create/page.tsx
+- components/layout/ProducerNav.tsx (add auditions link)
+
+**Task**:
+
+1. Add "Auditions" section to producer dashboard navigation
+2. Create page routes for audition management:
+   - /producer/auditions - List all auditions
+   - /producer/auditions/create - Create wizard
+   - /producer/auditions/[id] - Manage specific audition & applications
+
+---
 
 ## Implementation Order
 
-1. **Database Schema (Task 1)** - Foundation for all other tasks
-2. **Validations (Task 2)** - Required by API routes
-3. **Show API (Task 3)** - Core CRUD endpoints
-4. **Role API (Task 4)** - Depends on show API
-5. **Show List Page (Task 5)** - First visible UI
-6. **Show Creation Wizard (Task 6)** - Create flow
-7. **Show Detail Page (Task 7)** - View/edit existing
-8. **Role Management (Task 8)** - Complete the feature
-9. **Tests (Task 9)** - Validate implementation
+1. **Database Schema** - Foundation for all other work
+2. **Validation Schemas** - Needed by API routes
+3. **API Routes (Producer)** - Core CRUD operations
+4. **API Routes (Public/Talent)** - Browse and apply functionality
+5. **Producer UI Components** - Create and manage auditions
+6. **Public Pages** - Browse and detail pages
+7. **Talent Application Flow** - Apply and track
+8. **Dashboard Integration** - Wire everything together
 
 ## Testing Requirements
 
 ### Unit Tests
 
-- **Validations**: Test all schema validations in lib/validations/**tests**/shows.test.ts
-- **Coverage**: Aim for 80%+ on validation schemas
+- **lib/**tests**/auditions/**: Test validation schemas, slug generation
+- **lib/**tests**/auditions/deadline.test.ts**: Deadline enforcement logic
 
 ### Integration Tests
 
-- API route tests using existing patterns (if test utils available)
+- API route tests for all endpoints
+- Auth/permission tests (producer owns audition, talent can apply)
+- Deadline enforcement (can't apply after deadline)
+- Visibility rules (private vs public)
+
+### E2E Tests (Playwright)
+
+- Producer creates audition flow
+- Talent browses and applies flow
+- Producer reviews applications flow
+- Application status updates
 
 ### Manual Testing
 
-1. Create a new show with all fields
-2. Edit show details
-3. Add multiple roles with drag-and-drop reorder
-4. Delete a role
-5. Duplicate a show
-6. Filter shows by status
-7. Search shows by title
-8. Delete a show
-9. Verify public/private visibility
+- Create audition with all fields
+- Verify public page displays correctly
+- Test all filter combinations on browse
+- Submit application with various materials
+- Review application and change status
 
 ## Risks and Considerations
 
-- **Drag-and-drop library**: Need to choose and install a DnD library (@dnd-kit recommended for React 18+)
-- **Date handling**: Ensure consistent timezone handling for performance dates
-- **Cascade deletes**: Deleting a show should delete all roles (handled by DB cascade)
-- **Producer profile required**: User must have producer profile before creating shows
-- **Future integration**: Leave room for casting/auditions integration (keep role model flexible)
+- **Slug uniqueness**: Generate slugs from title, handle conflicts with suffix
+- **Geocoding for "near me"**: May need external API (Google Places) for location filtering
+- **File uploads**: Reuse existing upload infrastructure from documents/headshots
+- **Deadline timezone**: Store in UTC, display in user's timezone
+- **Partial profiles**: Talent may not have all required materials - show completion prompts
+- **Concurrent applications**: Handle race conditions in application submission
+- **SEO**: Public audition pages should have proper meta tags for discoverability
 
 <!-- IMPLEMENTATION_PLAN_END -->
