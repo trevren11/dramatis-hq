@@ -9,6 +9,7 @@ import {
   index,
   pgEnum,
   primaryKey,
+  integer,
 } from "drizzle-orm/pg-core";
 import { producerProfiles } from "./producer-profiles";
 import { shows } from "./shows";
@@ -36,6 +37,8 @@ export const applicationStatusEnum = pgEnum("application_status", [
   "rejected",
   "cast",
 ]);
+
+export const checkinStatusEnum = pgEnum("checkin_status", ["checked_in", "in_room", "completed"]);
 
 // Types for JSONB fields
 export interface AuditionDate {
@@ -77,6 +80,31 @@ export interface ApplicationMaterials {
   audioUrl?: string;
   customResponses?: Record<string, string>;
 }
+
+// Form Builder types
+export const FORM_FIELD_TYPES = [
+  "text",
+  "textarea",
+  "select",
+  "multiselect",
+  "boolean",
+  "date",
+  "file",
+] as const;
+
+export type FormFieldType = (typeof FORM_FIELD_TYPES)[number];
+
+export interface FormField {
+  id: string;
+  type: FormFieldType;
+  label: string;
+  required: boolean;
+  options?: string[]; // for select/multiselect
+  profileMapping?: string; // auto-fill from profile field
+  placeholder?: string;
+}
+
+export type FormResponses = Record<string, string | string[] | boolean | null>;
 
 // Main auditions table
 export const auditions = pgTable(
@@ -174,6 +202,48 @@ export const auditionApplications = pgTable(
   ]
 );
 
+// Form builder - custom audition forms
+export const auditionForms = pgTable(
+  "audition_forms",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    auditionId: uuid("audition_id")
+      .references(() => auditions.id, { onDelete: "cascade" })
+      .notNull()
+      .unique(), // One form per audition
+    fields: jsonb("fields").$type<FormField[]>().default([]),
+    createdAt: timestamp("created_at", { mode: "date" }).defaultNow().notNull(),
+    updatedAt: timestamp("updated_at", { mode: "date" }).defaultNow().notNull(),
+  },
+  (table) => [index("audition_forms_audition_id_idx").on(table.auditionId)]
+);
+
+// Form responses and check-in tracking
+export const auditionFormResponses = pgTable(
+  "audition_form_responses",
+  {
+    id: uuid("id").primaryKey().defaultRandom(),
+    auditionId: uuid("audition_id")
+      .references(() => auditions.id, { onDelete: "cascade" })
+      .notNull(),
+    talentProfileId: uuid("talent_profile_id")
+      .references(() => talentProfiles.id, { onDelete: "cascade" })
+      .notNull(),
+    responses: jsonb("responses").$type<FormResponses>().default({}),
+    checkedInAt: timestamp("checked_in_at", { mode: "date" }),
+    queueNumber: integer("queue_number"),
+    status: checkinStatusEnum("status").default("checked_in"),
+    createdAt: timestamp("created_at", { mode: "date" }).defaultNow().notNull(),
+  },
+  (table) => [
+    index("audition_form_responses_audition_id_idx").on(table.auditionId),
+    index("audition_form_responses_talent_profile_id_idx").on(table.talentProfileId),
+    index("audition_form_responses_status_idx").on(table.status),
+    index("audition_form_responses_queue_number_idx").on(table.queueNumber),
+    index("audition_form_responses_checked_in_at_idx").on(table.checkedInAt),
+  ]
+);
+
 // Type exports
 export type Audition = typeof auditions.$inferSelect;
 export type NewAudition = typeof auditions.$inferInsert;
@@ -181,6 +251,10 @@ export type AuditionRole = typeof auditionRoles.$inferSelect;
 export type NewAuditionRole = typeof auditionRoles.$inferInsert;
 export type AuditionApplication = typeof auditionApplications.$inferSelect;
 export type NewAuditionApplication = typeof auditionApplications.$inferInsert;
+export type AuditionForm = typeof auditionForms.$inferSelect;
+export type NewAuditionForm = typeof auditionForms.$inferInsert;
+export type AuditionFormResponse = typeof auditionFormResponses.$inferSelect;
+export type NewAuditionFormResponse = typeof auditionFormResponses.$inferInsert;
 
 // Option constants for UI
 export const AUDITION_VISIBILITY_OPTIONS = [
@@ -215,3 +289,11 @@ export const APPLICATION_STATUS_VALUES = [
   "rejected",
   "cast",
 ] as const;
+
+export const CHECKIN_STATUS_OPTIONS = [
+  { value: "checked_in", label: "Checked In" },
+  { value: "in_room", label: "In Room" },
+  { value: "completed", label: "Completed" },
+] as const;
+
+export const CHECKIN_STATUS_VALUES = ["checked_in", "in_room", "completed"] as const;
