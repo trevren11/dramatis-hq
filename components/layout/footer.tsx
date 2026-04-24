@@ -39,7 +39,10 @@ export function Footer({ className }: FooterProps): React.ReactElement {
                 </Link>
               </li>
               <li>
-                <Link href="/talent/applications" className="hover:text-foreground transition-colors">
+                <Link
+                  href="/talent/applications"
+                  className="hover:text-foreground transition-colors"
+                >
                   Applications
                 </Link>
               </li>

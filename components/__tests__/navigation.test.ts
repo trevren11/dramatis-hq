@@ -1,6 +1,5 @@
 import { describe, it, expect } from "vitest";
-import { talentNavItems } from "@/lib/navigation/talent-nav";
-import { producerNavItems } from "@/lib/navigation/producer-nav";
+import { talentNavItems, producerNavItems } from "@/lib/navigation";
 
 describe("talentNavItems", () => {
   it("contains dashboard as first item", () => {

@@ -84,7 +84,7 @@ export function Sidebar({
               <React.Fragment key={item.href}>
                 <NavItemComponent item={item} isActive={pathname === item.href} />
                 {item.children && (
-                  <div className="ml-4 mt-1 space-y-1">
+                  <div className="mt-1 ml-4 space-y-1">
                     {item.children.map((child) => (
                       <NavItemComponent
                         key={child.href}
