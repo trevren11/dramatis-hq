@@ -115,6 +115,9 @@ export async function POST(request: Request): Promise<NextResponse> {
 
     if (!skill) {
       const [created] = await db.insert(skills).values(parsed.data).returning();
+      if (!created) {
+        return NextResponse.json({ error: "Failed to create skill" }, { status: 500 });
+      }
       skill = created;
     }
 
