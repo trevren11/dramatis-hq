@@ -3,7 +3,7 @@ import { NextResponse } from "next/server";
 
 const publicRoutes = ["/", "/login", "/signup", "/forgot-password", "/reset-password"];
 const authRoutes = ["/login", "/signup", "/forgot-password", "/reset-password"];
-const talentOnlyRoutes = ["/profile", "/auditions"];
+const talentOnlyRoutes = ["/profile", "/auditions", "/talent"];
 const producerOnlyRoutes = ["/dashboard", "/projects", "/casting"];
 
 export default auth((req) => {
@@ -18,6 +18,7 @@ export default auth((req) => {
     (route) => nextUrl.pathname === route || nextUrl.pathname.startsWith("/signup/")
   );
   const isApiAuthRoute = nextUrl.pathname.startsWith("/api/auth");
+  const isApiTalentRoute = nextUrl.pathname.startsWith("/api/talent");
   const isTalentOnlyRoute = talentOnlyRoutes.some((route) => nextUrl.pathname.startsWith(route));
   const isProducerOnlyRoute = producerOnlyRoutes.some((route) =>
     nextUrl.pathname.startsWith(route)
@@ -25,6 +26,11 @@ export default auth((req) => {
 
   // Allow API auth routes
   if (isApiAuthRoute) {
+    return NextResponse.next();
+  }
+
+  // Allow API talent routes for authenticated users (auth check happens in the route handlers)
+  if (isApiTalentRoute) {
     return NextResponse.next();
   }
 
