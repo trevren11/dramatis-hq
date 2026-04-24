@@ -37,7 +37,9 @@ export function UnionsStep({ data, onUpdate }: UnionsStepProps): React.ReactElem
             <input
               type="checkbox"
               checked={selectedUnions.includes(union.value)}
-              onChange={() => { toggleUnion(union.value); }}
+              onChange={() => {
+                toggleUnion(union.value);
+              }}
               className="text-primary focus:ring-primary h-4 w-4 rounded border-gray-300"
             />
             <span className="font-medium">{union.label}</span>

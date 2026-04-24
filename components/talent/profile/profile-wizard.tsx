@@ -78,7 +78,7 @@ export function ProfileWizard({ initialData }: ProfileWizardProps): React.ReactE
         });
 
         if (!response.ok) {
-          const errorData: ApiErrorResponse = await response.json() as ApiErrorResponse;
+          const errorData: ApiErrorResponse = (await response.json()) as ApiErrorResponse;
           setError(errorData.error ?? "Failed to create profile");
           return;
         }
@@ -134,9 +134,7 @@ export function ProfileWizard({ initialData }: ProfileWizardProps): React.ReactE
               </div>
               {index < STEPS.length - 1 && (
                 <div
-                  className={`mx-2 h-0.5 w-12 ${
-                    index < currentStep ? "bg-primary" : "bg-muted"
-                  }`}
+                  className={`mx-2 h-0.5 w-12 ${index < currentStep ? "bg-primary" : "bg-muted"}`}
                 />
               )}
             </div>

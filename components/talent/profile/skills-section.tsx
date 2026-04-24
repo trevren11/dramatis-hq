@@ -38,7 +38,9 @@ export function SkillsSection({ initialData }: SkillsSectionProps): React.ReactE
     };
 
     document.addEventListener("mousedown", handleClickOutside);
-    return () => { document.removeEventListener("mousedown", handleClickOutside); };
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
   }, []);
 
   useEffect(() => {
@@ -50,9 +52,11 @@ export function SkillsSection({ initialData }: SkillsSectionProps): React.ReactE
     const timer = setTimeout(() => {
       void (async () => {
         try {
-          const response = await fetch(`/api/talent/skills?search=${encodeURIComponent(searchQuery)}`);
+          const response = await fetch(
+            `/api/talent/skills?search=${encodeURIComponent(searchQuery)}`
+          );
           if (response.ok) {
-            const data: SkillsApiResponse = await response.json() as SkillsApiResponse;
+            const data: SkillsApiResponse = (await response.json()) as SkillsApiResponse;
             const existingIds = new Set(skills.map((s) => s.id));
             setSuggestions((data.skills ?? []).filter((s) => !existingIds.has(s.id)));
           }
@@ -62,7 +66,9 @@ export function SkillsSection({ initialData }: SkillsSectionProps): React.ReactE
       })();
     }, 300);
 
-    return () => { clearTimeout(timer); };
+    return () => {
+      clearTimeout(timer);
+    };
   }, [searchQuery, skills]);
 
   const addSkill = async (skill: Skill | { name: string; category: string }): Promise<void> => {
@@ -75,11 +81,11 @@ export function SkillsSection({ initialData }: SkillsSectionProps): React.ReactE
       });
 
       if (!response.ok) {
-        const errorData: SkillsApiResponse = await response.json() as SkillsApiResponse;
+        const errorData: SkillsApiResponse = (await response.json()) as SkillsApiResponse;
         throw new Error(errorData.error ?? "Failed to add skill");
       }
 
-      const data: SkillsApiResponse = await response.json() as SkillsApiResponse;
+      const data: SkillsApiResponse = (await response.json()) as SkillsApiResponse;
       if (data.skill) {
         setSkills([...skills, data.skill]);
       }
@@ -104,7 +110,7 @@ export function SkillsSection({ initialData }: SkillsSectionProps): React.ReactE
       const response = await fetch(`/api/talent/skills/${skillId}`, { method: "DELETE" });
 
       if (!response.ok) {
-        const errorData: SkillsApiResponse = await response.json() as SkillsApiResponse;
+        const errorData: SkillsApiResponse = (await response.json()) as SkillsApiResponse;
         throw new Error(errorData.error ?? "Failed to remove skill");
       }
 
@@ -134,15 +140,12 @@ export function SkillsSection({ initialData }: SkillsSectionProps): React.ReactE
       (!selectedCategory || cs.category === selectedCategory)
   );
 
-  const groupedSkills = skills.reduce<Record<string, Skill[]>>(
-    (acc, skill) => {
-      const category = skill.category;
-      acc[category] ??= [];
-      acc[category].push(skill);
-      return acc;
-    },
-    {}
-  );
+  const groupedSkills = skills.reduce<Record<string, Skill[]>>((acc, skill) => {
+    const category = skill.category;
+    acc[category] ??= [];
+    acc[category].push(skill);
+    return acc;
+  }, {});
 
   return (
     <Card id="skills">
@@ -160,7 +163,9 @@ export function SkillsSection({ initialData }: SkillsSectionProps): React.ReactE
                   setSearchQuery(e.target.value);
                   setShowSuggestions(true);
                 }}
-                onFocus={() => { setShowSuggestions(true); }}
+                onFocus={() => {
+                  setShowSuggestions(true);
+                }}
                 onKeyDown={handleKeyDown}
                 placeholder="Search or add a skill..."
                 disabled={isLoading}
@@ -185,7 +190,9 @@ export function SkillsSection({ initialData }: SkillsSectionProps): React.ReactE
             </div>
             <select
               value={selectedCategory ?? ""}
-              onChange={(e) => { setSelectedCategory(e.target.value || null); }}
+              onChange={(e) => {
+                setSelectedCategory(e.target.value || null);
+              }}
               className="border-input bg-background rounded-lg border px-3 py-2 text-sm"
             >
               <option value="">All Categories</option>

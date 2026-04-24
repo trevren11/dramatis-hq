@@ -1,12 +1,4 @@
-import {
-  pgTable,
-  uuid,
-  varchar,
-  timestamp,
-  pgEnum,
-  index,
-  primaryKey,
-} from "drizzle-orm/pg-core";
+import { pgTable, uuid, varchar, timestamp, pgEnum, index, primaryKey } from "drizzle-orm/pg-core";
 import { talentProfiles } from "./talent-profiles";
 
 export const skillCategoryEnum = pgEnum("skill_category", [

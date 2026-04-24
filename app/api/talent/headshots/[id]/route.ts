@@ -104,7 +104,10 @@ export async function DELETE(
       });
 
       if (firstHeadshot) {
-        await db.update(headshots).set({ isPrimary: true }).where(eq(headshots.id, firstHeadshot.id));
+        await db
+          .update(headshots)
+          .set({ isPrimary: true })
+          .where(eq(headshots.id, firstHeadshot.id));
       }
     }
 

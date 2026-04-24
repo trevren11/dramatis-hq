@@ -160,8 +160,8 @@ export function HeadshotsSection({ initialData }: HeadshotsSectionProps): React.
       <CardHeader>
         <CardTitle>Headshots</CardTitle>
         <CardDescription>
-          Upload up to {MAX_HEADSHOTS} headshots. Your primary headshot will be shown first in search
-          results.
+          Upload up to {MAX_HEADSHOTS} headshots. Your primary headshot will be shown first in
+          search results.
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-4">
@@ -182,7 +182,9 @@ export function HeadshotsSection({ initialData }: HeadshotsSectionProps): React.
             type="file"
             accept={ALLOWED_IMAGE_TYPES.join(",")}
             multiple
-            onChange={(e) => { void handleFileSelect(e); }}
+            onChange={(e) => {
+              void handleFileSelect(e);
+            }}
             className="hidden"
             disabled={headshots.length >= MAX_HEADSHOTS || isUploading}
           />
@@ -205,7 +207,10 @@ export function HeadshotsSection({ initialData }: HeadshotsSectionProps): React.
         {headshots.length > 0 && (
           <div className="grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
             {headshots.map((headshot) => (
-              <div key={headshot.id} className="group relative aspect-[3/4] overflow-hidden rounded-lg">
+              <div
+                key={headshot.id}
+                className="group relative aspect-[3/4] overflow-hidden rounded-lg"
+              >
                 <Image
                   src={headshot.thumbnailUrl ?? headshot.url}
                   alt="Headshot"
@@ -223,7 +228,9 @@ export function HeadshotsSection({ initialData }: HeadshotsSectionProps): React.
                     <Button
                       size="sm"
                       variant="secondary"
-                      onClick={() => { void setPrimary(headshot.id); }}
+                      onClick={() => {
+                        void setPrimary(headshot.id);
+                      }}
                       disabled={isLoading}
                     >
                       <Star className="mr-1 h-3 w-3" />
@@ -233,7 +240,9 @@ export function HeadshotsSection({ initialData }: HeadshotsSectionProps): React.
                   <Button
                     size="sm"
                     variant="destructive"
-                    onClick={() => { void deleteHeadshot(headshot.id); }}
+                    onClick={() => {
+                      void deleteHeadshot(headshot.id);
+                    }}
                     disabled={isLoading}
                   >
                     <Trash2 className="h-3 w-3" />
@@ -246,7 +255,8 @@ export function HeadshotsSection({ initialData }: HeadshotsSectionProps): React.
 
         {headshots.length === 0 && (
           <p className="text-muted-foreground py-4 text-center text-sm">
-            No headshots uploaded yet. Your headshots are essential for getting noticed by producers.
+            No headshots uploaded yet. Your headshots are essential for getting noticed by
+            producers.
           </p>
         )}
       </CardContent>
