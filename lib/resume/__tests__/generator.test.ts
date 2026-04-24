@@ -55,7 +55,9 @@ describe("Resume Generator", () => {
 
     it("should filter work history by selected IDs", async () => {
       const profile = createSampleProfile();
-      const selectedIds = [profile.workHistory[0].id];
+      const [firstWorkHistory] = profile.workHistory;
+      if (!firstWorkHistory) throw new Error("Expected work history item");
+      const selectedIds = [firstWorkHistory.id];
 
       const result = await generateResumePdf({
         profile,
@@ -68,7 +70,9 @@ describe("Resume Generator", () => {
 
     it("should filter education by selected IDs", async () => {
       const profile = createSampleProfile();
-      const selectedIds = [profile.education[0].id];
+      const [firstEducation] = profile.education;
+      if (!firstEducation) throw new Error("Expected education item");
+      const selectedIds = [firstEducation.id];
 
       const result = await generateResumePdf({
         profile,
@@ -81,7 +85,9 @@ describe("Resume Generator", () => {
 
     it("should filter skills by selected list", async () => {
       const profile = createSampleProfile();
-      const selectedSkills = [profile.skills[0], profile.skills[1]];
+      const [firstSkill, secondSkill] = profile.skills;
+      if (!firstSkill || !secondSkill) throw new Error("Expected skill items");
+      const selectedSkills = [firstSkill, secondSkill];
 
       const result = await generateResumePdf({
         profile,

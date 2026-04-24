@@ -60,13 +60,15 @@ export async function generateResumePdf(options: GenerateResumeOptions): Promise
   const filteredEducation = filterEducation(profile.education, selectedEducationIds);
   const filteredSkills = filterSkills(profile.skills, selectedSkills);
 
-  const resumeElement = TheatricalResume({
-    profile,
-    config,
-    selectedWorkHistory: filteredWorkHistory,
-    selectedEducation: filteredEducation,
-    selectedSkills: filteredSkills,
-  });
+  const resumeElement = (
+    <TheatricalResume
+      profile={profile}
+      config={config}
+      selectedWorkHistory={filteredWorkHistory}
+      selectedEducation={filteredEducation}
+      selectedSkills={filteredSkills}
+    />
+  );
 
   const buffer = await renderToBuffer(resumeElement);
 

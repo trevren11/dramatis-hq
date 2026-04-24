@@ -46,7 +46,7 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       selectedSkills,
     });
 
-    return new NextResponse(buffer, {
+    return new NextResponse(new Uint8Array(buffer), {
       status: 200,
       headers: {
         "Content-Type": contentType,
@@ -72,7 +72,7 @@ export async function GET(): Promise<NextResponse> {
       },
     });
 
-    return new NextResponse(buffer, {
+    return new NextResponse(new Uint8Array(buffer), {
       status: 200,
       headers: {
         "Content-Type": contentType,
