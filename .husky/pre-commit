@@ -1,4 +1,5 @@
 pnpm lint-staged
+pnpm format:check
 pnpm typecheck
 pnpm test
 # NOTE: Build check temporarily disabled due to pre-existing react-pdf/Next.js conflict
