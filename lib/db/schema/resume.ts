@@ -1,13 +1,4 @@
-import {
-  pgTable,
-  uuid,
-  varchar,
-  timestamp,
-  text,
-  boolean,
-  json,
-  index,
-} from "drizzle-orm/pg-core";
+import { pgTable, uuid, varchar, timestamp, text, boolean, json, index } from "drizzle-orm/pg-core";
 import { users } from "./users";
 
 export const talentProfiles = pgTable(
