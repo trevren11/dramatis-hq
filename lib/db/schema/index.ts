@@ -5,3 +5,4 @@ export * from "./work-history";
 export * from "./education";
 export * from "./skills";
 export * from "./headshots";
+export * from "./documents";
