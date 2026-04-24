@@ -52,6 +52,7 @@ const createMockProfile = (overrides: Partial<TalentProfile> = {}): TalentProfil
   isPublic: true,
   hideFromSearch: false,
   publicProfileSlug: "john-doe",
+  publicSections: null,
   createdAt: new Date(),
   updatedAt: new Date(),
   ...overrides,
