@@ -43,7 +43,7 @@ export async function GET(
     const format = url.searchParams.get("format") ?? "dataUrl";
 
     // Build check-in URL
-    const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:3000";
+    const baseUrl = process.env.NEXT_PUBLIC_APP_URL ?? "http://localhost:6767";
     const checkinUrl = `${baseUrl}/auditions/${audition.slug}/checkin`;
 
     // Generate QR code based on format
