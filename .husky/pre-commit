@@ -1,6 +1,23 @@
+# =============================================================================
+# PRE-COMMIT HOOK - DO NOT SKIP OR COMMENT OUT ANY CHECKS
+# =============================================================================
+#
+# CRITICAL: These checks MUST run before every commit. If a check fails:
+#   1. FIX THE ACTUAL ISSUE - do not comment out or skip the check
+#   2. If tests fail, fix the tests or the code causing failures
+#   3. If lint fails, fix the lint errors
+#   4. NEVER use --no-verify to bypass this hook
+#
+# The purpose of this hook is to catch issues BEFORE they reach CI.
+# Skipping checks here defeats the entire purpose and wastes CI resources.
+#
+# =============================================================================
+
 pnpm lint-staged
 pnpm format:check
 pnpm typecheck
-# NOTE: Tests temporarily skipped due to pre-existing React 19/testing-library compatibility issues
-# TODO: Fix test infrastructure - React.act and crypto module issues in test environment
-# pnpm test
+pnpm test
+
+# NOTE: Build check temporarily disabled due to pre-existing react-pdf/Next.js conflict
+# TODO: Fix Html component conflict during static page generation (see DRM-013)
+# pnpm build
