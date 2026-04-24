@@ -1,23 +1,24 @@
 @import "tailwindcss";
+@plugin "daisyui";
 
 @theme {
-  --color-primary: oklch(0.55 0.24 260);
-  --color-primary-foreground: oklch(0.98 0.01 260);
+  --color-primary: oklch(0.55 0.24 280);
+  --color-primary-foreground: oklch(0.98 0.01 280);
   --color-secondary: oklch(0.72 0.18 80);
   --color-secondary-foreground: oklch(0.25 0.05 80);
   --color-accent: oklch(0.65 0.22 340);
   --color-accent-foreground: oklch(0.98 0.01 340);
-  --color-muted: oklch(0.95 0.01 260);
-  --color-muted-foreground: oklch(0.55 0.02 260);
+  --color-muted: oklch(0.95 0.01 280);
+  --color-muted-foreground: oklch(0.55 0.02 280);
   --color-destructive: oklch(0.55 0.22 25);
   --color-destructive-foreground: oklch(0.98 0.01 25);
-  --color-background: oklch(0.99 0.005 260);
-  --color-foreground: oklch(0.15 0.02 260);
+  --color-background: oklch(0.99 0.005 280);
+  --color-foreground: oklch(0.15 0.02 280);
   --color-card: oklch(1 0 0);
-  --color-card-foreground: oklch(0.15 0.02 260);
-  --color-border: oklch(0.88 0.01 260);
-  --color-input: oklch(0.88 0.01 260);
-  --color-ring: oklch(0.55 0.24 260);
+  --color-card-foreground: oklch(0.15 0.02 280);
+  --color-border: oklch(0.88 0.01 280);
+  --color-input: oklch(0.88 0.01 280);
+  --color-ring: oklch(0.55 0.24 280);
 
   --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
   --font-heading: "Playfair Display", ui-serif, Georgia, serif;
@@ -26,6 +27,53 @@
   --radius-md: 0.5rem;
   --radius-lg: 0.75rem;
   --radius-xl: 1rem;
+}
+
+@plugin "daisyui" {
+  themes:
+    light --default,
+    dark,
+    dramatis;
+}
+
+@utility dramatis {
+  @layer components {
+    [data-theme="dramatis"] {
+      --p: 280 80% 45%;
+      --pf: 280 80% 35%;
+      --pc: 280 10% 98%;
+      --s: 45 90% 55%;
+      --sf: 45 90% 45%;
+      --sc: 45 20% 15%;
+      --a: 340 75% 55%;
+      --af: 340 75% 45%;
+      --ac: 340 10% 98%;
+      --n: 280 15% 20%;
+      --nf: 280 15% 15%;
+      --nc: 280 10% 90%;
+      --b1: 280 10% 99%;
+      --b2: 280 10% 96%;
+      --b3: 280 10% 92%;
+      --bc: 280 20% 15%;
+      --in: 220 90% 55%;
+      --inc: 220 10% 98%;
+      --su: 150 70% 45%;
+      --suc: 150 10% 98%;
+      --wa: 40 95% 50%;
+      --wac: 40 20% 15%;
+      --er: 0 75% 55%;
+      --erc: 0 10% 98%;
+      --rounded-btn: 0.5rem;
+      --rounded-box: 0.75rem;
+      --rounded-badge: 1rem;
+      --animation-btn: 0.2s;
+      --animation-input: 0.2s;
+      --btn-focus-scale: 0.98;
+      --border-btn: 1px;
+      --tab-border: 1px;
+      --tab-radius: 0.5rem;
+    }
+  }
 }
 
 @layer base {

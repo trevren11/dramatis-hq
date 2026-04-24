@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Toaster } from "@/components/ui/toaster";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -16,8 +17,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>): React.ReactElement {
   return (
-    <html lang="en">
-      <body className="min-h-screen">{children}</body>
+    <html lang="en" data-theme="dramatis">
+      <body className="min-h-screen">
+        {children}
+        <Toaster />
+      </body>
     </html>
   );
 }
