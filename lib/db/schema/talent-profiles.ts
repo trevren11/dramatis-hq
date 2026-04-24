@@ -118,6 +118,25 @@ export const talentProfiles = pgTable(
     isPublic: boolean("is_public").default(true),
     hideFromSearch: boolean("hide_from_search").default(false),
     publicProfileSlug: varchar("public_profile_slug", { length: 100 }).unique(),
+    publicSections: jsonb("public_sections")
+      .$type<{
+        basicInfo: boolean;
+        bio: boolean;
+        headshots: boolean;
+        workHistory: boolean;
+        education: boolean;
+        skills: boolean;
+        contact: boolean;
+      }>()
+      .default({
+        basicInfo: true,
+        bio: true,
+        headshots: true,
+        workHistory: true,
+        education: true,
+        skills: true,
+        contact: false,
+      }),
 
     createdAt: timestamp("created_at", { mode: "date" }).defaultNow().notNull(),
     updatedAt: timestamp("updated_at", { mode: "date" }).defaultNow().notNull(),
@@ -137,6 +156,26 @@ export const talentProfiles = pgTable(
 
 export type TalentProfile = typeof talentProfiles.$inferSelect;
 export type NewTalentProfile = typeof talentProfiles.$inferInsert;
+
+export interface PublicSections {
+  basicInfo: boolean;
+  bio: boolean;
+  headshots: boolean;
+  workHistory: boolean;
+  education: boolean;
+  skills: boolean;
+  contact: boolean;
+}
+
+export const DEFAULT_PUBLIC_SECTIONS: PublicSections = {
+  basicInfo: true,
+  bio: true,
+  headshots: true,
+  workHistory: true,
+  education: true,
+  skills: true,
+  contact: false,
+};
 
 export const HAIR_COLORS = [
   "black",
