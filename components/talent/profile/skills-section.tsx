@@ -14,6 +14,12 @@ interface SkillsSectionProps {
   initialData: Skill[];
 }
 
+interface SkillsApiResponse {
+  skill?: Skill;
+  skills?: Skill[];
+  error?: string;
+}
+
 export function SkillsSection({ initialData }: SkillsSectionProps): React.ReactElement {
   const { toast } = useToast();
   const [skills, setSkills] = useState<Skill[]>(initialData);
@@ -41,17 +47,19 @@ export function SkillsSection({ initialData }: SkillsSectionProps): React.ReactE
       return;
     }
 
-    const timer = setTimeout(async () => {
-      try {
-        const response = await fetch(`/api/talent/skills?search=${encodeURIComponent(searchQuery)}`);
-        if (response.ok) {
-          const data = await response.json();
-          const existingIds = new Set(skills.map((s) => s.id));
-          setSuggestions(data.skills.filter((s: Skill) => !existingIds.has(s.id)));
+    const timer = setTimeout(() => {
+      void (async () => {
+        try {
+          const response = await fetch(`/api/talent/skills?search=${encodeURIComponent(searchQuery)}`);
+          if (response.ok) {
+            const data: SkillsApiResponse = await response.json() as SkillsApiResponse;
+            const existingIds = new Set(skills.map((s) => s.id));
+            setSuggestions((data.skills ?? []).filter((s) => !existingIds.has(s.id)));
+          }
+        } catch {
+          // Ignore search errors
         }
-      } catch {
-        // Ignore search errors
-      }
+      })();
     }, 300);
 
     return () => { clearTimeout(timer); };
@@ -67,12 +75,14 @@ export function SkillsSection({ initialData }: SkillsSectionProps): React.ReactE
       });
 
       if (!response.ok) {
-        const data = await response.json();
-        throw new Error(data.error ?? "Failed to add skill");
+        const errorData: SkillsApiResponse = await response.json() as SkillsApiResponse;
+        throw new Error(errorData.error ?? "Failed to add skill");
       }
 
-      const data = await response.json();
-      setSkills([...skills, data.skill]);
+      const data: SkillsApiResponse = await response.json() as SkillsApiResponse;
+      if (data.skill) {
+        setSkills([...skills, data.skill]);
+      }
       setSearchQuery("");
       setSuggestions([]);
       setShowSuggestions(false);
@@ -94,8 +104,8 @@ export function SkillsSection({ initialData }: SkillsSectionProps): React.ReactE
       const response = await fetch(`/api/talent/skills/${skillId}`, { method: "DELETE" });
 
       if (!response.ok) {
-        const data = await response.json();
-        throw new Error(data.error ?? "Failed to remove skill");
+        const errorData: SkillsApiResponse = await response.json() as SkillsApiResponse;
+        throw new Error(errorData.error ?? "Failed to remove skill");
       }
 
       setSkills(skills.filter((s) => s.id !== skillId));
@@ -114,7 +124,7 @@ export function SkillsSection({ initialData }: SkillsSectionProps): React.ReactE
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>): void => {
     if (e.key === "Enter" && searchQuery.trim() && suggestions.length === 0) {
       e.preventDefault();
-      addSkill({ name: searchQuery.trim(), category: selectedCategory ?? "other" });
+      void addSkill({ name: searchQuery.trim(), category: selectedCategory ?? "other" });
     }
   };
 
@@ -127,7 +137,7 @@ export function SkillsSection({ initialData }: SkillsSectionProps): React.ReactE
   const groupedSkills = skills.reduce<Record<string, Skill[]>>(
     (acc, skill) => {
       const category = skill.category;
-      if (!acc[category]) acc[category] = [];
+      acc[category] ??= [];
       acc[category].push(skill);
       return acc;
     },
@@ -161,7 +171,7 @@ export function SkillsSection({ initialData }: SkillsSectionProps): React.ReactE
                     <button
                       key={skill.id}
                       type="button"
-                      onClick={() => addSkill(skill)}
+                      onClick={() => void addSkill(skill)}
                       className="hover:bg-muted flex w-full items-center justify-between px-4 py-2 text-left text-sm"
                     >
                       <span>{skill.name}</span>
@@ -205,7 +215,7 @@ export function SkillsSection({ initialData }: SkillsSectionProps): React.ReactE
                       {skill.name}
                       <button
                         type="button"
-                        onClick={() => removeSkill(skill.id)}
+                        onClick={() => void removeSkill(skill.id)}
                         className="hover:bg-muted ml-1 rounded p-0.5"
                         disabled={isLoading}
                       >
@@ -231,7 +241,7 @@ export function SkillsSection({ initialData }: SkillsSectionProps): React.ReactE
                   key={skill.name}
                   variant="outline"
                   size="sm"
-                  onClick={() => addSkill(skill)}
+                  onClick={() => void addSkill(skill)}
                   disabled={isLoading}
                   className="h-7 text-xs"
                 >
