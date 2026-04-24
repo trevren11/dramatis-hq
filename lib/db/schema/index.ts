@@ -1,5 +1,7 @@
 export * from "./users";
 export * from "./talent-profiles";
+export * from "./producer-profiles";
+export * from "./production-photos";
 export * from "./resume";
 export * from "./media";
 export * from "./work-history";
