@@ -403,22 +403,42 @@ export function CastingBoard({
       onDragEnd={handleDragEnd}
     >
       <div className="flex h-full flex-col">
-        <div className="flex items-center justify-between border-b px-6 py-4">
-          <div>
-            <h1 className="text-2xl font-bold">Casting Board</h1>
-            <p className="text-muted-foreground text-sm">{showTitle}</p>
+        {/* Header - responsive layout */}
+        <div className="flex flex-col gap-4 border-b px-4 py-4 md:flex-row md:items-center md:justify-between md:px-6">
+          <div className="flex items-center justify-between">
+            <div>
+              <h1 className="text-xl font-bold md:text-2xl">Casting Board</h1>
+              <p className="text-muted-foreground text-sm">{showTitle}</p>
+            </div>
+            <div className="flex items-center gap-2 md:hidden">
+              <PresenceIndicators users={presence} />
+              {hasUnsavedChanges && (
+                <Badge variant="warning" className="animate-pulse text-xs">
+                  Unsaved
+                </Badge>
+              )}
+            </div>
           </div>
-          <div className="flex items-center gap-4">
-            <PresenceIndicators users={presence} />
-            {hasUnsavedChanges && (
-              <Badge variant="warning" className="animate-pulse">
-                Unsaved changes
-              </Badge>
-            )}
-            <div className="flex gap-2">
-              <Button variant="outline" size="sm" onClick={handleRefresh} disabled={isSaving}>
-                <RefreshCw className={cn("mr-2 h-4 w-4", isSaving && "animate-spin")} />
-                Refresh
+          <div className="flex items-center gap-2 md:gap-4">
+            <div className="hidden md:flex md:items-center md:gap-2">
+              <PresenceIndicators users={presence} />
+              {hasUnsavedChanges && (
+                <Badge variant="warning" className="animate-pulse">
+                  Unsaved changes
+                </Badge>
+              )}
+            </div>
+            {/* Action buttons - horizontal scroll on mobile */}
+            <div className="scrollbar-hide -mx-4 flex gap-2 overflow-x-auto px-4 md:mx-0 md:px-0">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={handleRefresh}
+                disabled={isSaving}
+                className="shrink-0"
+              >
+                <RefreshCw className={cn("h-4 w-4 md:mr-2", isSaving && "animate-spin")} />
+                <span className="hidden md:inline">Refresh</span>
               </Button>
               <Button
                 variant="outline"
@@ -427,9 +447,10 @@ export function CastingBoard({
                   handleBulkLock(true);
                 }}
                 disabled={isSaving}
+                className="shrink-0"
               >
-                <Lock className="mr-2 h-4 w-4" />
-                Lock All
+                <Lock className="h-4 w-4 md:mr-2" />
+                <span className="hidden md:inline">Lock All</span>
               </Button>
               <Button
                 variant="outline"
@@ -438,9 +459,10 @@ export function CastingBoard({
                   handleBulkLock(false);
                 }}
                 disabled={isSaving}
+                className="shrink-0"
               >
-                <Unlock className="mr-2 h-4 w-4" />
-                Unlock All
+                <Unlock className="h-4 w-4 md:mr-2" />
+                <span className="hidden md:inline">Unlock All</span>
               </Button>
               <Button
                 variant="outline"
@@ -449,9 +471,10 @@ export function CastingBoard({
                   setShowCastList(true);
                 }}
                 disabled={isSaving}
+                className="shrink-0"
               >
-                <FileText className="mr-2 h-4 w-4" />
-                Cast List
+                <FileText className="h-4 w-4 md:mr-2" />
+                <span className="hidden md:inline">Cast List</span>
               </Button>
               <Button
                 size="sm"
@@ -459,18 +482,21 @@ export function CastingBoard({
                   setShowNotificationFlow(true);
                 }}
                 disabled={isSaving || assignments.length === 0}
+                className="shrink-0"
               >
-                <Mail className="mr-2 h-4 w-4" />
-                Send Notifications
+                <Mail className="h-4 w-4 md:mr-2" />
+                <span className="hidden md:inline">Send Notifications</span>
               </Button>
             </div>
           </div>
         </div>
 
-        <div className="flex flex-1 overflow-hidden">
-          <div className="flex-1 overflow-hidden border-r">
-            <ScrollArea className="h-full p-6">
-              <div className="space-y-6">
+        {/* Main content - stack on mobile, side-by-side on desktop */}
+        <div className="flex flex-1 flex-col overflow-hidden md:flex-row">
+          {/* Roles area */}
+          <div className="flex-1 overflow-hidden md:border-r">
+            <ScrollArea className="h-full p-4 md:p-6">
+              <div className="space-y-4 md:space-y-6">
                 {tierOrder.map((tier) => {
                   const tierRoles = rolesByTier[tier];
                   if (tierRoles.length === 0) return null;
@@ -481,28 +507,32 @@ export function CastingBoard({
                   );
                   return (
                     <TierGroup key={tier} title={tier} count={filledSlots} totalSlots={totalSlots}>
-                      <div className="grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-                        {tierRoles
-                          .sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0))
-                          .map((role) => (
-                            <RoleCard
-                              key={role.id}
-                              role={role}
-                              assignments={
-                                assignmentsByRole[role.id]?.map((a) => ({
-                                  roleId: a.roleId,
-                                  slotIndex: a.slotIndex,
-                                  talent: a.talent,
-                                  isLocked: a.isLocked,
-                                  status: a.status,
-                                })) ?? []
-                              }
-                              onLockToggle={handleLockToggle}
-                              onEject={handleEject}
-                              selectedTalentId={selectedTalentId}
-                              presenceMap={presenceMap}
-                            />
-                          ))}
+                      {/* Mobile: horizontal scroll for role cards within each tier */}
+                      <div className="scrollbar-hide -mx-4 overflow-x-auto px-4 md:mx-0 md:overflow-visible md:px-0">
+                        <div className="flex gap-4 md:grid md:grid-cols-2 lg:grid-cols-3">
+                          {tierRoles
+                            .sort((a, b) => (a.sortOrder ?? 0) - (b.sortOrder ?? 0))
+                            .map((role) => (
+                              <div key={role.id} className="w-[280px] shrink-0 md:w-auto">
+                                <RoleCard
+                                  role={role}
+                                  assignments={
+                                    assignmentsByRole[role.id]?.map((a) => ({
+                                      roleId: a.roleId,
+                                      slotIndex: a.slotIndex,
+                                      talent: a.talent,
+                                      isLocked: a.isLocked,
+                                      status: a.status,
+                                    })) ?? []
+                                  }
+                                  onLockToggle={handleLockToggle}
+                                  onEject={handleEject}
+                                  selectedTalentId={selectedTalentId}
+                                  presenceMap={presenceMap}
+                                />
+                              </div>
+                            ))}
+                        </div>
                       </div>
                     </TierGroup>
                   );
@@ -511,7 +541,8 @@ export function CastingBoard({
             </ScrollArea>
           </div>
 
-          <div className="w-80 shrink-0">
+          {/* Talent pool - collapsible on mobile, fixed width on desktop */}
+          <div className="border-t md:w-80 md:shrink-0 md:border-t-0">
             <TalentPool
               talents={pool}
               selectedTalentId={selectedTalentId}

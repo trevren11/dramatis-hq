@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useState } from "react";
+import { useCallback, useState, useEffect } from "react";
 import FullCalendar from "@fullcalendar/react";
 import dayGridPlugin from "@fullcalendar/daygrid";
 import timeGridPlugin from "@fullcalendar/timegrid";
@@ -33,12 +33,25 @@ export function TalentCalendar({ icalToken }: TalentCalendarProps): React.ReactE
   const { toast } = useToast();
   const [events, setEvents] = useState<EventInput[]>([]);
   const [isLoading, setIsLoading] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const [formState, setFormState] = useState<FormState>({
     isOpen: false,
     mode: "create",
     selectedDates: null,
     editingEvent: null,
   });
+
+  // Detect mobile viewport for responsive calendar configuration
+  useEffect(() => {
+    const checkMobile = (): void => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    checkMobile();
+    window.addEventListener("resize", checkMobile);
+    return () => {
+      window.removeEventListener("resize", checkMobile);
+    };
+  }, []);
 
   const fetchEvents = useCallback(
     async (start: Date, end: Date) => {
@@ -193,18 +206,37 @@ export function TalentCalendar({ icalToken }: TalentCalendarProps): React.ReactE
           </div>
         )}
 
-        <div className="calendar-wrapper">
+        <div className="calendar-wrapper touch-pan-y">
           <FullCalendar
             plugins={[dayGridPlugin, timeGridPlugin, interactionPlugin]}
-            initialView="dayGridMonth"
-            headerToolbar={{
-              left: "prev,next today",
-              center: "title",
-              right: "dayGridMonth,timeGridWeek",
+            initialView={isMobile ? "timeGridDay" : "dayGridMonth"}
+            headerToolbar={
+              isMobile
+                ? {
+                    left: "prev,next",
+                    center: "title",
+                    right: "timeGridDay,dayGridMonth",
+                  }
+                : {
+                    left: "prev,next today",
+                    center: "title",
+                    right: "dayGridMonth,timeGridWeek",
+                  }
+            }
+            views={{
+              timeGridDay: {
+                buttonText: "Day",
+              },
+              dayGridMonth: {
+                buttonText: "Month",
+              },
+              timeGridWeek: {
+                buttonText: "Week",
+              },
             }}
             selectable={true}
             selectMirror={true}
-            dayMaxEvents={true}
+            dayMaxEvents={isMobile ? 2 : true}
             events={events}
             select={handleDateSelect}
             eventClick={handleEventClick}
@@ -213,6 +245,10 @@ export function TalentCalendar({ icalToken }: TalentCalendarProps): React.ReactE
             }}
             height="auto"
             eventDisplay="block"
+            // Mobile touch improvements
+            longPressDelay={isMobile ? 500 : 1000}
+            selectLongPressDelay={isMobile ? 500 : 1000}
+            eventLongPressDelay={isMobile ? 500 : 1000}
           />
         </div>
 
