@@ -67,7 +67,10 @@ export function VideoPlayer({
   const [isFullscreen, setIsFullscreen] = React.useState(false);
   const [showControls, setShowControls] = React.useState(true);
   const [playbackSpeed, setPlaybackSpeed] = React.useState("1");
+  const [lastTapTime, setLastTapTime] = React.useState(0);
+  const [doubleTapSide, setDoubleTapSide] = React.useState<"left" | "right" | null>(null);
   const hideControlsTimerRef = React.useRef<NodeJS.Timeout | null>(null);
+  const doubleTapTimeoutRef = React.useRef<NodeJS.Timeout | null>(null);
 
   // Update playing state
   const handlePlay = (): void => {
@@ -176,6 +179,47 @@ export function VideoPlayer({
     setPlaybackSpeed(speed);
   };
 
+  // Handle double-tap to seek (mobile gesture)
+  const handleDoubleTap = React.useCallback(
+    (e: React.TouchEvent | React.MouseEvent): void => {
+      if (!containerRef.current || !videoRef.current) return;
+
+      const now = Date.now();
+      const timeDiff = now - lastTapTime;
+
+      if (timeDiff < 300 && timeDiff > 0) {
+        // Double tap detected
+        const rect = containerRef.current.getBoundingClientRect();
+        const clientX = "touches" in e ? (e.touches[0]?.clientX ?? 0) : e.clientX;
+        const tapPosition = (clientX - rect.left) / rect.width;
+
+        if (tapPosition < 0.3) {
+          // Left side - rewind 10 seconds
+          videoRef.current.currentTime = Math.max(0, videoRef.current.currentTime - 10);
+          setDoubleTapSide("left");
+        } else if (tapPosition > 0.7) {
+          // Right side - forward 10 seconds
+          videoRef.current.currentTime = Math.min(
+            videoRef.current.duration,
+            videoRef.current.currentTime + 10
+          );
+          setDoubleTapSide("right");
+        }
+
+        // Clear indicator after animation
+        if (doubleTapTimeoutRef.current) {
+          clearTimeout(doubleTapTimeoutRef.current);
+        }
+        doubleTapTimeoutRef.current = setTimeout(() => {
+          setDoubleTapSide(null);
+        }, 500);
+      }
+
+      setLastTapTime(now);
+    },
+    [lastTapTime]
+  );
+
   // Show/hide controls on mouse activity
   const handleMouseMove = (): void => {
     setShowControls(true);
@@ -208,11 +252,14 @@ export function VideoPlayer({
     };
   }, []);
 
-  // Cleanup timer on unmount
+  // Cleanup timers on unmount
   React.useEffect(() => {
     return () => {
       if (hideControlsTimerRef.current) {
         clearTimeout(hideControlsTimerRef.current);
+      }
+      if (doubleTapTimeoutRef.current) {
+        clearTimeout(doubleTapTimeoutRef.current);
       }
     };
   }, []);
@@ -267,6 +314,8 @@ export function VideoPlayer({
       )}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
+      onTouchStart={handleDoubleTap}
+      // eslint-disable-next-line jsx-a11y/no-noninteractive-tabindex -- role="application" makes this interactive for keyboard control
       tabIndex={0}
     >
       <video
@@ -295,6 +344,22 @@ export function VideoPlayer({
         </div>
       )}
 
+      {/* Double-tap seek indicator */}
+      {doubleTapSide && (
+        <div
+          className={cn(
+            "pointer-events-none absolute top-1/2 flex -translate-y-1/2 items-center justify-center",
+            doubleTapSide === "left" ? "left-8" : "right-8"
+          )}
+        >
+          <div className="animate-ping rounded-full bg-white/30 p-4">
+            <span className="text-lg font-bold text-white">
+              {doubleTapSide === "left" ? "-10s" : "+10s"}
+            </span>
+          </div>
+        </div>
+      )}
+
       {/* Play overlay (when paused) */}
       {!isPlaying && (
         <div
@@ -312,42 +377,42 @@ export function VideoPlayer({
         </div>
       )}
 
-      {/* Controls */}
+      {/* Controls - touch-friendly on mobile */}
       <div
         className={cn(
-          "absolute right-0 bottom-0 left-0 bg-gradient-to-t from-black/80 to-transparent px-4 py-3 transition-opacity",
+          "absolute right-0 bottom-0 left-0 bg-gradient-to-t from-black/80 to-transparent px-3 py-2 transition-opacity md:px-4 md:py-3",
           showControls ? "opacity-100" : "opacity-0"
         )}
       >
-        {/* Progress bar */}
-        <div className="mb-3">
+        {/* Progress bar - larger touch target on mobile */}
+        <div className="mb-2 py-2 md:mb-3 md:py-0">
           <Slider
             value={[currentTime]}
             max={duration || 100}
             step={0.1}
             onValueChange={handleSeek}
-            className="h-1 cursor-pointer"
+            className="h-1.5 cursor-pointer md:h-1"
           />
         </div>
 
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            {/* Play/Pause */}
+          <div className="flex items-center gap-1 md:gap-2">
+            {/* Play/Pause - larger on mobile */}
             <Button
               variant="ghost"
               size="icon"
-              className="h-8 w-8 text-white hover:bg-white/20"
+              className="h-10 w-10 text-white hover:bg-white/20 md:h-8 md:w-8"
               onClick={togglePlay}
             >
               {isPlaying ? (
-                <Pause className="h-4 w-4" fill="currentColor" />
+                <Pause className="h-5 w-5 md:h-4 md:w-4" fill="currentColor" />
               ) : (
-                <Play className="h-4 w-4" fill="currentColor" />
+                <Play className="h-5 w-5 md:h-4 md:w-4" fill="currentColor" />
               )}
             </Button>
 
-            {/* Volume */}
-            <div className="flex items-center gap-1">
+            {/* Volume - hidden on mobile (use device volume) */}
+            <div className="hidden items-center gap-1 md:flex">
               <Button
                 variant="ghost"
                 size="icon"
@@ -369,6 +434,20 @@ export function VideoPlayer({
               />
             </div>
 
+            {/* Mute button only on mobile */}
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-10 w-10 text-white hover:bg-white/20 md:hidden"
+              onClick={toggleMute}
+            >
+              {isMuted || volume === 0 ? (
+                <VolumeX className="h-5 w-5" />
+              ) : (
+                <Volume2 className="h-5 w-5" />
+              )}
+            </Button>
+
             {/* Time */}
             <span className="text-xs text-white">
               {formatTime(currentTime)} / {formatTime(duration)}
@@ -376,15 +455,15 @@ export function VideoPlayer({
           </div>
 
           <div className="flex items-center gap-1">
-            {/* Playback speed */}
+            {/* Playback speed - larger touch target */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button
                   variant="ghost"
                   size="icon"
-                  className="h-8 w-8 text-white hover:bg-white/20"
+                  className="h-10 w-10 text-white hover:bg-white/20 md:h-8 md:w-8"
                 >
-                  <Settings className="h-4 w-4" />
+                  <Settings className="h-5 w-5 md:h-4 md:w-4" />
                 </Button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end">
@@ -393,7 +472,11 @@ export function VideoPlayer({
                   onValueChange={handlePlaybackSpeedChange}
                 >
                   {PLAYBACK_SPEEDS.map((speed) => (
-                    <DropdownMenuRadioItem key={speed} value={speed}>
+                    <DropdownMenuRadioItem
+                      key={speed}
+                      value={speed}
+                      className="min-h-[44px] md:min-h-0"
+                    >
                       {speed}x
                     </DropdownMenuRadioItem>
                   ))}
@@ -401,11 +484,11 @@ export function VideoPlayer({
               </DropdownMenuContent>
             </DropdownMenu>
 
-            {/* Picture-in-picture */}
+            {/* Picture-in-picture - hidden on mobile (limited support) */}
             <Button
               variant="ghost"
               size="icon"
-              className="h-8 w-8 text-white hover:bg-white/20"
+              className="hidden h-8 w-8 text-white hover:bg-white/20 md:inline-flex"
               onClick={() => {
                 void togglePictureInPicture();
               }}
@@ -413,16 +496,20 @@ export function VideoPlayer({
               <PictureInPicture2 className="h-4 w-4" />
             </Button>
 
-            {/* Fullscreen */}
+            {/* Fullscreen - larger on mobile */}
             <Button
               variant="ghost"
               size="icon"
-              className="h-8 w-8 text-white hover:bg-white/20"
+              className="h-10 w-10 text-white hover:bg-white/20 md:h-8 md:w-8"
               onClick={() => {
                 void toggleFullscreen();
               }}
             >
-              {isFullscreen ? <Minimize className="h-4 w-4" /> : <Maximize className="h-4 w-4" />}
+              {isFullscreen ? (
+                <Minimize className="h-5 w-5 md:h-4 md:w-4" />
+              ) : (
+                <Maximize className="h-5 w-5 md:h-4 md:w-4" />
+              )}
             </Button>
           </div>
         </div>

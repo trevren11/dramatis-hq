@@ -83,11 +83,19 @@
     @apply border-border;
   }
 
+  /* Prevent tap highlight and zoom delay on mobile */
+  html {
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+  }
+
   body {
     @apply bg-background text-foreground antialiased;
     font-feature-settings:
       "rlig" 1,
       "calt" 1;
+    /* Prevent horizontal scroll */
+    overflow-x: hidden;
   }
 
   h1,
@@ -99,6 +107,40 @@
     font-family: var(--font-heading);
     @apply tracking-tight;
   }
+
+  /* Fluid typography using clamp for responsive text */
+  h1 {
+    font-size: clamp(1.75rem, 4vw + 1rem, 3rem);
+  }
+
+  h2 {
+    font-size: clamp(1.5rem, 3vw + 0.75rem, 2.25rem);
+  }
+
+  h3 {
+    font-size: clamp(1.25rem, 2vw + 0.5rem, 1.75rem);
+  }
+
+  /* Ensure interactive elements meet 44px touch target on mobile */
+  @media (pointer: coarse) {
+    button,
+    [role="button"],
+    input[type="checkbox"],
+    input[type="radio"],
+    select,
+    a {
+      min-height: 44px;
+      min-width: 44px;
+    }
+
+    /* Except for inline links in text */
+    p a,
+    li a,
+    span a {
+      min-height: auto;
+      min-width: auto;
+    }
+  }
 }
 
 @layer utilities {
@@ -108,6 +150,50 @@
 
   .gradient-text {
     @apply from-primary via-accent to-secondary bg-gradient-to-r bg-clip-text text-transparent;
+  }
+
+  /* Touch-friendly tap target */
+  .touch-target {
+    @apply relative;
+  }
+
+  .touch-target::after {
+    content: "";
+    @apply absolute -inset-2;
+  }
+
+  /* Safe area padding for notched devices */
+  .safe-area-inset-bottom {
+    padding-bottom: env(safe-area-inset-bottom, 0);
+  }
+
+  .safe-area-inset-top {
+    padding-top: env(safe-area-inset-top, 0);
+  }
+
+  /* Mobile container padding */
+  .container-mobile {
+    @apply px-4 sm:px-6 lg:px-8;
+  }
+
+  /* Hide scrollbar but keep functionality */
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Horizontal scroll container for mobile */
+  .scroll-snap-x {
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .scroll-snap-item {
+    scroll-snap-align: start;
   }
 }
 
