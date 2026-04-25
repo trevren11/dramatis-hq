@@ -38,8 +38,11 @@ const Checkbox = React.forwardRef<HTMLInputElement, CheckboxProps>(
           >
             <Check className="text-primary-foreground hidden h-3 w-3 peer-checked:block" />
           </div>
+          {/* Clickable overlay - hidden from screen readers as the input is already accessible */}
+          {/* eslint-disable-next-line jsx-a11y/label-has-associated-control -- decorative overlay, input has proper label */}
           <label
             htmlFor={inputId}
+            aria-hidden="true"
             className="absolute inset-0 cursor-pointer peer-disabled:cursor-not-allowed"
           />
         </div>

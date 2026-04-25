@@ -1,3 +1,4 @@
+/* eslint-disable max-lines -- filter component with many filter options */
 "use client";
 
 import { useState, useCallback } from "react";
@@ -443,13 +444,26 @@ export function TalentSearchFilters({
                   ))}
                 </div>
               )}
-              <div className="max-h-32 space-y-1 overflow-y-auto">
+              <div
+                className="max-h-32 space-y-1 overflow-y-auto"
+                role="listbox"
+                aria-label="Skills"
+              >
                 {filteredSkills.slice(0, 20).map((skill) => (
                   <div
                     key={skill}
+                    role="option"
+                    tabIndex={0}
+                    aria-selected={filters.skills?.includes(skill) ?? false}
                     className="hover:bg-accent cursor-pointer rounded px-2 py-1 text-sm"
                     onClick={() => {
                       toggleArrayValue("skills", skill);
+                    }}
+                    onKeyDown={(e) => {
+                      if (e.key === "Enter" || e.key === " ") {
+                        e.preventDefault();
+                        toggleArrayValue("skills", skill);
+                      }
                     }}
                   >
                     {skill}

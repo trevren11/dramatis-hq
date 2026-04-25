@@ -45,9 +45,13 @@ const Toast = React.forwardRef<
   React.ComponentRef<typeof ToastPrimitives.Root>,
   React.ComponentPropsWithoutRef<typeof ToastPrimitives.Root> & VariantProps<typeof toastVariants>
 >(({ className, variant, ...props }, ref) => {
+  // Use assertive for destructive toasts (errors) and polite for others
+  const isDestructive = variant === "destructive";
   return (
     <ToastPrimitives.Root
       ref={ref}
+      role={isDestructive ? "alert" : "status"}
+      aria-live={isDestructive ? "assertive" : "polite"}
       className={cn(toastVariants({ variant }), className)}
       {...props}
     />
@@ -83,7 +87,8 @@ const ToastClose = React.forwardRef<
     toast-close=""
     {...props}
   >
-    <X className="h-4 w-4" />
+    <X className="h-4 w-4" aria-hidden="true" />
+    <span className="sr-only">Dismiss</span>
   </ToastPrimitives.Close>
 ));
 ToastClose.displayName = ToastPrimitives.Close.displayName;
