@@ -1,124 +1,119 @@
-# Implementation Plan: [DRM-036] User Settings
+# Implementation Plan: [DRM-037] Real-Time Collaboration
 
 ## Overview
+Implement WebSocket infrastructure for real-time collaboration features including live casting board updates, instant messaging, and presence indicators.
 
-Build comprehensive settings pages for users to manage account, notifications, privacy, security, and appearance settings.
+## Architecture Decision
+Using **Pusher** (or Ably) for MVP - managed service reduces complexity. Can migrate to self-hosted Socket.io later if needed.
 
 ## Tasks
 
-### Task 1: Settings Layout and Navigation
+### Task 1: Pusher Setup and Configuration
+**Files:** `lib/pusher.ts`, `lib/pusher-server.ts`, `.env.local`
 
-**Files:** `app/(settings)/settings/layout.tsx`, `components/settings/settings-nav.tsx`
+- Install Pusher client and server packages
+- Create Pusher client singleton
+- Create server-side Pusher instance
+- Configure environment variables (PUSHER_APP_ID, KEY, SECRET, CLUSTER)
+- Add connection error handling
 
-Create the settings layout with sidebar navigation:
+### Task 2: Authentication Endpoint
+**Files:** `app/api/pusher/auth/route.ts`
 
-- Settings sidebar with sections: Account, Profile, Notifications, Privacy, Security, Appearance
-- Mobile-friendly collapsible navigation
-- Breadcrumb support
-- Active state highlighting
+- Create Pusher authentication endpoint
+- Validate user session before authorizing
+- Support private and presence channels
+- Return proper auth signatures
+- Handle unauthorized access
 
-### Task 2: Account Settings Page
+### Task 3: React Hooks for Real-Time
+**Files:** `lib/hooks/use-realtime.ts`, `lib/hooks/use-presence.ts`
 
-**Files:** `app/(settings)/settings/account/page.tsx`, `components/settings/account-form.tsx`
+Create reusable hooks:
+- `useRealtime(channel, event)` - Subscribe to channel events
+- `usePresence(channel)` - Track who's in a channel
+- Auto-reconnect logic with exponential backoff
+- Connection state management
+- Cleanup on unmount
 
-Implement account management:
+### Task 4: Casting Board Live Updates
+**Files:** `components/casting/CastingBoard.tsx`, `app/api/castings/[id]/route.ts`
 
-- Update name form
-- Update email with verification flow
-- Change password form with current password validation
-- Connected accounts display (Google OAuth)
-- Delete account with confirmation modal
+- Subscribe to `casting:show-{id}` channel
+- Broadcast on talent add/remove/move
+- Apply optimistic updates
+- Handle server reconciliation
+- Show "X users viewing" indicator
 
-### Task 3: Profile Settings Page (Role-based)
+### Task 5: Real-Time Messaging
+**Files:** `components/messages/ChatWindow.tsx`, `app/api/messages/route.ts`
 
-**Files:** `app/(settings)/settings/profile/page.tsx`, `components/settings/profile-settings.tsx`
+- Subscribe to `chat:conv-{id}` for new messages
+- Broadcast message on send
+- Show "typing" indicators
+- Instant delivery without polling
+- Handle message ordering
 
-Role-based profile settings:
+### Task 6: Schedule Change Broadcasts
+**Files:** `components/schedule/ScheduleView.tsx`, `app/api/schedules/route.ts`
 
-- Talent: visibility toggles, contact info visibility, search opt-in
-- Producer: company info, logo upload, team members list
-- Username change for all roles
+- Subscribe to `schedule:show-{id}` channel
+- Broadcast on schedule CRUD operations
+- Update UI without refresh
+- Show change notifications
+- Conflict detection for same-time edits
 
-### Task 4: Notification Preferences Page
+### Task 7: Presence System
+**Files:** `lib/presence.ts`, `components/ui/presence-avatars.tsx`
 
-**Files:** `app/(settings)/settings/notifications/page.tsx`, `components/settings/notification-settings.tsx`
+- Track users per page/resource
+- Display avatar stack of viewers
+- Show "User is typing" in chat
+- Online/offline indicators
+- Last seen timestamps
 
-Notification controls:
+### Task 8: Offline Queue and Retry
+**Files:** `lib/offline-queue.ts`
 
-- Email notification toggles by category (messages, bookings, marketing)
-- Push notification toggles (matches email categories)
-- Digest frequency selector (immediate, daily, weekly)
-- Do not disturb hours picker
-- Marketing opt-in/out toggle
+- Queue actions when offline
+- Sync on reconnection
+- Exponential backoff for retries
+- User feedback for pending actions
+- Graceful degradation to polling
 
-### Task 5: Privacy Settings Page
+### Task 9: Conflict Resolution
+**Files:** `lib/conflict-resolver.ts`
 
-**Files:** `app/(settings)/settings/privacy/page.tsx`, `components/settings/privacy-settings.tsx`
-
-Privacy management:
-
-- Data export request button (GDPR compliance)
-- Download all data functionality
-- Activity visibility toggles
-- Block list management with search
-- Third-party connections list
-
-### Task 6: Security Settings Page
-
-**Files:** `app/(settings)/settings/security/page.tsx`, `components/settings/security-settings.tsx`
-
-Security features:
-
-- Two-factor authentication enable/disable
-- Active sessions list with revoke capability
-- Login history table (last 10 logins)
-- Security notification preferences
-
-### Task 7: Appearance Settings Page
-
-**Files:** `app/(settings)/settings/appearance/page.tsx`, `components/settings/appearance-settings.tsx`
-
-User preferences:
-
-- Dark mode toggle (system/light/dark)
-- Language preference dropdown
-- Timezone selector
-- Persist to localStorage and user settings
-
-### Task 8: API Routes for Settings
-
-**Files:** `app/api/settings/[...slug]/route.ts`
-
-Create API endpoints:
-
-- GET/PATCH /api/settings/account
-- GET/PATCH /api/settings/notifications
-- GET/PATCH /api/settings/privacy
-- GET/PATCH /api/settings/security
-- POST /api/settings/export-data
-- POST /api/settings/delete-account
-
-### Task 9: Database Schema Updates
-
-**Files:** `prisma/schema.prisma`, migration
-
-Add user settings model with notification and privacy JSON fields.
+- Detect concurrent edits
+- Implement last-write-wins for simple fields
+- User notification of conflicts
+- Manual merge UI for complex conflicts
+- Audit trail for conflict resolutions
 
 ### Task 10: Tests
+**Files:** `__tests__/realtime/*.test.ts`, `e2e/tests/realtime.spec.ts`
 
-**Files:** `__tests__/settings/*.test.tsx`, `e2e/tests/settings.spec.ts`
-
-Write tests:
-
-- Unit tests for settings forms
-- API route tests
-- E2E test for settings flow
+- Unit tests for hooks
+- Mock Pusher for testing
+- E2E test for message delivery
+- Connection stability tests
 
 ## Completion Criteria
+- [x] WebSocket connections stable
+- [x] Casting board syncs live between users
+- [x] Messages deliver instantly
+- [x] Presence indicators work
+- [x] Reconnection handles gracefully
+- [x] Tests passing
 
-- All settings pages accessible from user menu
-- Changes persist correctly to database
-- Email change sends verification email
-- Password change validates current password
-- Mobile responsive design
-- Tests passing
+## Implementation Complete
+
+All tasks implemented on 2026-04-25. Key files added:
+- `lib/pusher.ts`, `lib/pusher-server.ts` - Pusher client/server setup
+- `app/api/pusher/auth/route.ts` - Authentication endpoint
+- `lib/hooks/use-realtime.ts`, `use-presence.ts` - React hooks
+- `lib/realtime/` - Broadcasting functions for all features
+- `lib/offline-queue.ts` - Offline support with retry
+- `lib/conflict-resolver.ts` - Conflict detection and resolution
+- `components/ui/presence-avatars.tsx` - Presence UI component
+- `lib/__tests__/realtime/` - Unit tests
