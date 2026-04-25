@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import {
-  Select,
+  RadixSelect as Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
@@ -40,14 +40,17 @@ interface ComplianceDashboardProps {
   statuses: ComplianceStatus[];
   summary: ComplianceSummary;
   isLoading?: boolean;
-  showOptions?: Array<{ id: string; title: string }>;
+  showOptions?: { id: string; title: string }[];
   selectedShowId?: string;
   onShowChange?: (showId: string) => void;
   onUploadForTalent?: (talentProfileId: string, documentType: string) => void;
 }
 
 function getStatusBadge(status: ComplianceStatus["status"]): React.ReactElement {
-  const config: Record<ComplianceStatus["status"], { label: string; variant: "default" | "secondary" | "destructive" | "outline" }> = {
+  const config: Record<
+    ComplianceStatus["status"],
+    { label: string; variant: "default" | "secondary" | "destructive" | "outline" }
+  > = {
     missing: { label: "Missing", variant: "destructive" },
     pending: { label: "Pending", variant: "outline" },
     delivered: { label: "Delivered", variant: "secondary" },
@@ -95,8 +98,8 @@ export function ComplianceDashboard({
   const groupedByTalent = filteredStatuses.reduce<Record<string, ComplianceStatus[]>>(
     (acc, status) => {
       const key = status.talentProfileId;
-      if (!acc[key]) acc[key] = [];
-      acc[key]!.push(status);
+      acc[key] ??= [];
+      acc[key].push(status);
       return acc;
     },
     {}
@@ -206,25 +209,33 @@ export function ComplianceDashboard({
       ) : (
         <div className="space-y-4">
           {Object.entries(groupedByTalent).map(([talentId, talentStatuses]) => {
-            const firstStatus = talentStatuses[0]!;
+            const firstStatus = talentStatuses[0];
+            if (!firstStatus) return null;
+            const { talentName, talentEmail } = firstStatus;
             return (
               <Card key={talentId}>
                 <CardHeader className="pb-2">
-                  <CardTitle className="text-lg">{firstStatus.talentName}</CardTitle>
-                  <CardDescription>{firstStatus.talentEmail}</CardDescription>
+                  <CardTitle className="text-lg">{talentName}</CardTitle>
+                  <CardDescription>{talentEmail}</CardDescription>
                 </CardHeader>
                 <CardContent>
                   <div className="space-y-2">
                     {talentStatuses.map((status, idx) => (
                       <div
-                        key={`${talentId}-${status.documentType}-${idx}`}
+                        key={`${talentId}-${status.documentType}-${String(idx)}`}
                         className="flex items-center justify-between rounded-lg border p-3"
                       >
                         <div className="flex items-center gap-3">
                           <div>
                             <p className="font-medium">
-                              {DOCUMENT_TYPE_LABELS[status.documentType as keyof typeof DOCUMENT_TYPE_LABELS]}
-                              {status.year && <span className="text-muted-foreground"> ({status.year})</span>}
+                              {
+                                DOCUMENT_TYPE_LABELS[
+                                  status.documentType as keyof typeof DOCUMENT_TYPE_LABELS
+                                ]
+                              }
+                              {status.year && (
+                                <span className="text-muted-foreground"> ({status.year})</span>
+                              )}
                             </p>
                             {status.deadline && (
                               <p className="text-muted-foreground text-xs">
@@ -243,7 +254,9 @@ export function ComplianceDashboard({
                           {status.status === "missing" && onUploadForTalent && (
                             <Button
                               size="sm"
-                              onClick={() => onUploadForTalent(status.talentProfileId, status.documentType)}
+                              onClick={() => {
+                                onUploadForTalent(status.talentProfileId, status.documentType);
+                              }}
                             >
                               Upload
                             </Button>

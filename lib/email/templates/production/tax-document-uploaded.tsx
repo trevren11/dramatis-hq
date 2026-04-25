@@ -121,7 +121,7 @@ export function TaxDocumentUploadedEmail({
 
   return (
     <EmailLayout
-      preview={`${organizationName} uploaded a ${typeLabel}${year ? ` (${year})` : ""} for you`}
+      preview={`${organizationName} uploaded a ${typeLabel}${year ? ` (${String(year)})` : ""} for you`}
       unsubscribeUrl={unsubscribeUrl}
     >
       <Heading style={heading}>New Document Available</Heading>
@@ -132,7 +132,8 @@ export function TaxDocumentUploadedEmail({
         <strong>{organizationName}</strong> has uploaded a new document for you
         {showTitle && (
           <>
-            {" "}related to <strong>{showTitle}</strong>
+            {" "}
+            related to <strong>{showTitle}</strong>
           </>
         )}
         .

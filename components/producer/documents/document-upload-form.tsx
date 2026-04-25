@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import {
-  Select,
+  RadixSelect as Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
@@ -49,7 +49,9 @@ export function DocumentUploadForm({
   const [sendNotification, setSendNotification] = React.useState<boolean>(true);
   const fileInputRef = React.useRef<HTMLInputElement>(null);
 
-  const isTaxDocument = TAX_DOCUMENT_TYPES.includes(documentType as (typeof TAX_DOCUMENT_TYPES)[number]);
+  const isTaxDocument = TAX_DOCUMENT_TYPES.includes(
+    documentType as (typeof TAX_DOCUMENT_TYPES)[number]
+  );
   const currentYear = new Date().getFullYear();
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
@@ -62,7 +64,7 @@ export function DocumentUploadForm({
     }
   };
 
-  const handleSubmit = async (e: React.FormEvent): Promise<void> => {
+  const handleSubmit = (e: React.SyntheticEvent): void => {
     e.preventDefault();
     if (!file || !documentType) return;
 
@@ -77,7 +79,7 @@ export function DocumentUploadForm({
     if (notes) formData.append("notes", notes);
     formData.append("sendNotification", String(sendNotification));
 
-    await onSubmit(formData);
+    void onSubmit(formData);
   };
 
   return (
@@ -131,7 +133,9 @@ export function DocumentUploadForm({
         <Input
           id="name"
           value={name}
-          onChange={(e) => setName(e.target.value)}
+          onChange={(e) => {
+            setName(e.target.value);
+          }}
           placeholder={file?.name ?? "Enter document name"}
         />
       </div>
@@ -160,7 +164,9 @@ export function DocumentUploadForm({
           id="deadline"
           type="date"
           value={deadline}
-          onChange={(e) => setDeadline(e.target.value)}
+          onChange={(e) => {
+            setDeadline(e.target.value);
+          }}
         />
       </div>
 
@@ -169,7 +175,9 @@ export function DocumentUploadForm({
         <Textarea
           id="notes"
           value={notes}
-          onChange={(e) => setNotes(e.target.value)}
+          onChange={(e) => {
+            setNotes(e.target.value);
+          }}
           placeholder="Add any notes for this document..."
           rows={3}
         />
@@ -179,7 +187,11 @@ export function DocumentUploadForm({
         <Checkbox
           id="sendNotification"
           checked={sendNotification}
-          onCheckedChange={(checked) => setSendNotification(checked === true)}
+          onCheckedChange={(checked) => {
+            if (typeof checked === "boolean") {
+              setSendNotification(checked);
+            }
+          }}
         />
         <Label htmlFor="sendNotification" className="text-sm font-normal">
           Notify {talentName.split(" ")[0]} via email when document is uploaded

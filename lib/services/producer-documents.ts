@@ -44,7 +44,7 @@ interface ProducerDocumentWithDetails {
   viewedAt: Date | null;
   downloadedAt: Date | null;
   createdAt: Date;
-  talent: { id: string; userId: string; firstName: string; lastName: string; email: string };
+  talent: { id: string; userId: string; name: string; email: string };
   show?: { id: string; title: string } | null;
 }
 
@@ -190,14 +190,14 @@ async function sendDocumentNotification(params: {
 }): Promise<void> {
   const talent = await db.query.users.findFirst({
     where: eq(users.id, params.talentUserId),
-    columns: { id: true, email: true, firstName: true, lastName: true },
+    columns: { id: true, email: true, name: true },
   });
 
   if (!talent?.email) return;
 
   const org = await db.query.producerProfiles.findFirst({
     where: eq(producerProfiles.id, params.organizationId),
-    columns: { organizationName: true, companyName: true },
+    columns: { companyName: true },
   });
 
   let showTitle: string | undefined;
@@ -209,8 +209,8 @@ async function sendDocumentNotification(params: {
     showTitle = show?.title;
   }
 
-  const orgName = org?.organizationName ?? org?.companyName ?? "A producer";
-  const recipientName = [talent.firstName, talent.lastName].filter(Boolean).join(" ") || "there";
+  const orgName = org?.companyName ?? "A producer";
+  const recipientName = talent.name ?? "there";
   const appUrl = process.env.NEXT_PUBLIC_APP_URL ?? "https://dramatishq.com";
   const documentUrl = `${appUrl}/documents/${params.documentId}`;
 
@@ -224,7 +224,7 @@ async function sendDocumentNotification(params: {
       organizationName: orgName,
       showTitle,
       documentName: params.documentName,
-      documentType: params.documentType as "W2" | "1099" | "I9" | "Contract" | "CallSheet" | "Other",
+      documentType: params.documentType,
       year: params.year,
       documentUrl,
     }),
@@ -238,7 +238,12 @@ async function sendDocumentNotification(params: {
   if (result.success) {
     await db
       .update(producerDocuments)
-      .set({ status: "delivered", notificationSentAt: new Date(), emailId: result.id, updatedAt: new Date() })
+      .set({
+        status: "delivered",
+        notificationSentAt: new Date(),
+        emailId: result.id,
+        updatedAt: new Date(),
+      })
       .where(eq(producerDocuments.id, params.producerDocumentId));
   }
 }
@@ -265,8 +270,12 @@ export async function listProducerDocuments(
     eq(producerDocuments.organizationId, organizationId),
     isNull(producerDocuments.deletedAt),
     whereFilters.showId ? eq(producerDocuments.showId, whereFilters.showId) : undefined,
-    whereFilters.talentProfileId ? eq(producerDocuments.talentProfileId, whereFilters.talentProfileId) : undefined,
-    whereFilters.documentType ? eq(producerDocuments.documentType, whereFilters.documentType) : undefined,
+    whereFilters.talentProfileId
+      ? eq(producerDocuments.talentProfileId, whereFilters.talentProfileId)
+      : undefined,
+    whereFilters.documentType
+      ? eq(producerDocuments.documentType, whereFilters.documentType)
+      : undefined,
     whereFilters.status ? eq(producerDocuments.status, whereFilters.status) : undefined,
     whereFilters.year ? eq(producerDocuments.year, whereFilters.year) : undefined,
   ].filter(Boolean);
@@ -312,9 +321,8 @@ export async function listProducerDocuments(
       talent: {
         id: r.talentProfile.id,
         userId: r.talentUser.id,
-        firstName: r.talentUser.firstName ?? "",
-        lastName: r.talentUser.lastName ?? "",
-        email: r.talentUser.email ?? "",
+        name: r.talentUser.name ?? "",
+        email: r.talentUser.email,
       },
       show: r.show ? { id: r.show.id, title: r.show.title } : null,
     })),
@@ -333,7 +341,12 @@ export async function updateProducerDocument(
   await db
     .update(producerDocuments)
     .set({ ...updates, updatedAt: new Date() })
-    .where(and(eq(producerDocuments.id, producerDocumentId), eq(producerDocuments.organizationId, organizationId)));
+    .where(
+      and(
+        eq(producerDocuments.id, producerDocumentId),
+        eq(producerDocuments.organizationId, organizationId)
+      )
+    );
 }
 
 /**
@@ -343,7 +356,10 @@ export async function deleteProducerDocument(params: DeleteDocumentParams): Prom
   const { producerDocumentId, organizationId, userId, ipAddress, userAgent } = params;
 
   const doc = await db.query.producerDocuments.findFirst({
-    where: and(eq(producerDocuments.id, producerDocumentId), eq(producerDocuments.organizationId, organizationId)),
+    where: and(
+      eq(producerDocuments.id, producerDocumentId),
+      eq(producerDocuments.organizationId, organizationId)
+    ),
   });
 
   if (!doc) throw new Error("Document not found");
@@ -384,11 +400,18 @@ export async function recordDocumentView(
   if (producerDoc && !producerDoc.viewedAt) {
     await db
       .update(producerDocuments)
-      .set({ status: "viewed", viewedAt: new Date(), viewedByUserId: userId, updatedAt: new Date() })
+      .set({
+        status: "viewed",
+        viewedAt: new Date(),
+        viewedByUserId: userId,
+        updatedAt: new Date(),
+      })
       .where(eq(producerDocuments.id, producerDoc.id));
   }
 
-  await db.insert(documentAccessLogs).values({ documentId, userId, action: "view", ipAddress, userAgent });
+  await db
+    .insert(documentAccessLogs)
+    .values({ documentId, userId, action: "view", ipAddress, userAgent });
 }
 
 /**
@@ -411,13 +434,17 @@ export async function recordDocumentDownload(
       .where(eq(producerDocuments.id, producerDoc.id));
   }
 
-  await db.insert(documentAccessLogs).values({ documentId, userId, action: "download", ipAddress, userAgent });
+  await db
+    .insert(documentAccessLogs)
+    .values({ documentId, userId, action: "download", ipAddress, userAgent });
 }
 
 /**
  * Get documents for a talent
  */
-export async function getTalentProducerDocuments(talentUserId: string): Promise<ProducerDocumentWithDetails[]> {
+export async function getTalentProducerDocuments(
+  talentUserId: string
+): Promise<ProducerDocumentWithDetails[]> {
   const talentProfile = await db.query.talentProfiles.findFirst({
     where: eq(talentProfiles.userId, talentUserId),
     columns: { id: true },
@@ -431,7 +458,12 @@ export async function getTalentProducerDocuments(talentUserId: string): Promise<
     .innerJoin(documents, eq(documents.id, producerDocuments.documentId))
     .innerJoin(producerProfiles, eq(producerProfiles.id, producerDocuments.organizationId))
     .leftJoin(shows, eq(shows.id, producerDocuments.showId))
-    .where(and(eq(producerDocuments.talentProfileId, talentProfile.id), isNull(producerDocuments.deletedAt)))
+    .where(
+      and(
+        eq(producerDocuments.talentProfileId, talentProfile.id),
+        isNull(producerDocuments.deletedAt)
+      )
+    )
     .orderBy(desc(producerDocuments.createdAt));
 
   return results.map((r) => ({
@@ -448,7 +480,7 @@ export async function getTalentProducerDocuments(talentUserId: string): Promise<
     viewedAt: r.producerDoc.viewedAt,
     downloadedAt: r.producerDoc.downloadedAt,
     createdAt: r.producerDoc.createdAt,
-    talent: { id: talentProfile.id, userId: talentUserId, firstName: "", lastName: "", email: "" },
+    talent: { id: talentProfile.id, userId: talentUserId, name: "", email: "" },
     show: r.show ? { id: r.show.id, title: r.show.title } : null,
   }));
 }

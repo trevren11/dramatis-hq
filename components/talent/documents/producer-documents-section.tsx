@@ -37,7 +37,7 @@ interface ProducerDocumentsSectionProps {
 }
 
 function formatFileSize(bytes: number): string {
-  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024) return `${String(bytes)} B`;
   if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 }
@@ -99,8 +99,8 @@ export function ProducerDocumentsSection({
   // Group documents by organization
   const groupedByOrg = documents.reduce<Record<string, ProducerUploadedDocument[]>>((acc, doc) => {
     const orgName = doc.uploadedBy?.organizationName ?? "Unknown Production";
-    if (!acc[orgName]) acc[orgName] = [];
-    acc[orgName]!.push(doc);
+    acc[orgName] ??= [];
+    acc[orgName].push(doc);
     return acc;
   }, {});
 
@@ -140,7 +140,11 @@ export function ProducerDocumentsSection({
                         )}
                       </div>
                       <p className="text-muted-foreground text-sm">
-                        {DOCUMENT_TYPE_LABELS[doc.documentType as keyof typeof DOCUMENT_TYPE_LABELS]}
+                        {
+                          DOCUMENT_TYPE_LABELS[
+                            doc.documentType as keyof typeof DOCUMENT_TYPE_LABELS
+                          ]
+                        }
                         {doc.taxYear && <span> &bull; {doc.taxYear}</span>}
                         {doc.show && <span> &bull; {doc.show.title}</span>}
                       </p>
@@ -155,10 +159,21 @@ export function ProducerDocumentsSection({
                     </div>
                   </div>
                   <div className="flex gap-2">
-                    <Button variant="outline" size="sm" onClick={() => onView(doc.id)}>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      onClick={() => {
+                        onView(doc.id);
+                      }}
+                    >
                       View
                     </Button>
-                    <Button size="sm" onClick={() => onDownload(doc.id)}>
+                    <Button
+                      size="sm"
+                      onClick={() => {
+                        onDownload(doc.id);
+                      }}
+                    >
                       Download
                     </Button>
                   </div>
