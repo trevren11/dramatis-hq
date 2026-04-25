@@ -4,6 +4,7 @@ import { db } from "@/lib/db";
 import { conversations, conversationParticipants, messages, users } from "@/lib/db/schema";
 import { replyMessageSchema, conversationActionSchema } from "@/lib/validations/messages";
 import { eq, and, desc, isNull, asc } from "drizzle-orm";
+import { triggerEvent, CHANNELS, EVENTS } from "@/lib/pusher-server";
 
 interface RouteContext {
   params: Promise<{ conversationId: string }>;
@@ -228,6 +229,29 @@ export async function POST(request: Request, context: RouteContext): Promise<Nex
           eq(conversationParticipants.userId, session.user.id)
         )
       );
+
+    // Get sender info for broadcast
+    const sender = await db.query.users.findFirst({
+      where: eq(users.id, session.user.id),
+    });
+
+    // Broadcast new message to all participants
+    void triggerEvent(CHANNELS.chat(conversationId), EVENTS.MESSAGE_SENT, {
+      message: {
+        id: newMessage.id,
+        content: newMessage.content,
+        createdAt: newMessage.createdAt,
+        parentMessageId: newMessage.parentMessageId,
+        attachments: attachments ?? [],
+        sender: {
+          id: session.user.id,
+          name: sender?.name ?? "Unknown",
+          image: sender?.image ?? null,
+          email: sender?.email ?? "",
+        },
+      },
+      conversationId,
+    });
 
     return NextResponse.json(
       {

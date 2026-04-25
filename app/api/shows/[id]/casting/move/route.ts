@@ -4,6 +4,7 @@ import { db } from "@/lib/db";
 import { producerProfiles, shows, castingAssignments, castingDeck, roles } from "@/lib/db/schema";
 import { castingMoveSchema, type CastingMove } from "@/lib/validations/casting";
 import { eq, and, max } from "drizzle-orm";
+import { triggerEvent, CHANNELS, EVENTS } from "@/lib/pusher-server";
 
 async function validateRequest(
   userId: string,
@@ -95,6 +96,14 @@ async function moveToRole(
     .values({ showId, roleId: destination.roleId, talentProfileId, slotIndex, assignedBy: userId })
     .returning();
 
+  // Broadcast real-time update
+  void triggerEvent(CHANNELS.casting(showId), EVENTS.TALENT_ADDED, {
+    assignment,
+    talentProfileId,
+    roleId: destination.roleId,
+    slotIndex,
+  });
+
   return NextResponse.json({ type: "assignment", assignment });
 }
 
@@ -122,6 +131,13 @@ async function moveToDeck(
     .insert(castingDeck)
     .values({ showId, talentProfileId, sortOrder, addedBy: userId })
     .returning();
+
+  // Broadcast real-time update
+  void triggerEvent(CHANNELS.casting(showId), EVENTS.CASTING_UPDATED, {
+    type: "deck",
+    deckItem,
+    talentProfileId,
+  });
 
   return NextResponse.json({ type: "deck", deckItem });
 }
@@ -158,6 +174,13 @@ export async function POST(
     } else if (destination.type === "deck") {
       return await moveToDeck(showId, talentProfileId, session.user.id, destination);
     }
+
+    // Broadcast talent moved to pool
+    void triggerEvent(CHANNELS.casting(showId), EVENTS.TALENT_REMOVED, {
+      talentProfileId,
+      destination: "pool",
+    });
+
     return NextResponse.json({ type: "pool", success: true });
   } catch (error) {
     console.error("Error moving casting:", error);

@@ -14,6 +14,7 @@ import {
 import { scheduleEventCreateSchema, scheduleEventQuerySchema } from "@/lib/validations/schedule";
 import { eq, and, gte, lte, asc, inArray } from "drizzle-orm";
 import { getEventTypeColor } from "@/lib/db/schema/schedule";
+import { triggerEvent, CHANNELS, EVENTS } from "@/lib/pusher-server";
 
 export async function GET(
   request: Request,
@@ -236,6 +237,12 @@ export async function POST(
         }))
       );
     }
+
+    // Broadcast schedule update
+    void triggerEvent(CHANNELS.schedule(showId), EVENTS.SCHEDULE_CREATED, {
+      event: { ...event, color: getEventTypeColor(event.eventType) },
+      showId,
+    });
 
     return NextResponse.json(
       { event: { ...event, color: getEventTypeColor(event.eventType) } },
