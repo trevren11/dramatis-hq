@@ -23,12 +23,6 @@ export function getPusherClient(): Pusher {
     pusherClient = new Pusher(key, {
       cluster,
       authEndpoint: "/api/pusher/auth",
-      authTransport: "ajax",
-      auth: {
-        headers: {
-          "Content-Type": "application/json",
-        },
-      },
     });
 
     // Connection state logging for debugging
