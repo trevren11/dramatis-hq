@@ -37,3 +37,7 @@ next-env.d.ts
 
 # Taskling
 .taskling
+
+# E2E test outputs
+test-results/
+playwright-report/
