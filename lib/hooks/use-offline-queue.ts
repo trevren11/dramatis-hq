@@ -1,10 +1,7 @@
 "use client";
 
 import { useState, useEffect, useCallback } from "react";
-import {
-  getOfflineQueue,
-  type QueuedAction,
-} from "@/lib/realtime/offline-queue";
+import { getOfflineQueue, type QueuedAction } from "@/lib/realtime/offline-queue";
 
 interface UseOfflineQueueOptions {
   onSync?: (action: QueuedAction) => Promise<void>;
@@ -16,15 +13,13 @@ interface UseOfflineQueueReturn {
   queue: QueuedAction[];
   pendingCount: number;
   isOnline: boolean;
-  enqueue: <T>(type: string, payload: T) => string;
+  enqueue: (type: string, payload: unknown) => string;
   dequeue: (id: string) => void;
   syncNow: () => Promise<void>;
   clear: () => void;
 }
 
-export function useOfflineQueue(
-  options: UseOfflineQueueOptions = {}
-): UseOfflineQueueReturn {
+export function useOfflineQueue(options: UseOfflineQueueOptions = {}): UseOfflineQueueReturn {
   const [queue, setQueue] = useState<QueuedAction[]>([]);
   const [isOnline, setIsOnline] = useState(true);
 
@@ -41,8 +36,12 @@ export function useOfflineQueue(
     });
 
     // Track online status
-    const handleOnline = () => { setIsOnline(true); };
-    const handleOffline = () => { setIsOnline(false); };
+    const handleOnline = (): void => {
+      setIsOnline(true);
+    };
+    const handleOffline = (): void => {
+      setIsOnline(false);
+    };
 
     if (typeof window !== "undefined") {
       setIsOnline(navigator.onLine);
@@ -59,7 +58,7 @@ export function useOfflineQueue(
     };
   }, [options.onSync, options.onSyncError, options.onSyncComplete]);
 
-  const enqueue = useCallback(<T>(type: string, payload: T): string => {
+  const enqueue = useCallback((type: string, payload: unknown): string => {
     const offlineQueue = getOfflineQueue();
     return offlineQueue.enqueue(type, payload);
   }, []);
@@ -99,13 +98,17 @@ export function useOnlineStatus(): boolean {
 
     setIsOnline(navigator.onLine);
 
-    const handleOnline = () => { setIsOnline(true); };
-    const handleOffline = () => { setIsOnline(false); };
+    const handleOnline = (): void => {
+      setIsOnline(true);
+    };
+    const handleOffline = (): void => {
+      setIsOnline(false);
+    };
 
     window.addEventListener("online", handleOnline);
     window.addEventListener("offline", handleOffline);
 
-    return () => {
+    return (): void => {
       window.removeEventListener("online", handleOnline);
       window.removeEventListener("offline", handleOffline);
     };

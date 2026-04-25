@@ -8,16 +8,12 @@ describe("offline-queue", () => {
 
     // Mock localStorage
     const storage: Record<string, string> = {};
-    vi.spyOn(Storage.prototype, "getItem").mockImplementation(
-      (key) => storage[key] || null
-    );
-    vi.spyOn(Storage.prototype, "setItem").mockImplementation(
-      (key, value) => {
-        storage[key] = value;
-      }
-    );
+    vi.spyOn(Storage.prototype, "getItem").mockImplementation((key) => storage[key] ?? null);
+    vi.spyOn(Storage.prototype, "setItem").mockImplementation((key, value) => {
+      storage[key] = value;
+    });
     vi.spyOn(Storage.prototype, "removeItem").mockImplementation((key) => {
-      delete storage[key];
+      Reflect.deleteProperty(storage, key);
     });
 
     // Mock navigator.onLine
@@ -56,11 +52,11 @@ describe("offline-queue", () => {
 
       const actions = queue.getQueue();
       expect(actions).toHaveLength(1);
-      const action = actions[0]!;
-      expect(action.type).toBe("test-type");
-      expect(action.payload).toEqual({ value: 123 });
-      expect(action.retryCount).toBe(0);
-      expect(action.timestamp).toBeDefined();
+      const action = actions[0];
+      expect(action?.type).toBe("test-type");
+      expect(action?.payload).toEqual({ value: 123 });
+      expect(action?.retryCount).toBe(0);
+      expect(action?.timestamp).toBeDefined();
     });
   });
 
@@ -80,7 +76,9 @@ describe("offline-queue", () => {
       const queue = getOfflineQueue();
       queue.enqueue("action", { data: "test" });
 
-      expect(() => { queue.dequeue("non-existent-id"); }).not.toThrow();
+      expect(() => {
+        queue.dequeue("non-existent-id");
+      }).not.toThrow();
       expect(queue.getPendingCount()).toBe(1);
     });
   });

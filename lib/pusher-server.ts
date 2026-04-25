@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unnecessary-type-parameters */
 import Pusher from "pusher";
 
 // Re-export shared constants for server-side use
@@ -32,11 +33,7 @@ export function getPusherServer(): Pusher {
 }
 
 // Trigger helper with type safety
-export async function triggerEvent<T>(
-  channel: string,
-  event: string,
-  data: T
-): Promise<void> {
+export async function triggerEvent<T>(channel: string, event: string, data: T): Promise<void> {
   const pusher = getPusherServer();
   await pusher.trigger(channel, event, data);
 }

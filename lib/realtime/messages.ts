@@ -65,28 +65,20 @@ export async function broadcastMessageUpdated(
   messageId: string,
   content: string
 ): Promise<void> {
-  await triggerEvent<MessageUpdatedEvent>(
-    CHANNELS.chat(conversationId),
-    EVENTS.MESSAGE_UPDATED,
-    {
-      messageId,
-      content,
-      conversationId,
-      editedAt: new Date().toISOString(),
-    }
-  );
+  await triggerEvent<MessageUpdatedEvent>(CHANNELS.chat(conversationId), EVENTS.MESSAGE_UPDATED, {
+    messageId,
+    content,
+    conversationId,
+    editedAt: new Date().toISOString(),
+  });
 }
 
 export async function broadcastMessageDeleted(
   conversationId: string,
   messageId: string
 ): Promise<void> {
-  await triggerEvent<MessageDeletedEvent>(
-    CHANNELS.chat(conversationId),
-    EVENTS.MESSAGE_DELETED,
-    {
-      messageId,
-      conversationId,
-    }
-  );
+  await triggerEvent<MessageDeletedEvent>(CHANNELS.chat(conversationId), EVENTS.MESSAGE_DELETED, {
+    messageId,
+    conversationId,
+  });
 }

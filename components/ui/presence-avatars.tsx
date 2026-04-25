@@ -2,12 +2,7 @@
 
 import React from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from "@/components/ui/tooltip";
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { cn } from "@/lib/utils";
 import { usePresence, type PresenceMember } from "@/lib/hooks/use-presence";
 
@@ -77,9 +72,7 @@ export function PresenceAvatars({
       <div className={cn("flex items-center gap-2", className)}>
         {showLabel && (
           <span className="text-muted-foreground text-xs">
-            {otherMembers.length === 1
-              ? "1 viewer"
-              : `${otherMembers.length} viewers`}
+            {otherMembers.length === 1 ? "1 viewer" : `${String(otherMembers.length)} viewers`}
           </span>
         )}
         <div className="flex -space-x-2">
@@ -87,16 +80,10 @@ export function PresenceAvatars({
             <Tooltip key={member.id}>
               <TooltipTrigger asChild>
                 <Avatar
-                  className={cn(
-                    sizeClasses[size],
-                    "border-background border-2 ring-2 ring-white"
-                  )}
+                  className={cn(sizeClasses[size], "border-background border-2 ring-2 ring-white")}
                 >
                   {member.info.image && (
-                    <AvatarImage
-                      src={member.info.image}
-                      alt={member.info.name}
-                    />
+                    <AvatarImage src={member.info.image} alt={member.info.name} />
                   )}
                   <AvatarFallback
                     style={{ backgroundColor: getUserColor(member.id) }}
@@ -114,12 +101,7 @@ export function PresenceAvatars({
           {remainingCount > 0 && (
             <Tooltip>
               <TooltipTrigger asChild>
-                <Avatar
-                  className={cn(
-                    sizeClasses[size],
-                    "border-background border-2 bg-gray-500"
-                  )}
-                >
+                <Avatar className={cn(sizeClasses[size], "border-background border-2 bg-gray-500")}>
                   <AvatarFallback className="bg-gray-500 text-white">
                     +{remainingCount}
                   </AvatarFallback>
@@ -127,8 +109,7 @@ export function PresenceAvatars({
               </TooltipTrigger>
               <TooltipContent>
                 <p>
-                  {remainingCount} more{" "}
-                  {remainingCount === 1 ? "viewer" : "viewers"}
+                  {remainingCount} more {remainingCount === 1 ? "viewer" : "viewers"}
                 </p>
               </TooltipContent>
             </Tooltip>
@@ -155,9 +136,7 @@ export function PresenceAvatarsList({
   showLabel?: boolean;
   className?: string;
 }): React.ReactElement | null {
-  const otherMembers = currentUserId
-    ? members.filter((m) => m.id !== currentUserId)
-    : members;
+  const otherMembers = currentUserId ? members.filter((m) => m.id !== currentUserId) : members;
 
   if (otherMembers.length === 0) {
     return null;
@@ -171,9 +150,7 @@ export function PresenceAvatarsList({
       <div className={cn("flex items-center gap-2", className)}>
         {showLabel && (
           <span className="text-muted-foreground text-xs">
-            {otherMembers.length === 1
-              ? "1 viewer"
-              : `${otherMembers.length} viewers`}
+            {otherMembers.length === 1 ? "1 viewer" : `${String(otherMembers.length)} viewers`}
           </span>
         )}
         <div className="flex -space-x-2">
@@ -181,16 +158,10 @@ export function PresenceAvatarsList({
             <Tooltip key={member.id}>
               <TooltipTrigger asChild>
                 <Avatar
-                  className={cn(
-                    sizeClasses[size],
-                    "border-background border-2 ring-2 ring-white"
-                  )}
+                  className={cn(sizeClasses[size], "border-background border-2 ring-2 ring-white")}
                 >
                   {member.info.image && (
-                    <AvatarImage
-                      src={member.info.image}
-                      alt={member.info.name}
-                    />
+                    <AvatarImage src={member.info.image} alt={member.info.name} />
                   )}
                   <AvatarFallback
                     style={{ backgroundColor: getUserColor(member.id) }}
@@ -206,15 +177,8 @@ export function PresenceAvatarsList({
             </Tooltip>
           ))}
           {remainingCount > 0 && (
-            <Avatar
-              className={cn(
-                sizeClasses[size],
-                "border-background border-2 bg-gray-500"
-              )}
-            >
-              <AvatarFallback className="bg-gray-500 text-white">
-                +{remainingCount}
-              </AvatarFallback>
+            <Avatar className={cn(sizeClasses[size], "border-background border-2 bg-gray-500")}>
+              <AvatarFallback className="bg-gray-500 text-white">+{remainingCount}</AvatarFallback>
             </Avatar>
           )}
         </div>

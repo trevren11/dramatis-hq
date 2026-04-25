@@ -37,14 +37,10 @@ export async function broadcastScheduleCreated(
   showId: string,
   event: ScheduleEvent
 ): Promise<void> {
-  await triggerEvent<ScheduleCreatedEvent>(
-    CHANNELS.schedule(showId),
-    EVENTS.SCHEDULE_CREATED,
-    {
-      event,
-      showId,
-    }
-  );
+  await triggerEvent<ScheduleCreatedEvent>(CHANNELS.schedule(showId), EVENTS.SCHEDULE_CREATED, {
+    event,
+    showId,
+  });
 }
 
 export async function broadcastScheduleUpdated(
@@ -53,16 +49,12 @@ export async function broadcastScheduleUpdated(
   changes: Partial<ScheduleEvent>,
   userId: string
 ): Promise<void> {
-  await triggerEvent<ScheduleUpdatedEvent>(
-    CHANNELS.schedule(showId),
-    EVENTS.SCHEDULE_UPDATED,
-    {
-      eventId,
-      changes,
-      showId,
-      userId,
-    }
-  );
+  await triggerEvent<ScheduleUpdatedEvent>(CHANNELS.schedule(showId), EVENTS.SCHEDULE_UPDATED, {
+    eventId,
+    changes,
+    showId,
+    userId,
+  });
 }
 
 export async function broadcastScheduleDeleted(
@@ -70,13 +62,9 @@ export async function broadcastScheduleDeleted(
   eventId: string,
   userId: string
 ): Promise<void> {
-  await triggerEvent<ScheduleDeletedEvent>(
-    CHANNELS.schedule(showId),
-    EVENTS.SCHEDULE_DELETED,
-    {
-      eventId,
-      showId,
-      userId,
-    }
-  );
+  await triggerEvent<ScheduleDeletedEvent>(CHANNELS.schedule(showId), EVENTS.SCHEDULE_DELETED, {
+    eventId,
+    showId,
+    userId,
+  });
 }

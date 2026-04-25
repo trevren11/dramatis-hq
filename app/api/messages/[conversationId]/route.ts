@@ -147,6 +147,7 @@ export async function GET(request: Request, context: RouteContext): Promise<Next
 }
 
 // Reply to conversation
+// eslint-disable-next-line complexity
 export async function POST(request: Request, context: RouteContext): Promise<NextResponse> {
   try {
     const session = await auth();
