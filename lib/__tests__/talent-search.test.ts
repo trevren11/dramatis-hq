@@ -44,7 +44,7 @@ describe("Talent Search", () => {
   describe("calculateMatchPercentage", () => {
     it("returns 100% when no filters are specified", () => {
       const profile = createMockProfile();
-      const filters: TalentSearchInput = { page: 1, limit: 20 };
+      const filters: TalentSearchInput = { page: 1, limit: 20, sortBy: "relevance" };
 
       expect(calculateMatchPercentage(profile, filters)).toBe(100);
     });
@@ -65,6 +65,7 @@ describe("Talent Search", () => {
         mustBe18Plus: true,
         page: 1,
         limit: 20,
+        sortBy: "relevance",
       };
 
       expect(calculateMatchPercentage(profile, filters)).toBe(100);
@@ -86,6 +87,7 @@ describe("Talent Search", () => {
         mustBe18Plus: true,
         page: 1,
         limit: 20,
+        sortBy: "relevance",
       };
 
       expect(calculateMatchPercentage(profile, filters)).toBe(75);
@@ -95,11 +97,23 @@ describe("Talent Search", () => {
       const profile = createMockProfile({ heightInches: 72 });
 
       expect(
-        calculateMatchPercentage(profile, { heightMin: 70, heightMax: 74, page: 1, limit: 20 })
+        calculateMatchPercentage(profile, {
+          heightMin: 70,
+          heightMax: 74,
+          page: 1,
+          limit: 20,
+          sortBy: "relevance",
+        })
       ).toBe(100);
 
       expect(
-        calculateMatchPercentage(profile, { heightMin: 74, heightMax: 78, page: 1, limit: 20 })
+        calculateMatchPercentage(profile, {
+          heightMin: 74,
+          heightMax: 78,
+          page: 1,
+          limit: 20,
+          sortBy: "relevance",
+        })
       ).toBe(0);
     });
 
@@ -107,11 +121,23 @@ describe("Talent Search", () => {
       const profile = createMockProfile({ ageRangeLow: 25, ageRangeHigh: 35 });
 
       expect(
-        calculateMatchPercentage(profile, { ageMin: 30, ageMax: 40, page: 1, limit: 20 })
+        calculateMatchPercentage(profile, {
+          ageMin: 30,
+          ageMax: 40,
+          page: 1,
+          limit: 20,
+          sortBy: "relevance",
+        })
       ).toBe(100);
 
       expect(
-        calculateMatchPercentage(profile, { ageMin: 40, ageMax: 50, page: 1, limit: 20 })
+        calculateMatchPercentage(profile, {
+          ageMin: 40,
+          ageMax: 50,
+          page: 1,
+          limit: 20,
+          sortBy: "relevance",
+        })
       ).toBe(0);
     });
 
@@ -123,6 +149,7 @@ describe("Talent Search", () => {
           hairColors: ["brown", "black"],
           page: 1,
           limit: 20,
+          sortBy: "relevance",
         })
       ).toBe(100);
 
@@ -131,6 +158,7 @@ describe("Talent Search", () => {
           hairColors: ["blonde", "red"],
           page: 1,
           limit: 20,
+          sortBy: "relevance",
         })
       ).toBe(0);
     });
@@ -140,7 +168,12 @@ describe("Talent Search", () => {
       const negotiableProfile = createMockProfile({ willingnessToRemoveHair: "negotiable" });
       const unwillingProfile = createMockProfile({ willingnessToRemoveHair: "no" });
 
-      const filters: TalentSearchInput = { willingToCutHair: true, page: 1, limit: 20 };
+      const filters: TalentSearchInput = {
+        willingToCutHair: true,
+        page: 1,
+        limit: 20,
+        sortBy: "relevance",
+      };
 
       expect(calculateMatchPercentage(willingProfile, filters)).toBe(100);
       expect(calculateMatchPercentage(negotiableProfile, filters)).toBe(100);
@@ -152,7 +185,12 @@ describe("Talent Search", () => {
       const under18Profile = createMockProfile({ isOver18: false });
       const unknownProfile = createMockProfile({ isOver18: null });
 
-      const filters: TalentSearchInput = { mustBe18Plus: true, page: 1, limit: 20 };
+      const filters: TalentSearchInput = {
+        mustBe18Plus: true,
+        page: 1,
+        limit: 20,
+        sortBy: "relevance",
+      };
 
       expect(calculateMatchPercentage(over18Profile, filters)).toBe(100);
       expect(calculateMatchPercentage(under18Profile, filters)).toBe(0);
@@ -171,6 +209,7 @@ describe("Talent Search", () => {
         hairColors: ["brown"],
         page: 1,
         limit: 20,
+        sortBy: "relevance",
       };
 
       expect(calculateMatchPercentage(profile, filters)).toBe(0);
@@ -180,7 +219,7 @@ describe("Talent Search", () => {
   describe("filterBySearchCriteria", () => {
     it("returns true when no strict criteria", () => {
       const profile = createMockProfile();
-      const filters: TalentSearchInput = { page: 1, limit: 20 };
+      const filters: TalentSearchInput = { page: 1, limit: 20, sortBy: "relevance" };
 
       expect(filterBySearchCriteria(profile, filters)).toBe(true);
     });
@@ -189,7 +228,12 @@ describe("Talent Search", () => {
       const over18Profile = createMockProfile({ isOver18: true });
       const under18Profile = createMockProfile({ isOver18: false });
 
-      const filters: TalentSearchInput = { mustBe18Plus: true, page: 1, limit: 20 };
+      const filters: TalentSearchInput = {
+        mustBe18Plus: true,
+        page: 1,
+        limit: 20,
+        sortBy: "relevance",
+      };
 
       expect(filterBySearchCriteria(over18Profile, filters)).toBe(true);
       expect(filterBySearchCriteria(under18Profile, filters)).toBe(false);

@@ -34,6 +34,7 @@ export function TalentSearch({
   const [filters, setFilters] = React.useState<TalentSearchInput>({
     page: 1,
     limit: 20,
+    sortBy: "relevance",
   });
 
   const handleSearch = (e: React.SyntheticEvent): void => {
@@ -42,7 +43,7 @@ export function TalentSearch({
   };
 
   const clearFilters = (): void => {
-    setFilters({ page: 1, limit: 20 });
+    setFilters({ page: 1, limit: 20, sortBy: "relevance" });
   };
 
   return (
