@@ -1,4 +1,4 @@
-import { eq, and, isNull, desc, sql, inArray, or, lte } from "drizzle-orm";
+import { eq, and, isNull, desc, sql, inArray } from "drizzle-orm";
 import { db } from "@/lib/db";
 import {
   documents,
@@ -13,7 +13,7 @@ import {
   type DocumentType,
   type ProducerDocumentStatus,
 } from "@/lib/db/schema";
-import { uploadDocument, generateDocumentKey, deleteDocument } from "@/lib/storage/document-storage";
+import { uploadDocument, generateDocumentKey } from "@/lib/storage/document-storage";
 import { encryptDocument } from "@/lib/encryption";
 import { emailService } from "@/lib/email/service";
 import { getOrganizationMembership } from "@/lib/permissions/helpers";
