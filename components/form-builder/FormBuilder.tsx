@@ -56,9 +56,18 @@ function SortableField({
   const fieldTypeConfig = FIELD_TYPES.find((ft) => ft.type === field.type);
   const Icon = fieldTypeConfig?.icon;
 
+  const handleKeyDown = (e: React.KeyboardEvent): void => {
+    if (e.key === "Enter" || e.key === " ") {
+      e.preventDefault();
+      onSelect();
+    }
+  };
+
   return (
     <div
       ref={setNodeRef}
+      role="button"
+      tabIndex={0}
       style={style}
       className={cn(
         "group bg-card flex items-center gap-2 rounded-lg border p-3 transition-colors",
@@ -66,6 +75,7 @@ function SortableField({
         isDragging && "opacity-50"
       )}
       onClick={onSelect}
+      onKeyDown={handleKeyDown}
     >
       <div
         {...attributes}

@@ -85,6 +85,20 @@ function CompactTalentCard({
   const displayName = talent.stageName ?? `${talent.firstName} ${talent.lastName}`;
   const style = buildCardStyle(transform, isDragging, selectedBy);
 
+  const handleKeyDown = (e: React.KeyboardEvent): void => {
+    if ((e.key === "Enter" || e.key === " ") && onSelect) {
+      e.preventDefault();
+      onSelect();
+    }
+  };
+
+  // Merge accessibility attributes - spread attributes first so our values override
+  const a11yProps = {
+    ...attributes,
+    role: onSelect ? ("button" as const) : attributes.role,
+    tabIndex: onSelect && !disabled && !talent.isLocked ? 0 : attributes.tabIndex,
+  };
+
   return (
     <div
       ref={setNodeRef}
@@ -98,7 +112,8 @@ function CompactTalentCard({
       )}
       style={style}
       onClick={onSelect}
-      {...attributes}
+      onKeyDown={handleKeyDown}
+      {...a11yProps}
       {...listeners}
     >
       <Avatar className="h-6 w-6">
@@ -113,6 +128,7 @@ function CompactTalentCard({
   );
 }
 
+// eslint-disable-next-line complexity -- accessibility handlers add necessary complexity
 function FullTalentCard({
   talent,
   showStatus,
@@ -141,6 +157,20 @@ function FullTalentCard({
   const displayName = talent.stageName ?? `${talent.firstName} ${talent.lastName}`;
   const style = buildCardStyle(transform, isDragging, selectedBy);
 
+  const handleKeyDown = (e: React.KeyboardEvent): void => {
+    if ((e.key === "Enter" || e.key === " ") && onSelect) {
+      e.preventDefault();
+      onSelect();
+    }
+  };
+
+  // Merge accessibility attributes - spread attributes first so our values override
+  const a11yProps = {
+    ...attributes,
+    role: onSelect ? ("button" as const) : attributes.role,
+    tabIndex: onSelect && !disabled && !talent.isLocked ? 0 : attributes.tabIndex,
+  };
+
   return (
     <div
       ref={setNodeRef}
@@ -153,7 +183,8 @@ function FullTalentCard({
         !disabled && !talent.isLocked && "cursor-grab active:cursor-grabbing"
       )}
       onClick={onSelect}
-      {...attributes}
+      onKeyDown={handleKeyDown}
+      {...a11yProps}
       {...listeners}
     >
       {!disabled && !talent.isLocked && (

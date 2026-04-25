@@ -247,11 +247,19 @@ export default function NotificationsPage(): React.ReactElement {
               notifications.map((notification) => (
                 <div
                   key={notification.id}
+                  role="button"
+                  tabIndex={0}
                   className={`group hover:bg-accent flex cursor-pointer items-start gap-4 rounded-lg border p-4 transition-colors ${
                     !notification.readAt ? "bg-accent/30" : ""
                   }`}
                   onClick={() => {
                     void handleNotificationClick(notification);
+                  }}
+                  onKeyDown={(e) => {
+                    if (e.key === "Enter" || e.key === " ") {
+                      e.preventDefault();
+                      void handleNotificationClick(notification);
+                    }
                   }}
                 >
                   <div className="bg-primary/10 flex h-10 w-10 items-center justify-center rounded-full">

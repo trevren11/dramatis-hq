@@ -159,12 +159,22 @@ export function ProfileViewer({
       {/* Content */}
       <CardContent className="p-0">
         <div
+          role="button"
+          tabIndex={0}
+          aria-pressed={showResume}
+          aria-label={showResume ? "Show headshot" : "Show resume"}
           className={cn(
             "relative cursor-pointer transition-all duration-300",
             showResume && "rotate-y-180"
           )}
           onClick={() => {
             setShowResume((prev) => !prev);
+          }}
+          onKeyDown={(e) => {
+            if (e.key === "Enter" || e.key === " ") {
+              e.preventDefault();
+              setShowResume((prev) => !prev);
+            }
           }}
         >
           {!showResume ? (

@@ -255,6 +255,8 @@ export function SendNotificationFlow({
                   {recipients.map((recipient) => (
                     <div
                       key={recipient.assignmentId}
+                      role="button"
+                      tabIndex={0}
                       className={`flex cursor-pointer items-center gap-3 rounded-md p-3 transition-colors ${
                         selectedRecipients.includes(recipient.assignmentId)
                           ? "bg-primary/10"
@@ -262,6 +264,12 @@ export function SendNotificationFlow({
                       }`}
                       onClick={() => {
                         handleToggleRecipient(recipient.assignmentId);
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter" || e.key === " ") {
+                          e.preventDefault();
+                          handleToggleRecipient(recipient.assignmentId);
+                        }
                       }}
                     >
                       <Checkbox
