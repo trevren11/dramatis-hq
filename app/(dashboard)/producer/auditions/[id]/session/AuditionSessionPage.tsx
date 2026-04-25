@@ -13,7 +13,7 @@ import {
 } from "@/components/audition-session";
 import { RefreshCw, ArrowLeft } from "lucide-react";
 
-type DecisionType = "callback" | "no_thanks" | "callback_role";
+type DecisionType = "callback" | "hold_for_role" | "cast_in_role" | "release";
 
 interface Role {
   id: string;
@@ -78,8 +78,9 @@ interface SessionData {
     inRoom: number;
     completed: number;
     callback: number;
-    callbackRole: number;
-    noThanks: number;
+    holdForRole: number;
+    castInRole: number;
+    release: number;
     undecided: number;
   };
 }
@@ -329,8 +330,9 @@ export function AuditionSessionPage({
             roles={data.roles}
             counts={{
               callback: data.counts.callback,
-              callbackRole: data.counts.callbackRole,
-              noThanks: data.counts.noThanks,
+              holdForRole: data.counts.holdForRole,
+              castInRole: data.counts.castInRole,
+              release: data.counts.release,
               undecided: data.counts.undecided,
             }}
             onSelectTalent={handleSelectTalent}

@@ -75,8 +75,9 @@ export async function GET(
     // Count by decision type
     const counts = {
       callback: 0,
-      no_thanks: 0,
-      callback_role: 0,
+      hold_for_role: 0,
+      cast_in_role: 0,
+      release: 0,
     };
 
     for (const d of decisions) {
