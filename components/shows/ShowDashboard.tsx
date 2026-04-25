@@ -3,7 +3,7 @@
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Calendar, MapPin, Users, Clock, Pencil, LayoutGrid } from "lucide-react";
+import { Calendar, MapPin, Users, Clock, Pencil, LayoutGrid, CalendarDays } from "lucide-react";
 import Link from "next/link";
 import type { Show } from "@/lib/db/schema/shows";
 import type { Role } from "@/lib/db/schema/roles";
@@ -55,6 +55,12 @@ export function ShowDashboard({ show, roles }: ShowDashboardProps): React.ReactE
             <Link href={`/producer/shows/${show.id}/casting`}>
               <LayoutGrid className="mr-2 h-4 w-4" />
               Casting Board
+            </Link>
+          </Button>
+          <Button asChild variant="secondary">
+            <Link href={`/producer/shows/${show.id}/schedule`}>
+              <CalendarDays className="mr-2 h-4 w-4" />
+              Schedule
             </Link>
           </Button>
           <Button asChild variant="outline">
