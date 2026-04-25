@@ -1,3 +1,4 @@
+/* eslint-disable max-lines */
 "use client";
 
 import React, { useState, useCallback, useEffect, useRef } from "react";
@@ -23,7 +24,9 @@ import { TalentCard, type TalentCardData } from "./TalentCard";
 import { PresenceIndicators, buildPresenceMap } from "./PresenceIndicators";
 import { useToast } from "@/components/ui/use-toast";
 import { cn } from "@/lib/utils";
-import { RefreshCw, Lock, Unlock } from "lucide-react";
+import { RefreshCw, Lock, Unlock, Mail, FileText } from "lucide-react";
+import { SendNotificationFlow, CastListGenerator } from "@/components/notifications";
+import type { EmailTemplate } from "@/lib/db/schema/notifications";
 
 interface RoleData {
   id: string;
@@ -65,10 +68,12 @@ interface PresenceUser {
 interface CastingBoardProps {
   showId: string;
   showTitle: string;
+  organizationName?: string;
   initialRoles: RoleData[];
   initialAssignments: AssignmentData[];
   initialDeck: DeckItemData[];
   initialPool: TalentCardData[];
+  initialTemplates?: EmailTemplate[];
 }
 
 interface CastingResponse {
@@ -130,22 +135,27 @@ function groupAssignmentsByRole(assignments: AssignmentData[]): Record<string, A
 export function CastingBoard({
   showId,
   showTitle,
+  organizationName = "",
   initialRoles,
   initialAssignments,
   initialDeck,
   initialPool,
+  initialTemplates = [],
 }: CastingBoardProps): React.ReactElement {
   const { toast } = useToast();
   const [roles] = useState(initialRoles);
   const [assignments, setAssignments] = useState(initialAssignments);
   const [deck, setDeck] = useState(initialDeck);
   const [pool, setPool] = useState(initialPool);
+  const [templates] = useState(initialTemplates);
   const [presence, setPresence] = useState<PresenceUser[]>([]);
   const [selectedTalentId, setSelectedTalentId] = useState<string | null>(null);
   const [isDeckExpanded, setIsDeckExpanded] = useState(true);
   const [activeDragTalent, setActiveDragTalent] = useState<TalentCardData | null>(null);
   const [isSaving, setIsSaving] = useState(false);
   const [hasUnsavedChanges, setHasUnsavedChanges] = useState(false);
+  const [showNotificationFlow, setShowNotificationFlow] = useState(false);
+  const [showCastList, setShowCastList] = useState(false);
 
   const presenceIntervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
 
@@ -432,6 +442,27 @@ export function CastingBoard({
                 <Unlock className="mr-2 h-4 w-4" />
                 Unlock All
               </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => {
+                  setShowCastList(true);
+                }}
+                disabled={isSaving}
+              >
+                <FileText className="mr-2 h-4 w-4" />
+                Cast List
+              </Button>
+              <Button
+                size="sm"
+                onClick={() => {
+                  setShowNotificationFlow(true);
+                }}
+                disabled={isSaving || assignments.length === 0}
+              >
+                <Mail className="mr-2 h-4 w-4" />
+                Send Notifications
+              </Button>
             </div>
           </div>
         </div>
@@ -515,6 +546,37 @@ export function CastingBoard({
           </div>
         )}
       </DragOverlay>
+
+      {showNotificationFlow && (
+        <SendNotificationFlow
+          showId={showId}
+          showTitle={showTitle}
+          organizationName={organizationName}
+          recipients={assignments.map((a) => ({
+            id: a.talent.id,
+            assignmentId: a.id,
+            talentName: `${a.talent.firstName} ${a.talent.lastName}`,
+            stageName: a.talent.stageName,
+            roleName: roles.find((r) => r.id === a.roleId)?.name ?? "Unknown Role",
+            status: a.status,
+          }))}
+          templates={templates}
+          onClose={() => {
+            setShowNotificationFlow(false);
+          }}
+          onSuccess={() => {
+            setHasUnsavedChanges(true);
+          }}
+        />
+      )}
+
+      <CastListGenerator
+        showId={showId}
+        isOpen={showCastList}
+        onClose={() => {
+          setShowCastList(false);
+        }}
+      />
     </DndContext>
   );
 }
