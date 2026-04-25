@@ -1,18 +1,106 @@
 /// <reference lib="webworker" />
 
-// Service Worker for Push Notifications
-const SW_VERSION = "1.0.0";
+// Service Worker for Push Notifications and Offline Caching
+const SW_VERSION = "1.1.0";
+const CACHE_NAME = `dramatis-cache-v${SW_VERSION}`;
 
-// Install event - activate immediately
+// Static assets to cache for offline use
+const STATIC_ASSETS = ["/", "/manifest.json", "/icons/icon-192.svg", "/icons/icon-512.svg"];
+
+// Install event - cache static assets and activate immediately
 self.addEventListener("install", (event) => {
   console.log("[SW] Installing service worker v" + SW_VERSION);
-  event.waitUntil(self.skipWaiting());
+  event.waitUntil(
+    caches
+      .open(CACHE_NAME)
+      .then((cache) => {
+        console.log("[SW] Caching static assets");
+        return cache.addAll(STATIC_ASSETS);
+      })
+      .then(() => self.skipWaiting())
+  );
 });
 
-// Activate event - claim clients immediately
+// Activate event - clean up old caches and claim clients
 self.addEventListener("activate", (event) => {
   console.log("[SW] Activating service worker v" + SW_VERSION);
-  event.waitUntil(self.clients.claim());
+  event.waitUntil(
+    Promise.all([
+      // Clean up old caches
+      caches.keys().then((cacheNames) => {
+        return Promise.all(
+          cacheNames
+            .filter((name) => name.startsWith("dramatis-cache-") && name !== CACHE_NAME)
+            .map((name) => {
+              console.log("[SW] Deleting old cache:", name);
+              return caches.delete(name);
+            })
+        );
+      }),
+      // Claim all clients
+      self.clients.claim(),
+    ])
+  );
+});
+
+// Fetch event - serve from cache with network fallback (stale-while-revalidate for static assets)
+self.addEventListener("fetch", (event) => {
+  const { request } = event;
+  const url = new URL(request.url);
+
+  // Skip non-GET requests and API calls
+  if (request.method !== "GET" || url.pathname.startsWith("/api/")) {
+    return;
+  }
+
+  // For navigation requests, use network-first strategy
+  if (request.mode === "navigate") {
+    event.respondWith(
+      fetch(request)
+        .then((response) => {
+          // Cache successful responses
+          if (response.ok) {
+            const responseClone = response.clone();
+            caches.open(CACHE_NAME).then((cache) => {
+              cache.put(request, responseClone);
+            });
+          }
+          return response;
+        })
+        .catch(() => {
+          // Fallback to cache on network failure
+          return caches.match(request).then((cached) => {
+            return cached || caches.match("/");
+          });
+        })
+    );
+    return;
+  }
+
+  // For static assets (images, scripts, styles), use stale-while-revalidate
+  if (
+    url.pathname.match(/\.(js|css|svg|png|jpg|jpeg|gif|webp|woff2?)$/) ||
+    url.pathname.startsWith("/icons/") ||
+    url.pathname.startsWith("/_next/static/")
+  ) {
+    event.respondWith(
+      caches.open(CACHE_NAME).then((cache) => {
+        return cache.match(request).then((cached) => {
+          const fetchPromise = fetch(request)
+            .then((response) => {
+              if (response.ok) {
+                cache.put(request, response.clone());
+              }
+              return response;
+            })
+            .catch(() => cached);
+
+          return cached || fetchPromise;
+        });
+      })
+    );
+    return;
+  }
 });
 
 // Push event - display notification
