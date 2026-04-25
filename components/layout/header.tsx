@@ -63,6 +63,7 @@ export function Header({
               <input
                 type="search"
                 placeholder="Search..."
+                aria-label="Search"
                 className="border-input bg-background ring-offset-background placeholder:text-muted-foreground focus-visible:ring-ring flex h-10 w-full rounded-lg border py-2 pr-4 pl-10 text-sm focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:outline-none"
               />
             </div>
