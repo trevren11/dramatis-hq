@@ -11,6 +11,7 @@ import {
 } from "@/lib/db/schema";
 import { sendCallbackEmailsSchema } from "@/lib/validations/callbacks";
 import { eq, and, inArray } from "drizzle-orm";
+import { emailService } from "@/lib/email";
 
 interface EmailResult {
   invitationId: string;
@@ -60,17 +61,42 @@ async function processInvitationEmail(
     };
   }
 
-  // In a real implementation, this would send an actual email
-  // For now, we'll just mark it as sent
-  const dateStr = invitation.scheduledDate?.toISOString() ?? "TBD";
+  // Send email via email service
+  const dateStr = invitation.scheduledDate?.toLocaleDateString() ?? "TBD";
   const timeStr = invitation.scheduledTime ?? "TBD";
-  console.log(`Would send email to ${user.email}:
-    Subject: ${emailParams.subject}
-    Body: ${emailParams.body}
-    Callback: ${emailParams.callbackSessionName}
-    Date: ${dateStr}
-    Time: ${timeStr}
-  `);
+
+  const emailResult = await emailService.send({
+    to: user.email,
+    subject: emailParams.subject,
+    html: `
+      <div style="font-family: sans-serif; max-width: 600px; margin: 0 auto;">
+        ${emailParams.body}
+        <hr style="margin: 24px 0; border: none; border-top: 1px solid #e5e7eb;" />
+        <p style="color: #6b7280; font-size: 14px;">
+          <strong>Callback Session:</strong> ${emailParams.callbackSessionName}<br />
+          <strong>Date:</strong> ${dateStr}<br />
+          <strong>Time:</strong> ${timeStr}
+        </p>
+      </div>
+    `,
+    type: "callback_notification",
+    userId: talent.userId,
+    metadata: {
+      invitationId: invitation.id,
+      callbackSessionName: emailParams.callbackSessionName,
+      scheduledDate: dateStr,
+      scheduledTime: timeStr,
+    },
+  });
+
+  if (!emailResult.success) {
+    return {
+      invitationId: invitation.id,
+      email: user.email,
+      status: "failed",
+      error: emailResult.error ?? "Failed to send email",
+    };
+  }
 
   await db
     .update(callbackInvitations)
