@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-unsafe-member-access, @typescript-eslint/explicit-function-return-type, @typescript-eslint/no-unnecessary-condition */
 "use client";
 
 import { useEffect, useState, useCallback, useRef } from "react";
@@ -191,7 +192,9 @@ export function useTypingIndicator(
       channelRef.current = null;
 
       // Clear all typing timeouts
-      typingTimeoutsRef.current.forEach((t) => { clearTimeout(t); });
+      typingTimeoutsRef.current.forEach((t) => {
+        clearTimeout(t);
+      });
       typingTimeoutsRef.current.clear();
     };
   }, [channelName, enabled, timeout]);

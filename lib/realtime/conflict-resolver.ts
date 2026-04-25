@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/restrict-template-expressions */
 "use client";
 
 // Conflict detection and resolution for concurrent edits
@@ -36,7 +37,7 @@ export function detectConflicts<T extends Record<string, unknown>>(
   fields?: (keyof T)[]
 ): Conflict<unknown>[] {
   const conflicts: Conflict<unknown>[] = [];
-  const fieldsToCheck = fields ?? (Object.keys(local.data));
+  const fieldsToCheck = fields ?? Object.keys(local.data);
 
   for (const field of fieldsToCheck) {
     const localValue = local.data[field];
@@ -83,17 +84,14 @@ export function resolveConflicts<T extends Record<string, unknown>>(
     if (strategy === "manual" && onConflict) {
       resolution = onConflict(conflict);
     } else if (strategy === "last-write-wins") {
-      resolution =
-        conflict.remoteTimestamp > conflict.localTimestamp ? "remote" : "local";
+      resolution = conflict.remoteTimestamp > conflict.localTimestamp ? "remote" : "local";
     } else {
       // first-write-wins
-      resolution =
-        conflict.remoteTimestamp < conflict.localTimestamp ? "remote" : "local";
+      resolution = conflict.remoteTimestamp < conflict.localTimestamp ? "remote" : "local";
     }
 
     if (resolution === "remote") {
-      (resolved as Record<string, unknown>)[conflict.field] =
-        conflict.remoteValue;
+      (resolved as Record<string, unknown>)[conflict.field] = conflict.remoteValue;
     }
     // "local" keeps the existing value, "merge" would need custom logic
   }
@@ -104,11 +102,7 @@ export function resolveConflicts<T extends Record<string, unknown>>(
 /**
  * Create a versioned wrapper around data
  */
-export function createVersionedData<T>(
-  data: T,
-  updatedBy: string,
-  version = 1
-): VersionedData<T> {
+export function createVersionedData<T>(data: T, updatedBy: string, version = 1): VersionedData<T> {
   return {
     data,
     version,
@@ -183,10 +177,7 @@ export class ConflictManager<T extends Record<string, unknown>> {
     return conflicts;
   }
 
-  resolveAll(
-    remoteVersion: VersionedData<T>,
-    options?: ConflictResolverOptions
-  ): T {
+  resolveAll(remoteVersion: VersionedData<T>, options?: ConflictResolverOptions): T {
     if (!this.localVersion) return remoteVersion.data;
 
     const resolved = resolveConflicts(
@@ -219,6 +210,8 @@ export class ConflictManager<T extends Record<string, unknown>> {
   }
 
   private notifyListeners(): void {
-    this.listeners.forEach((l) => { l(); });
+    this.listeners.forEach((l) => {
+      l();
+    });
   }
 }

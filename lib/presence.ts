@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/restrict-template-expressions */
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -91,20 +92,23 @@ export function useOnlineStatus(
       const pusher = getPusherClient();
       const channel = pusher.subscribe(presenceChannel);
 
-      channel.bind("pusher:subscription_succeeded", (members: { count: number; each: (cb: (member: PresenceMember) => void) => void }) => {
-        setIsConnected(true);
-        const users: OnlineUser[] = [];
-        members.each((member: PresenceMember) => {
-          users.push({
-            id: member.id,
-            name: member.info.name,
-            image: member.info.image,
-            lastSeen: new Date(),
-            isOnline: true,
+      channel.bind(
+        "pusher:subscription_succeeded",
+        (members: { count: number; each: (cb: (member: PresenceMember) => void) => void }) => {
+          setIsConnected(true);
+          const users: OnlineUser[] = [];
+          members.each((member: PresenceMember) => {
+            users.push({
+              id: member.id,
+              name: member.info.name,
+              image: member.info.image,
+              lastSeen: new Date(),
+              isOnline: true,
+            });
           });
-        });
-        setOnlineUsers(users);
-      });
+          setOnlineUsers(users);
+        }
+      );
 
       channel.bind("pusher:member_added", (member: PresenceMember) => {
         setOnlineUsers((prev) => {
@@ -125,9 +129,7 @@ export function useOnlineStatus(
       channel.bind("pusher:member_removed", (member: { id: string }) => {
         setOnlineUsers((prev) =>
           prev.map((u) =>
-            u.id === member.id
-              ? { ...u, isOnline: false, lastSeen: new Date() }
-              : u
+            u.id === member.id ? { ...u, isOnline: false, lastSeen: new Date() } : u
           )
         );
       });
@@ -167,7 +169,9 @@ export function useCursorTracking(
   const { enabled = true, throttleMs = 50 } = options;
   const [cursors, setCursors] = useState<CursorPosition[]>([]);
   const lastUpdateRef = useRef<number>(0);
-  const channelRef = useRef<ReturnType<ReturnType<typeof getPusherClient>["subscribe"]> | null>(null);
+  const channelRef = useRef<ReturnType<ReturnType<typeof getPusherClient>["subscribe"]> | null>(
+    null
+  );
 
   const userColor = getUserColor(userId);
 

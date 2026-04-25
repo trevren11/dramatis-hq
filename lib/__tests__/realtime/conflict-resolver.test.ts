@@ -52,9 +52,10 @@ describe("conflict-resolver", () => {
 
       const conflicts = detectConflicts(local, remote);
       expect(conflicts).toHaveLength(1);
-      expect(conflicts[0]!.field).toBe("name");
-      expect(conflicts[0]!.localValue).toBe("Local Name");
-      expect(conflicts[0]!.remoteValue).toBe("Remote Name");
+      const conflict = conflicts[0];
+      expect(conflict?.field).toBe("name");
+      expect(conflict?.localValue).toBe("Local Name");
+      expect(conflict?.remoteValue).toBe("Remote Name");
     });
 
     it("detects multiple conflicts", () => {
@@ -93,7 +94,7 @@ describe("conflict-resolver", () => {
 
       const conflicts = detectConflicts(local, remote, ["name"]);
       expect(conflicts).toHaveLength(1);
-      expect(conflicts[0]!.field).toBe("name");
+      expect(conflicts[0]?.field).toBe("name");
     });
   });
 

@@ -1,7 +1,7 @@
 "use client";
 
 import { useMemo } from "react";
-import { useRealtimeChannel } from "./use-realtime";
+import { useRealtimeChannel, type ConnectionState } from "./use-realtime";
 import { CHANNELS, EVENTS } from "@/lib/realtime-constants";
 
 interface ScheduleEvent {
@@ -39,7 +39,16 @@ interface UseScheduleRealtimeOptions {
   enabled?: boolean;
 }
 
-export function useScheduleRealtime(showId: string, options: UseScheduleRealtimeOptions = {}) {
+interface UseScheduleRealtimeReturn {
+  isConnected: boolean;
+  connectionState: ConnectionState;
+  error: Error | null;
+}
+
+export function useScheduleRealtime(
+  showId: string,
+  options: UseScheduleRealtimeOptions = {}
+): UseScheduleRealtimeReturn {
   const { onEventCreated, onEventUpdated, onEventDeleted, enabled = true } = options;
 
   const scheduleChannel = CHANNELS.schedule(showId);

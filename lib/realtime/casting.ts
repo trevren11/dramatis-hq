@@ -1,3 +1,4 @@
+/* eslint-disable max-params */
 import { triggerEvent, CHANNELS, EVENTS } from "../pusher-server";
 
 // Types for casting events

@@ -15,9 +15,7 @@ export function getPusherClient(): Pusher {
     const cluster = process.env.NEXT_PUBLIC_PUSHER_CLUSTER;
 
     if (!key || !cluster) {
-      throw new Error(
-        "NEXT_PUBLIC_PUSHER_KEY and NEXT_PUBLIC_PUSHER_CLUSTER must be set"
-      );
+      throw new Error("NEXT_PUBLIC_PUSHER_KEY and NEXT_PUBLIC_PUSHER_CLUSTER must be set");
     }
 
     pusherClient = new Pusher(key, {

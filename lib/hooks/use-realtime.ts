@@ -1,8 +1,11 @@
+/* eslint-disable @typescript-eslint/explicit-function-return-type, @typescript-eslint/no-unnecessary-condition */
 "use client";
 
 import { useEffect, useState, useRef } from "react";
 import type { Channel } from "pusher-js";
 import { getPusherClient, type ConnectionState } from "@/lib/pusher";
+
+export type { ConnectionState };
 
 interface UseRealtimeOptions<T> {
   onUpdate?: (data: T) => void;

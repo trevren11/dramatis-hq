@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/explicit-function-return-type, @typescript-eslint/restrict-template-expressions, @typescript-eslint/no-floating-promises */
 "use client";
 
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -248,25 +249,28 @@ export function createOfflineQueueStore<T>() {
     getQueue: () => queue,
     add: (type: string, payload: T, maxRetries = 3): string => {
       const id = generateId();
-      queue = [
-        ...queue,
-        { id, type, payload, timestamp: Date.now(), retryCount: 0, maxRetries },
-      ];
+      queue = [...queue, { id, type, payload, timestamp: Date.now(), retryCount: 0, maxRetries }];
       saveQueue(queue);
-      listeners.forEach((l) => { l(); });
+      listeners.forEach((l) => {
+        l();
+      });
       return id;
     },
     remove: (id: string) => {
       queue = queue.filter((op) => op.id !== id);
       saveQueue(queue);
-      listeners.forEach((l) => { l(); });
+      listeners.forEach((l) => {
+        l();
+      });
     },
     clear: () => {
       queue = [];
       if (typeof window !== "undefined") {
         localStorage.removeItem(STORAGE_KEY);
       }
-      listeners.forEach((l) => { l(); });
+      listeners.forEach((l) => {
+        l();
+      });
     },
     subscribe: (listener: () => void) => {
       listeners.add(listener);

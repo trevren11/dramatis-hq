@@ -16,11 +16,7 @@ export function TooltipProvider({
   children,
   delayDuration = 200,
 }: TooltipProviderProps): React.ReactElement {
-  return (
-    <TooltipContext.Provider value={{ delayDuration }}>
-      {children}
-    </TooltipContext.Provider>
-  );
+  return <TooltipContext.Provider value={{ delayDuration }}>{children}</TooltipContext.Provider>;
 }
 
 interface TooltipProps {
@@ -33,7 +29,9 @@ export function Tooltip({ children }: TooltipProps): React.ReactElement {
   const { delayDuration } = React.useContext(TooltipContext);
 
   const handleMouseEnter = React.useCallback(() => {
-    timeoutRef.current = setTimeout(() => { setIsOpen(true); }, delayDuration);
+    timeoutRef.current = setTimeout(() => {
+      setIsOpen(true);
+    }, delayDuration);
   }, [delayDuration]);
 
   const handleMouseLeave = React.useCallback(() => {
@@ -45,13 +43,14 @@ export function Tooltip({ children }: TooltipProps): React.ReactElement {
   }, []);
 
   return (
-    <TooltipStateContext.Provider
-      value={{ isOpen, handleMouseEnter, handleMouseLeave }}
-    >
+    <TooltipStateContext.Provider value={{ isOpen, handleMouseEnter, handleMouseLeave }}>
       {children}
     </TooltipStateContext.Provider>
   );
 }
+
+// eslint-disable-next-line @typescript-eslint/no-empty-function
+const noop = (): void => {};
 
 const TooltipStateContext = React.createContext<{
   isOpen: boolean;
@@ -59,8 +58,8 @@ const TooltipStateContext = React.createContext<{
   handleMouseLeave: () => void;
 }>({
   isOpen: false,
-  handleMouseEnter: () => {},
-  handleMouseLeave: () => {},
+  handleMouseEnter: noop,
+  handleMouseLeave: noop,
 });
 
 interface TooltipTriggerProps {
@@ -68,16 +67,10 @@ interface TooltipTriggerProps {
   asChild?: boolean;
 }
 
-export function TooltipTrigger({
-  children,
-  asChild,
-}: TooltipTriggerProps): React.ReactElement {
-  const { handleMouseEnter, handleMouseLeave } =
-    React.useContext(TooltipStateContext);
+export function TooltipTrigger({ children, asChild }: TooltipTriggerProps): React.ReactElement {
+  const { handleMouseEnter, handleMouseLeave } = React.useContext(TooltipStateContext);
 
-  const child = asChild
-    ? React.Children.only(children)
-    : (children as React.ReactElement);
+  const child = asChild ? React.Children.only(children) : (children as React.ReactElement);
 
   if (asChild && React.isValidElement(child)) {
     return React.cloneElement(child, {

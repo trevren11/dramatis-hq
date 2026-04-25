@@ -1,8 +1,8 @@
 "use client";
 
 import { useMemo } from "react";
-import { useRealtimeChannel } from "./use-realtime";
-import { useTypingIndicator } from "./use-presence";
+import { useRealtimeChannel, type ConnectionState } from "./use-realtime";
+import { useTypingIndicator, type PresenceMember } from "./use-presence";
 import { CHANNELS, EVENTS } from "@/lib/realtime-constants";
 
 interface MessageSender {
@@ -36,10 +36,19 @@ interface UseMessagesRealtimeOptions {
   enabled?: boolean;
 }
 
+interface UseMessagesRealtimeReturn {
+  isConnected: boolean;
+  connectionState: ConnectionState;
+  error: Error | null;
+  typingUsers: PresenceMember[];
+  startTyping: () => void;
+  stopTyping: () => void;
+}
+
 export function useMessagesRealtime(
   conversationId: string,
   options: UseMessagesRealtimeOptions = {}
-) {
+): UseMessagesRealtimeReturn {
   const { onMessageReceived, onMessageRead, enabled = true } = options;
 
   const chatChannel = CHANNELS.chat(conversationId);

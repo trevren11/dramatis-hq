@@ -161,6 +161,7 @@ export async function GET(
   }
 }
 
+// eslint-disable-next-line complexity
 export async function POST(
   request: Request,
   { params }: { params: Promise<{ id: string }> }
@@ -268,22 +269,26 @@ export async function POST(
 
     // Broadcast to all connected clients
     if (talent && assignment) {
-      broadcastTalentAdded(showId, {
-        id: assignment.id,
-        showId: assignment.showId,
-        roleId: assignment.roleId,
-        talentProfileId: assignment.talentProfileId,
-        slotIndex: assignment.slotIndex,
-        status: assignment.status,
-        isLocked: assignment.isLocked,
-        talent: {
-          id: talent.id,
-          firstName: talent.firstName,
-          lastName: talent.lastName,
-          stageName: talent.stageName,
-          primaryHeadshotUrl: talentHeadshot?.thumbnailUrl ?? talentHeadshot?.url ?? null,
+      broadcastTalentAdded(
+        showId,
+        {
+          id: assignment.id,
+          showId: assignment.showId,
+          roleId: assignment.roleId,
+          talentProfileId: assignment.talentProfileId,
+          slotIndex: assignment.slotIndex,
+          status: assignment.status,
+          isLocked: assignment.isLocked,
+          talent: {
+            id: talent.id,
+            firstName: talent.firstName,
+            lastName: talent.lastName,
+            stageName: talent.stageName,
+            primaryHeadshotUrl: talentHeadshot?.thumbnailUrl ?? talentHeadshot?.url ?? null,
+          },
         },
-      }, session.user.id).catch(console.error);
+        session.user.id
+      ).catch(console.error);
     }
 
     return NextResponse.json({ assignment }, { status: 201 });

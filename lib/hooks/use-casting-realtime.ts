@@ -1,7 +1,7 @@
 "use client";
 
-import { useRealtimeChannel } from "./use-realtime";
-import { usePresence } from "./use-presence";
+import { useRealtimeChannel, type ConnectionState } from "./use-realtime";
+import { usePresence, type PresenceMember } from "./use-presence";
 import { EVENTS } from "@/lib/realtime-constants";
 
 interface TalentAddedEvent {
@@ -43,9 +43,26 @@ interface UseCastingRealtimeOptions {
   enabled?: boolean;
 }
 
-export function useCastingRealtime(showId: string, options: UseCastingRealtimeOptions = {}) {
-  const { onTalentAdded, onTalentRemoved, onCastingUpdated, onRefreshNeeded, enabled = true } =
-    options;
+interface UseCastingRealtimeReturn {
+  isConnected: boolean;
+  connectionState: ConnectionState;
+  error: Error | null;
+  viewers: PresenceMember[];
+  me: PresenceMember | null;
+  viewerCount: number;
+}
+
+export function useCastingRealtime(
+  showId: string,
+  options: UseCastingRealtimeOptions = {}
+): UseCastingRealtimeReturn {
+  const {
+    onTalentAdded,
+    onTalentRemoved,
+    onCastingUpdated,
+    onRefreshNeeded,
+    enabled = true,
+  } = options;
 
   // Build channel name using the same pattern as server
   const castingChannel = `private-casting-show-${showId}`;
@@ -75,11 +92,7 @@ export function useCastingRealtime(showId: string, options: UseCastingRealtimeOp
   });
 
   // Subscribe to presence channel for viewing indicators
-  const {
-    members,
-    me,
-    count: viewerCount,
-  } = usePresence(presenceChannel, { enabled });
+  const { members, me, count: viewerCount } = usePresence(presenceChannel, { enabled });
 
   return {
     isConnected,

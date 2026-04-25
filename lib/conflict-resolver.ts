@@ -98,8 +98,7 @@ export function resolveConflict<T extends Record<string, unknown>>(
   switch (strategy) {
     case "last-write-wins": {
       // Use whichever was modified more recently
-      const useServer =
-        conflict.serverVersion.lastModified > conflict.localVersion.lastModified;
+      const useServer = conflict.serverVersion.lastModified > conflict.localVersion.lastModified;
       return {
         resolved: true,
         data: useServer ? conflict.serverVersion.data : conflict.localVersion.data,
@@ -109,8 +108,7 @@ export function resolveConflict<T extends Record<string, unknown>>(
 
     case "first-write-wins": {
       // Use whichever was modified first
-      const useLocal =
-        conflict.localVersion.lastModified < conflict.serverVersion.lastModified;
+      const useLocal = conflict.localVersion.lastModified < conflict.serverVersion.lastModified;
       return {
         resolved: true,
         data: useLocal ? conflict.localVersion.data : conflict.serverVersion.data,
@@ -179,7 +177,7 @@ export function useConflictResolver<T extends Record<string, unknown>>(
       }
 
       const conflict: Conflict<T> = {
-        id: `${resourceType}-${resourceId}-${Date.now()}`,
+        id: `${resourceType}-${resourceId}-${String(Date.now())}`,
         resourceId,
         resourceType,
         localVersion: local,
