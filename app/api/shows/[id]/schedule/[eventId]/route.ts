@@ -15,6 +15,7 @@ import {
 import { scheduleEventUpdateSchema } from "@/lib/validations/schedule";
 import { eq, and, inArray } from "drizzle-orm";
 import { getEventTypeColor } from "@/lib/db/schema/schedule";
+import { triggerEvent, CHANNELS, EVENTS } from "@/lib/pusher-server";
 
 export async function GET(
   _request: Request,
@@ -207,6 +208,13 @@ export async function PUT(
       return NextResponse.json({ error: "Failed to update event" }, { status: 500 });
     }
 
+    // Broadcast schedule update
+    void triggerEvent(CHANNELS.schedule(showId), EVENTS.SCHEDULE_UPDATED, {
+      event: { ...updatedEvent, color: getEventTypeColor(updatedEvent.eventType) },
+      eventId,
+      showId,
+    });
+
     return NextResponse.json({
       event: { ...updatedEvent, color: getEventTypeColor(updatedEvent.eventType) },
     });
@@ -253,6 +261,12 @@ export async function DELETE(
     }
 
     await db.delete(scheduleEvents).where(eq(scheduleEvents.id, eventId));
+
+    // Broadcast schedule deletion
+    void triggerEvent(CHANNELS.schedule(showId), EVENTS.SCHEDULE_DELETED, {
+      eventId,
+      showId,
+    });
 
     return NextResponse.json({ success: true });
   } catch (error) {

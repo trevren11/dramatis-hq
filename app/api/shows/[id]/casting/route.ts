@@ -14,6 +14,7 @@ import {
 } from "@/lib/db/schema";
 import { castingAssignmentCreateSchema } from "@/lib/validations/casting";
 import { eq, and, asc, inArray } from "drizzle-orm";
+import { broadcastTalentAdded } from "@/lib/realtime/casting";
 
 interface TalentWithHeadshot {
   id: string;
@@ -252,6 +253,38 @@ export async function POST(
         assignedBy: session.user.id,
       })
       .returning();
+
+    // Fetch talent info for broadcast
+    const talent = await db.query.talentProfiles.findFirst({
+      where: eq(talentProfiles.id, parsed.data.talentProfileId),
+    });
+
+    const talentHeadshot = await db.query.headshots.findFirst({
+      where: and(
+        eq(headshots.talentProfileId, parsed.data.talentProfileId),
+        eq(headshots.isPrimary, true)
+      ),
+    });
+
+    // Broadcast to all connected clients
+    if (talent && assignment) {
+      broadcastTalentAdded(showId, {
+        id: assignment.id,
+        showId: assignment.showId,
+        roleId: assignment.roleId,
+        talentProfileId: assignment.talentProfileId,
+        slotIndex: assignment.slotIndex,
+        status: assignment.status,
+        isLocked: assignment.isLocked,
+        talent: {
+          id: talent.id,
+          firstName: talent.firstName,
+          lastName: talent.lastName,
+          stageName: talent.stageName,
+          primaryHeadshotUrl: talentHeadshot?.thumbnailUrl ?? talentHeadshot?.url ?? null,
+        },
+      }, session.user.id).catch(console.error);
+    }
 
     return NextResponse.json({ assignment }, { status: 201 });
   } catch (error) {
