@@ -1,162 +1,124 @@
-# Implementation Plan: Stripe Integration
+# Implementation Plan: [DRM-036] User Settings
 
 ## Overview
 
-Implement Stripe subscription billing for producer accounts with plan selection, payment processing, and subscription management.
+Build comprehensive settings pages for users to manage account, notifications, privacy, security, and appearance settings.
 
-## Phase 1: Database & Dependencies
+## Tasks
 
-### Task 1.1: Install Stripe Dependencies
+### Task 1: Settings Layout and Navigation
 
-```bash
-pnpm add stripe @stripe/stripe-js
-```
+**Files:** `app/(settings)/settings/layout.tsx`, `components/settings/settings-nav.tsx`
 
-### Task 1.2: Create Database Schema
+Create the settings layout with sidebar navigation:
 
-Create `lib/db/schema/subscriptions.ts`:
+- Settings sidebar with sections: Account, Profile, Notifications, Privacy, Security, Appearance
+- Mobile-friendly collapsible navigation
+- Breadcrumb support
+- Active state highlighting
 
-- `subscriptions` table: id, organizationId, stripeCustomerId, stripeSubscriptionId, plan, status, currentPeriodStart, currentPeriodEnd, canceledAt, trialEnd
-- `invoices` table: id, organizationId, stripeInvoiceId, amount, status, paidAt, invoiceUrl
+### Task 2: Account Settings Page
 
-### Task 1.3: Add Environment Variables
+**Files:** `app/(settings)/settings/account/page.tsx`, `components/settings/account-form.tsx`
 
-Add to `.env.example`:
+Implement account management:
 
-- STRIPE_SECRET_KEY
-- STRIPE_PUBLISHABLE_KEY
-- STRIPE_WEBHOOK_SECRET
-- STRIPE_PRICE_MONTHLY
-- STRIPE_PRICE_ANNUAL
+- Update name form
+- Update email with verification flow
+- Change password form with current password validation
+- Connected accounts display (Google OAuth)
+- Delete account with confirmation modal
 
-## Phase 2: Stripe Server Setup
+### Task 3: Profile Settings Page (Role-based)
 
-### Task 2.1: Create Stripe Client
+**Files:** `app/(settings)/settings/profile/page.tsx`, `components/settings/profile-settings.tsx`
 
-Create `lib/stripe.ts`:
+Role-based profile settings:
 
-- Initialize Stripe with secret key
-- Export configured client
+- Talent: visibility toggles, contact info visibility, search opt-in
+- Producer: company info, logo upload, team members list
+- Username change for all roles
 
-### Task 2.2: Implement Checkout Session
+### Task 4: Notification Preferences Page
 
-Create `app/api/stripe/checkout/route.ts`:
+**Files:** `app/(settings)/settings/notifications/page.tsx`, `components/settings/notification-settings.tsx`
 
-- Create Stripe checkout session
-- Include trial period (14 days)
-- Support monthly/annual plans
-- Set success/cancel URLs
+Notification controls:
 
-### Task 2.3: Implement Webhook Handler
+- Email notification toggles by category (messages, bookings, marketing)
+- Push notification toggles (matches email categories)
+- Digest frequency selector (immediate, daily, weekly)
+- Do not disturb hours picker
+- Marketing opt-in/out toggle
 
-Create `app/api/stripe/webhook/route.ts`:
+### Task 5: Privacy Settings Page
 
-- Verify webhook signature
-- Handle `checkout.session.completed` - activate subscription
-- Handle `invoice.paid` - record payment
-- Handle `invoice.payment_failed` - handle failure
-- Handle `customer.subscription.deleted` - deactivate
-- Handle `customer.subscription.updated` - plan changes
+**Files:** `app/(settings)/settings/privacy/page.tsx`, `components/settings/privacy-settings.tsx`
 
-## Phase 3: Frontend Components
+Privacy management:
 
-### Task 3.1: Pricing Page
+- Data export request button (GDPR compliance)
+- Download all data functionality
+- Activity visibility toggles
+- Block list management with search
+- Third-party connections list
 
-Create `components/billing/PricingPlans.tsx`:
+### Task 6: Security Settings Page
 
-- Display free trial info
-- Monthly plan card
-- Annual plan card (with discount badge)
-- "Subscribe" buttons
+**Files:** `app/(settings)/settings/security/page.tsx`, `components/settings/security-settings.tsx`
 
-### Task 3.2: Checkout Integration
+Security features:
 
-Create `components/billing/CheckoutButton.tsx`:
+- Two-factor authentication enable/disable
+- Active sessions list with revoke capability
+- Login history table (last 10 logins)
+- Security notification preferences
 
-- Initialize Stripe.js
-- Redirect to Stripe Checkout
-- Handle success/failure callbacks
+### Task 7: Appearance Settings Page
 
-### Task 3.3: Subscription Settings
+**Files:** `app/(settings)/settings/appearance/page.tsx`, `components/settings/appearance-settings.tsx`
 
-Create `components/billing/SubscriptionSettings.tsx`:
+User preferences:
 
-- Show current plan
-- Show billing period
-- Upgrade/downgrade buttons
-- Cancel subscription button
-- Link to Stripe customer portal
+- Dark mode toggle (system/light/dark)
+- Language preference dropdown
+- Timezone selector
+- Persist to localStorage and user settings
 
-### Task 3.4: Billing History
+### Task 8: API Routes for Settings
 
-Create `components/billing/BillingHistory.tsx`:
+**Files:** `app/api/settings/[...slug]/route.ts`
 
-- List invoices
-- Show payment status
-- Download invoice links
+Create API endpoints:
 
-## Phase 4: Access Control
+- GET/PATCH /api/settings/account
+- GET/PATCH /api/settings/notifications
+- GET/PATCH /api/settings/privacy
+- GET/PATCH /api/settings/security
+- POST /api/settings/export-data
+- POST /api/settings/delete-account
 
-### Task 4.1: Subscription Middleware
+### Task 9: Database Schema Updates
 
-Create `lib/subscription-guard.ts`:
+**Files:** `prisma/schema.prisma`, migration
 
-- Check subscription status
-- Allow access during trial
-- Block expired/canceled subscriptions
-- Grace period for failed payments
+Add user settings model with notification and privacy JSON fields.
 
-### Task 4.2: Upgrade Prompts
+### Task 10: Tests
 
-Create `components/billing/UpgradePrompt.tsx`:
+**Files:** `__tests__/settings/*.test.tsx`, `e2e/tests/settings.spec.ts`
 
-- Show when trial is ending
-- Show when subscription required
-- CTA to pricing page
+Write tests:
 
-## Phase 5: API Routes
+- Unit tests for settings forms
+- API route tests
+- E2E test for settings flow
 
-### Task 5.1: Billing API Routes
+## Completion Criteria
 
-Create:
-
-- `app/api/billing/subscription/route.ts` - GET current subscription
-- `app/api/billing/portal/route.ts` - GET Stripe portal link
-- `app/api/billing/invoices/route.ts` - GET invoice history
-
-## Phase 6: Testing
-
-### Task 6.1: Webhook Tests
-
-Create `__tests__/api/stripe/webhook.test.ts`:
-
-- Test each webhook event type
-- Verify database updates
-- Test signature verification
-
-### Task 6.2: Integration Tests
-
-Create `__tests__/billing/subscription.test.ts`:
-
-- Test subscription flow
-- Test access control
-- Test plan changes
-
-## Commit Strategy
-
-1. Phase 1: "feat(billing): add subscription database schema and Stripe deps"
-2. Phase 2: "feat(billing): implement Stripe checkout and webhook handling"
-3. Phase 3: "feat(billing): add pricing and subscription UI components"
-4. Phase 4: "feat(billing): implement subscription access control"
-5. Phase 5: "feat(billing): add billing API routes"
-6. Phase 6: "test(billing): add webhook and integration tests"
-
-## Definition of Done
-
-- [ ] Can subscribe via Stripe Checkout
-- [ ] Subscription status reflects in app
-- [ ] Can manage subscription in portal
-- [ ] Webhooks update status correctly
-- [ ] Failed payments handled gracefully
-- [ ] Invoices viewable/downloadable
-- [ ] Tests for webhook handling
+- All settings pages accessible from user menu
+- Changes persist correctly to database
+- Email change sends verification email
+- Password change validates current password
+- Mobile responsive design
+- Tests passing
