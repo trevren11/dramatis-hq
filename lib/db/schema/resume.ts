@@ -20,7 +20,7 @@ export const resumeTalentProfiles = pgTable(
     createdAt: timestamp("created_at", { mode: "date" }).defaultNow().notNull(),
     updatedAt: timestamp("updated_at", { mode: "date" }).defaultNow().notNull(),
   },
-  (table) => [index("talent_profiles_user_id_idx").on(table.userId)]
+  (table) => [index("resume_talent_profiles_user_id_idx").on(table.userId)]
 );
 
 export const resumeWorkHistory = pgTable(
