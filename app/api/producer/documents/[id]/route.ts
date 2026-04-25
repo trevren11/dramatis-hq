@@ -210,13 +210,13 @@ export async function DELETE(
       );
     }
 
-    await deleteProducerDocument(
-      id,
+    await deleteProducerDocument({
+      producerDocumentId: id,
       organizationId,
-      session.user.id,
-      request.headers.get("x-forwarded-for") ?? request.headers.get("x-real-ip"),
-      request.headers.get("user-agent")
-    );
+      userId: session.user.id,
+      ipAddress: request.headers.get("x-forwarded-for") ?? request.headers.get("x-real-ip"),
+      userAgent: request.headers.get("user-agent"),
+    });
 
     return NextResponse.json({ success: true });
   } catch (error) {
