@@ -21,12 +21,16 @@ pnpm db:seed:test
 
 These add data without clearing first. Use for building up data incrementally.
 
-| Command                  | Description                                            |
-| ------------------------ | ------------------------------------------------------ |
-| `pnpm db:seed:users`     | Add 15 talent, 5 producer, 1 admin users               |
-| `pnpm db:seed:talent`    | Add talent profiles (requires users)                   |
-| `pnpm db:seed:producer`  | Add producer profiles + shows + roles (requires users) |
-| `pnpm db:seed:auditions` | Add auditions with applications (requires producers)   |
+| Command                      | Description                                            |
+| ---------------------------- | ------------------------------------------------------ |
+| `pnpm db:seed:users`         | Add 15 talent, 5 producer, 1 admin users               |
+| `pnpm db:seed:talent`        | Add talent profiles (requires users)                   |
+| `pnpm db:seed:producer`      | Add producer profiles + shows + roles (requires users) |
+| `pnpm db:seed:auditions`     | Add auditions with applications (requires producers)   |
+| `pnpm db:seed:calendar`      | Add availability and show schedules (requires talent)  |
+| `pnpm db:seed:messages`      | Add conversations and messages (requires users)        |
+| `pnpm db:seed:notifications` | Add in-app notifications (requires users)              |
+| `pnpm db:seed:materials`     | Add scripts and minus tracks (requires shows)          |
 
 ### Scenario Seeds
 
@@ -77,13 +81,17 @@ All other seeded users have password: `password123`
 
 ```
 lib/db/seed/
-├── index.ts      # Seed runner and orchestration
-├── base.ts       # Utilities, DB connection, sample data pools
-├── users.ts      # User account seeding
-├── talent.ts     # Talent profile seeding
-├── producer.ts   # Producer profile, show, and role seeding
-├── auditions.ts  # Audition and application seeding
-└── README.md     # This file
+├── index.ts         # Seed runner and orchestration
+├── base.ts          # Utilities, DB connection, sample data pools
+├── users.ts         # User account seeding
+├── talent.ts        # Talent profile seeding
+├── producer.ts      # Producer profile, show, and role seeding
+├── auditions.ts     # Audition and application seeding
+├── calendar.ts      # Availability and show schedule seeding
+├── messages.ts      # Conversations and messages seeding
+├── notifications.ts # In-app notifications seeding
+├── materials.ts     # Scripts and minus tracks seeding
+└── README.md        # This file
 ```
 
 ### Adding New Seeds
