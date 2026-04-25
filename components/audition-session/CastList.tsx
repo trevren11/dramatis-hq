@@ -10,7 +10,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
 import { CheckCircle, XCircle, Clock, Star, Users } from "lucide-react";
 
-type DecisionType = "callback" | "no_thanks" | "callback_role";
+type DecisionType = "callback" | "hold_for_role" | "cast_in_role" | "release";
 
 interface Role {
   id: string;
@@ -32,8 +32,9 @@ interface CastListItem {
 
 interface DecisionCounts {
   callback: number;
-  callbackRole: number;
-  noThanks: number;
+  holdForRole: number;
+  castInRole: number;
+  release: number;
   undecided: number;
 }
 
@@ -65,7 +66,7 @@ export function CastList({
   onSelectTalent,
   className,
 }: CastListProps): React.ReactElement {
-  const [activeTab, setActiveTab] = useState<"all" | "callback" | "no_thanks" | "undecided">("all");
+  const [activeTab, setActiveTab] = useState<"all" | "callback" | "release" | "undecided">("all");
   const [roleFilter, setRoleFilter] = useState<string>("all");
 
   // Filter items based on active tab and role filter
@@ -74,12 +75,14 @@ export function CastList({
     if (activeTab === "callback") {
       if (
         !item.decision ||
-        (item.decision.type !== "callback" && item.decision.type !== "callback_role")
+        (item.decision.type !== "callback" &&
+          item.decision.type !== "hold_for_role" &&
+          item.decision.type !== "cast_in_role")
       ) {
         return false;
       }
-    } else if (activeTab === "no_thanks") {
-      if (item.decision?.type !== "no_thanks") {
+    } else if (activeTab === "release") {
+      if (item.decision?.type !== "release") {
         return false;
       }
     } else if (activeTab === "undecided") {
@@ -88,7 +91,7 @@ export function CastList({
       }
     }
 
-    // Role filter (only for callback_role decisions)
+    // Role filter (only for role-specific decisions)
     if (roleFilter !== "all") {
       if (item.decision?.roleId !== roleFilter) {
         return false;
@@ -98,7 +101,7 @@ export function CastList({
     return true;
   });
 
-  const totalCallbacks = counts.callback + counts.callbackRole;
+  const totalCallbacks = counts.callback + counts.holdForRole + counts.castInRole;
 
   return (
     <Card className={cn("flex h-full flex-col", className)}>
@@ -112,7 +115,7 @@ export function CastList({
             <Badge variant="default" className="bg-green-500">
               {totalCallbacks} CB
             </Badge>
-            <Badge variant="destructive">{counts.noThanks} No</Badge>
+            <Badge variant="destructive">{counts.release} No</Badge>
           </div>
         </CardTitle>
       </CardHeader>
@@ -132,9 +135,9 @@ export function CastList({
               <CheckCircle className="mr-1 h-3 w-3 text-green-500" />
               {totalCallbacks}
             </TabsTrigger>
-            <TabsTrigger value="no_thanks" className="text-xs">
+            <TabsTrigger value="release" className="text-xs">
               <XCircle className="mr-1 h-3 w-3 text-red-500" />
-              {counts.noThanks}
+              {counts.release}
             </TabsTrigger>
             <TabsTrigger value="undecided" className="text-xs">
               <Clock className="mr-1 h-3 w-3" />
@@ -190,15 +193,21 @@ export function CastList({
                           Callback
                         </Badge>
                       )}
-                      {item.decision.type === "callback_role" && (
-                        <Badge variant="default" className="bg-green-600 text-xs">
+                      {item.decision.type === "hold_for_role" && (
+                        <Badge variant="default" className="bg-amber-500 text-xs">
                           <Star className="mr-1 h-3 w-3" />
-                          {roles.find((r) => r.id === item.decision?.roleId)?.name ?? "Role"}
+                          Hold: {roles.find((r) => r.id === item.decision?.roleId)?.name ?? "Role"}
                         </Badge>
                       )}
-                      {item.decision.type === "no_thanks" && (
+                      {item.decision.type === "cast_in_role" && (
+                        <Badge variant="default" className="bg-green-600 text-xs">
+                          <Star className="mr-1 h-3 w-3" />
+                          Cast: {roles.find((r) => r.id === item.decision?.roleId)?.name ?? "Role"}
+                        </Badge>
+                      )}
+                      {item.decision.type === "release" && (
                         <Badge variant="destructive" className="text-xs">
-                          No Thanks
+                          Released
                         </Badge>
                       )}
                     </div>
@@ -217,8 +226,8 @@ export function CastList({
                   ? "No talent in queue"
                   : activeTab === "callback"
                     ? "No callbacks yet"
-                    : activeTab === "no_thanks"
-                      ? "No rejections yet"
+                    : activeTab === "release"
+                      ? "No releases yet"
                       : "All talent have been decided"}
               </div>
             )}
@@ -231,7 +240,8 @@ export function CastList({
         <div className="text-muted-foreground flex justify-between text-xs">
           <span>Total: {items.length}</span>
           <span>
-            Decided: {counts.callback + counts.callbackRole + counts.noThanks} / {items.length}
+            Decided: {counts.callback + counts.holdForRole + counts.castInRole + counts.release} /{" "}
+            {items.length}
           </span>
         </div>
       </div>

@@ -9,7 +9,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
 import { Users, ChevronLeft, ChevronRight, CheckCircle, XCircle, Clock } from "lucide-react";
 
-type DecisionType = "callback" | "no_thanks" | "callback_role" | null;
+type DecisionType = "callback" | "hold_for_role" | "cast_in_role" | "release" | null;
 
 interface QueueTalent {
   id: string;
@@ -36,7 +36,7 @@ interface TalentQueueProps {
 
 function getDecisionIcon(decision: DecisionType): React.ReactNode {
   if (!decision) return <Clock className="text-muted-foreground h-3 w-3" />;
-  if (decision === "callback" || decision === "callback_role") {
+  if (decision === "callback" || decision === "hold_for_role" || decision === "cast_in_role") {
     return <CheckCircle className="h-3 w-3 text-green-500" />;
   }
   return <XCircle className="h-3 w-3 text-red-500" />;
@@ -51,16 +51,23 @@ function getDecisionBadge(decision: DecisionType): React.ReactNode {
       </Badge>
     );
   }
-  if (decision === "callback_role") {
+  if (decision === "hold_for_role") {
+    return (
+      <Badge variant="default" className="bg-amber-500 text-xs">
+        Hold
+      </Badge>
+    );
+  }
+  if (decision === "cast_in_role") {
     return (
       <Badge variant="default" className="bg-green-600 text-xs">
-        CB+
+        Cast
       </Badge>
     );
   }
   return (
     <Badge variant="destructive" className="text-xs">
-      No
+      Rel
     </Badge>
   );
 }

@@ -222,8 +222,9 @@ export default async function ProducerAuditionSessionPage({
     inRoom: fullQueue.filter((q) => q.checkinStatus === "in_room").length,
     completed: fullQueue.filter((q) => q.checkinStatus === "completed").length,
     callback: fullQueue.filter((q) => q.decision?.type === "callback").length,
-    callbackRole: fullQueue.filter((q) => q.decision?.type === "callback_role").length,
-    noThanks: fullQueue.filter((q) => q.decision?.type === "no_thanks").length,
+    holdForRole: fullQueue.filter((q) => q.decision?.type === "hold_for_role").length,
+    castInRole: fullQueue.filter((q) => q.decision?.type === "cast_in_role").length,
+    release: fullQueue.filter((q) => q.decision?.type === "release").length,
     undecided: fullQueue.filter((q) => !q.decision).length,
   };
 

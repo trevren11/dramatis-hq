@@ -41,8 +41,6 @@ export const applicationStatusEnum = pgEnum("application_status", [
 
 export const checkinStatusEnum = pgEnum("checkin_status", ["checked_in", "in_room", "completed"]);
 
-export const decisionTypeEnum = pgEnum("decision_type", ["callback", "no_thanks", "callback_role"]);
-
 // Types for JSONB fields
 export interface AuditionDate {
   date: string; // ISO date string
@@ -247,34 +245,6 @@ export const auditionFormResponses = pgTable(
   ]
 );
 
-// Audition decisions - callback/rejection tracking
-export const auditionDecisions = pgTable(
-  "audition_decisions",
-  {
-    id: uuid("id").primaryKey().defaultRandom(),
-    auditionId: uuid("audition_id")
-      .references(() => auditions.id, { onDelete: "cascade" })
-      .notNull(),
-    talentProfileId: uuid("talent_profile_id")
-      .references(() => talentProfiles.id, { onDelete: "cascade" })
-      .notNull(),
-    decision: decisionTypeEnum("decision").notNull(),
-    roleId: uuid("role_id").references(() => roles.id, { onDelete: "set null" }), // for callback_role
-    notes: text("notes"),
-    decidedBy: uuid("decided_by")
-      .references(() => users.id, { onDelete: "set null" })
-      .notNull(),
-    decidedAt: timestamp("decided_at", { mode: "date" }).defaultNow().notNull(),
-  },
-  (table) => [
-    index("audition_decisions_audition_id_idx").on(table.auditionId),
-    index("audition_decisions_talent_profile_id_idx").on(table.talentProfileId),
-    index("audition_decisions_decision_idx").on(table.decision),
-    index("audition_decisions_decided_by_idx").on(table.decidedBy),
-    index("audition_decisions_decided_at_idx").on(table.decidedAt),
-  ]
-);
-
 // Audition notes - private notes per talent
 export const auditionNotes = pgTable(
   "audition_notes",
@@ -311,8 +281,6 @@ export type AuditionForm = typeof auditionForms.$inferSelect;
 export type NewAuditionForm = typeof auditionForms.$inferInsert;
 export type AuditionFormResponse = typeof auditionFormResponses.$inferSelect;
 export type NewAuditionFormResponse = typeof auditionFormResponses.$inferInsert;
-export type AuditionDecision = typeof auditionDecisions.$inferSelect;
-export type NewAuditionDecision = typeof auditionDecisions.$inferInsert;
 export type AuditionNote = typeof auditionNotes.$inferSelect;
 export type NewAuditionNote = typeof auditionNotes.$inferInsert;
 
@@ -357,11 +325,3 @@ export const CHECKIN_STATUS_OPTIONS = [
 ] as const;
 
 export const CHECKIN_STATUS_VALUES = ["checked_in", "in_room", "completed"] as const;
-
-export const DECISION_TYPE_OPTIONS = [
-  { value: "callback", label: "Callback" },
-  { value: "no_thanks", label: "No Thanks" },
-  { value: "callback_role", label: "Callback for Role" },
-] as const;
-
-export const DECISION_TYPE_VALUES = ["callback", "no_thanks", "callback_role"] as const;
