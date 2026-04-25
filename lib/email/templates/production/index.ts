@@ -9,3 +9,6 @@ export type { DocumentSharedEmailProps } from "./document-shared";
 
 export { RehearsalReminderEmail } from "./rehearsal-reminder";
 export type { RehearsalReminderEmailProps } from "./rehearsal-reminder";
+
+export { TaxDocumentUploadedEmail } from "./tax-document-uploaded";
+export type { TaxDocumentUploadedEmailProps } from "./tax-document-uploaded";
