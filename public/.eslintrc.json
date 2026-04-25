@@ -1,0 +1,10 @@
+{
+  "env": {
+    "serviceworker": true,
+    "browser": true
+  },
+  "parserOptions": {
+    "ecmaVersion": 2020
+  },
+  "rules": {}
+}
