@@ -142,9 +142,12 @@ export function DecisionPanel({
         {/* Role-specific decisions */}
         {roles.length > 0 && (
           <div className="space-y-2">
-            <label className="text-muted-foreground text-xs font-medium">Role Decision</label>
+            <label htmlFor="role-select" className="text-muted-foreground text-xs font-medium">
+              Role Decision
+            </label>
             <div className="flex gap-2">
               <Select
+                id="role-select"
                 value={selectedRole}
                 onChange={(e) => {
                   setSelectedRole(e.target.value);
@@ -176,8 +179,11 @@ export function DecisionPanel({
 
         {/* Notes input */}
         <div className="space-y-2">
-          <label className="text-muted-foreground text-xs font-medium">Quick Note (optional)</label>
+          <label htmlFor="decision-notes" className="text-muted-foreground text-xs font-medium">
+            Quick Note (optional)
+          </label>
           <textarea
+            id="decision-notes"
             value={notes}
             onChange={(e) => {
               setNotes(e.target.value);

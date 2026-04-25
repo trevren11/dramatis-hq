@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useId } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Modal, ModalContent, ModalHeader, ModalTitle, ModalFooter } from "@/components/ui/modal";
@@ -70,6 +70,15 @@ export function CalendarEventForm({
       ? formatDateForInput(initialData.recurrenceEndDate)
       : "",
   });
+
+  // Form field IDs for accessibility
+  const statusId = useId();
+  const titleId = useId();
+  const startDateId = useId();
+  const endDateId = useId();
+  const recurrenceId = useId();
+  const recurrenceEndId = useId();
+  const notesId = useId();
 
   // eslint-disable-next-line complexity
   const handleSubmit = async (): Promise<void> => {
@@ -180,9 +189,9 @@ export function CalendarEventForm({
 
         <div className="space-y-4 py-4">
           {/* Status Selection */}
-          <div className="space-y-2">
-            <label className="text-sm font-medium">Status</label>
-            <div className="flex gap-2">
+          <fieldset className="space-y-2">
+            <legend className="text-sm font-medium">Status</legend>
+            <div className="flex gap-2" role="radiogroup" aria-labelledby={statusId}>
               {AVAILABILITY_STATUSES.map((status) => (
                 <button
                   key={status}
@@ -208,12 +217,15 @@ export function CalendarEventForm({
                 </button>
               ))}
             </div>
-          </div>
+          </fieldset>
 
           {/* Title */}
           <div className="space-y-2">
-            <label className="text-sm font-medium">Title (optional)</label>
+            <label htmlFor={titleId} className="text-sm font-medium">
+              Title (optional)
+            </label>
             <Input
+              id={titleId}
               value={formData.title}
               onChange={(e) => {
                 setFormData({ ...formData, title: e.target.value });
@@ -225,31 +237,42 @@ export function CalendarEventForm({
           {/* Date Range */}
           <div className="grid gap-4 sm:grid-cols-2">
             <div className="space-y-2">
-              <label className="text-sm font-medium">Start Date</label>
+              <label htmlFor={startDateId} className="text-sm font-medium">
+                Start Date
+              </label>
               <Input
+                id={startDateId}
                 type="date"
                 value={formData.startDate}
                 onChange={(e) => {
                   setFormData({ ...formData, startDate: e.target.value });
                 }}
+                aria-required="true"
               />
             </div>
             <div className="space-y-2">
-              <label className="text-sm font-medium">End Date</label>
+              <label htmlFor={endDateId} className="text-sm font-medium">
+                End Date
+              </label>
               <Input
+                id={endDateId}
                 type="date"
                 value={formData.endDate}
                 onChange={(e) => {
                   setFormData({ ...formData, endDate: e.target.value });
                 }}
+                aria-required="true"
               />
             </div>
           </div>
 
           {/* Recurrence */}
           <div className="space-y-2">
-            <label className="text-sm font-medium">Repeat</label>
+            <label htmlFor={recurrenceId} className="text-sm font-medium">
+              Repeat
+            </label>
             <select
+              id={recurrenceId}
               value={formData.recurrencePattern}
               onChange={(e) => {
                 setFormData({ ...formData, recurrencePattern: e.target.value });
@@ -266,8 +289,11 @@ export function CalendarEventForm({
 
           {formData.recurrencePattern !== "none" && (
             <div className="space-y-2">
-              <label className="text-sm font-medium">Repeat Until</label>
+              <label htmlFor={recurrenceEndId} className="text-sm font-medium">
+                Repeat Until
+              </label>
               <Input
+                id={recurrenceEndId}
                 type="date"
                 value={formData.recurrenceEndDate}
                 onChange={(e) => {
@@ -279,8 +305,11 @@ export function CalendarEventForm({
 
           {/* Notes */}
           <div className="space-y-2">
-            <label className="text-sm font-medium">Notes</label>
+            <label htmlFor={notesId} className="text-sm font-medium">
+              Notes
+            </label>
             <textarea
+              id={notesId}
               value={formData.notes}
               onChange={(e) => {
                 setFormData({ ...formData, notes: e.target.value });
