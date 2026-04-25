@@ -1,7 +1,7 @@
 import { auth } from "@/lib/auth";
 import { NextResponse } from "next/server";
 
-const publicRoutes = ["/", "/login", "/signup", "/forgot-password", "/reset-password"];
+const publicRoutes = ["/", "/login", "/signup", "/forgot-password", "/reset-password", "/invite"];
 const authRoutes = ["/login", "/signup", "/forgot-password", "/reset-password"];
 const talentOnlyRoutes = ["/profile", "/auditions", "/talent"];
 const producerOnlyRoutes = ["/dashboard", "/projects", "/casting"];
