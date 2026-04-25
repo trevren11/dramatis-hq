@@ -27,3 +27,4 @@ export * from "./talent-search";
 export * from "./emails";
 export * from "./push-notifications";
 export * from "./video-samples";
+export * from "./producer-documents";

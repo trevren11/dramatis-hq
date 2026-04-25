@@ -32,12 +32,14 @@ export {
   NewMessageEmail,
   DocumentSharedEmail,
   RehearsalReminderEmail,
+  TaxDocumentUploadedEmail,
 } from "./production";
 export type {
   ScheduleUpdateEmailProps,
   NewMessageEmailProps,
   DocumentSharedEmailProps,
   RehearsalReminderEmailProps,
+  TaxDocumentUploadedEmailProps,
 } from "./production";
 
 // Billing templates
