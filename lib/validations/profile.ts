@@ -35,6 +35,7 @@ export const publicSectionsSchema = z.object({
   basicInfo: z.boolean().default(true),
   bio: z.boolean().default(true),
   headshots: z.boolean().default(true),
+  videos: z.boolean().default(true),
   workHistory: z.boolean().default(true),
   education: z.boolean().default(true),
   skills: z.boolean().default(true),

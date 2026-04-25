@@ -123,6 +123,7 @@ export const talentProfiles = pgTable(
         basicInfo: boolean;
         bio: boolean;
         headshots: boolean;
+        videos: boolean;
         workHistory: boolean;
         education: boolean;
         skills: boolean;
@@ -132,6 +133,7 @@ export const talentProfiles = pgTable(
         basicInfo: true,
         bio: true,
         headshots: true,
+        videos: true,
         workHistory: true,
         education: true,
         skills: true,
@@ -161,6 +163,7 @@ export interface PublicSections {
   basicInfo: boolean;
   bio: boolean;
   headshots: boolean;
+  videos: boolean;
   workHistory: boolean;
   education: boolean;
   skills: boolean;
@@ -171,6 +174,7 @@ export const DEFAULT_PUBLIC_SECTIONS: PublicSections = {
   basicInfo: true,
   bio: true,
   headshots: true,
+  videos: true,
   workHistory: true,
   education: true,
   skills: true,

@@ -10,6 +10,7 @@ import {
   headshots,
   talentSkills,
   skills,
+  videoSamples,
 } from "@/lib/db/schema";
 import { eq, asc, inArray } from "drizzle-orm";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -26,6 +27,7 @@ import {
   GraduationCap,
   Sparkles,
   Camera,
+  Video,
 } from "lucide-react";
 
 function getUnionLabel(value: string): string {
@@ -36,6 +38,7 @@ interface ProfileCounts {
   work: number;
   education: number;
   headshots: number;
+  videos: number;
   skills: number;
 }
 
@@ -50,8 +53,9 @@ function calculateCompleteness(
   if (counts.work > 0) score++;
   if (counts.education > 0) score++;
   if (counts.headshots > 0) score++;
+  if (counts.videos > 0) score++;
   if (counts.skills > 0) score++;
-  return Math.round((score / 7) * 100);
+  return Math.round((score / 8) * 100);
 }
 
 // eslint-disable-next-line complexity
@@ -69,7 +73,7 @@ export default async function ProfilePage(): Promise<React.ReactElement> {
     redirect("/talent/profile/wizard");
   }
 
-  const [work, edu, photos, userSkills] = await Promise.all([
+  const [work, edu, photos, videos, userSkills] = await Promise.all([
     db.query.workHistory.findMany({
       where: eq(workHistory.talentProfileId, profile.id),
       orderBy: [asc(workHistory.sortOrder)],
@@ -81,6 +85,10 @@ export default async function ProfilePage(): Promise<React.ReactElement> {
     db.query.headshots.findMany({
       where: eq(headshots.talentProfileId, profile.id),
       orderBy: [asc(headshots.sortOrder)],
+    }),
+    db.query.videoSamples.findMany({
+      where: eq(videoSamples.talentProfileId, profile.id),
+      orderBy: [asc(videoSamples.sortOrder)],
     }),
     db.query.talentSkills.findMany({
       where: eq(talentSkills.talentProfileId, profile.id),
@@ -97,6 +105,7 @@ export default async function ProfilePage(): Promise<React.ReactElement> {
     work: work.length,
     education: edu.length,
     headshots: photos.length,
+    videos: videos.length,
     skills: skillDetails.length,
   };
   const completeness = calculateCompleteness(profile, counts);
@@ -191,6 +200,10 @@ export default async function ProfilePage(): Promise<React.ReactElement> {
                   <div className="text-muted-foreground text-xs">Headshots</div>
                 </div>
                 <div>
+                  <div className="text-2xl font-bold">{videos.length}</div>
+                  <div className="text-muted-foreground text-xs">Videos</div>
+                </div>
+                <div>
                   <div className="text-2xl font-bold">{work.length}</div>
                   <div className="text-muted-foreground text-xs">Credits</div>
                 </div>
@@ -243,6 +256,44 @@ export default async function ProfilePage(): Promise<React.ReactElement> {
                 </div>
               ) : (
                 <p className="text-muted-foreground py-8 text-center">No headshots uploaded yet</p>
+              )}
+            </CardContent>
+          </Card>
+          <Card>
+            <CardHeader className="flex flex-row items-center justify-between">
+              <CardTitle className="flex items-center text-lg">
+                <Video className="mr-2 h-5 w-5" />
+                Video Samples
+              </CardTitle>
+              <Button variant="outline" size="sm" asChild>
+                <Link href="/talent/profile/edit#videos">Manage</Link>
+              </Button>
+            </CardHeader>
+            <CardContent>
+              {videos.length > 0 ? (
+                <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
+                  {videos.slice(0, 6).map((v) => (
+                    <div
+                      key={v.id}
+                      className="relative aspect-video overflow-hidden rounded-lg bg-black"
+                    >
+                      {v.thumbnailUrl ? (
+                        <Image src={v.thumbnailUrl} alt={v.title} fill className="object-cover" />
+                      ) : (
+                        <div className="flex h-full items-center justify-center">
+                          <Video className="text-muted-foreground h-8 w-8" />
+                        </div>
+                      )}
+                      <div className="absolute right-0 bottom-0 left-0 bg-gradient-to-t from-black/70 to-transparent p-2">
+                        <p className="truncate text-xs font-medium text-white">{v.title}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-muted-foreground py-8 text-center">
+                  No video samples uploaded yet
+                </p>
               )}
             </CardContent>
           </Card>
