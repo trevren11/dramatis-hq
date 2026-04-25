@@ -14,6 +14,7 @@ import {
   headshots,
   auditions,
   auditionApplications,
+  emailTemplates,
 } from "@/lib/db/schema";
 import { eq, and, asc, inArray } from "drizzle-orm";
 import { CastingBoard } from "@/components/casting";
@@ -109,6 +110,10 @@ export default async function CastingBoardPage({ params }: Props): Promise<React
     where: eq(auditions.showId, showId),
   });
 
+  const templates = await db.query.emailTemplates.findMany({
+    where: eq(emailTemplates.organizationId, profile.id),
+  });
+
   let poolTalent: { id: string; firstName: string; lastName: string; stageName: string | null }[] =
     [];
   if (audition) {
@@ -194,10 +199,12 @@ export default async function CastingBoardPage({ params }: Props): Promise<React
       <CastingBoard
         showId={showId}
         showTitle={show.title}
+        organizationName={profile.companyName}
         initialRoles={showRoles}
         initialAssignments={enrichedAssignments}
         initialDeck={enrichedDeck}
         initialPool={enrichedPool}
+        initialTemplates={templates}
       />
     </div>
   );
