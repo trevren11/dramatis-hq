@@ -32,6 +32,10 @@ import { seedUsers, seedTestUsers } from "./users";
 import { seedTalentProfiles, seedDiverseTalent } from "./talent";
 import { seedProducerProfiles } from "./producer";
 import { seedAuditions } from "./auditions";
+import { seedCalendar } from "./calendar";
+import { seedMessages } from "./messages";
+import { seedNotifications } from "./notifications";
+import { seedMaterials } from "./materials";
 
 // All available seed types
 type SeedType =
@@ -41,6 +45,10 @@ type SeedType =
   | "talent"
   | "producer"
   | "auditions"
+  | "calendar"
+  | "messages"
+  | "notifications"
+  | "materials"
   | "test"
   | "minimal"
   | "diverse-talent"
@@ -71,14 +79,34 @@ async function clearDatabase(): Promise<void> {
   console.log("Clearing database...");
 
   const tablesToClear = [
+    // Notifications
+    "in_app_notifications",
+    "notification_preferences",
+    "push_subscriptions",
+    // Messages
+    "messages",
+    "message_templates",
+    "conversation_participants",
+    "conversations",
+    // Materials
+    "material_access_logs",
+    "material_permissions",
+    "minus_tracks",
+    "scripts",
+    // Calendar
+    "show_schedules",
+    "availability",
+    // Auditions
     "audition_notes",
     "audition_form_responses",
     "audition_forms",
     "audition_applications",
     "audition_roles",
     "auditions",
+    // Shows & Roles
     "roles",
     "shows",
+    // Talent
     "talent_skills",
     "skills",
     "headshots",
@@ -86,7 +114,9 @@ async function clearDatabase(): Promise<void> {
     "work_history",
     "education",
     "talent_profiles",
+    // Producers
     "producer_profiles",
+    // Auth
     "password_reset_tokens",
     "verification_tokens",
     "sessions",
@@ -160,6 +190,38 @@ async function seedAuditionsOnly(): Promise<void> {
     minApplications: 5,
     maxApplications: 20,
   });
+}
+
+async function seedCalendarOnly(): Promise<void> {
+  if (state.talentProfiles.length === 0) {
+    console.log("No talent profiles found. Run 'talent' seed first.");
+    return;
+  }
+  await seedCalendar(state.talentProfiles, state.shows);
+}
+
+async function seedMessagesOnly(): Promise<void> {
+  if (state.users.length === 0) {
+    console.log("No users found. Run 'users' or 'test' seed first.");
+    return;
+  }
+  await seedMessages(state.users);
+}
+
+async function seedNotificationsOnly(): Promise<void> {
+  if (state.users.length === 0) {
+    console.log("No users found. Run 'users' or 'test' seed first.");
+    return;
+  }
+  await seedNotifications(state.users);
+}
+
+async function seedMaterialsOnly(): Promise<void> {
+  if (state.shows.length === 0) {
+    console.log("No shows found. Run 'producer' seed first.");
+    return;
+  }
+  await seedMaterials(state.shows, state.users);
 }
 
 // =============================================================================
@@ -496,6 +558,18 @@ async function seedFull(): Promise<void> {
     minApplications: 5,
     maxApplications: 20,
   });
+
+  // Seed calendar entries for talent
+  await seedCalendar(state.talentProfiles, state.shows);
+
+  // Seed messages between users
+  await seedMessages(state.users);
+
+  // Seed notifications for all users
+  await seedNotifications(state.users);
+
+  // Seed materials (scripts and tracks) for shows
+  await seedMaterials(state.shows, state.users);
 }
 
 // =============================================================================
@@ -509,6 +583,10 @@ const SEED_FUNCTIONS: Record<SeedType, () => Promise<void>> = {
   talent: seedTalentOnly,
   producer: seedProducerOnly,
   auditions: seedAuditionsOnly,
+  calendar: seedCalendarOnly,
+  messages: seedMessagesOnly,
+  notifications: seedNotificationsOnly,
+  materials: seedMaterialsOnly,
   test: seedTest,
   minimal: seedMinimal,
   "diverse-talent": seedDiverseTalentScenario,
