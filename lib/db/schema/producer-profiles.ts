@@ -9,6 +9,7 @@ import {
   index,
   pgEnum,
 } from "drizzle-orm/pg-core";
+import { relations } from "drizzle-orm";
 import { users } from "./users";
 
 export const unionStatusEnum = pgEnum("union_status", [
@@ -75,3 +76,11 @@ export const UNION_STATUS_OPTIONS = [
 ] as const;
 
 export const UNION_STATUS_VALUES = ["union", "non_union", "union_signatory", "both"] as const;
+
+// Relations
+export const producerProfilesRelations = relations(producerProfiles, ({ one }) => ({
+  user: one(users, {
+    fields: [producerProfiles.userId],
+    references: [users.id],
+  }),
+}));
