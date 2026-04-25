@@ -10,7 +10,7 @@ export function Footer({ className }: FooterProps): React.ReactElement {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className={cn("border-t", className)}>
+    <footer className={cn("border-t", className)} role="contentinfo" aria-label="Site footer">
       <div className="mx-auto max-w-7xl px-4 py-8 md:px-6">
         <div className="grid grid-cols-2 gap-8 md:grid-cols-4">
           <div className="col-span-2 md:col-span-1">

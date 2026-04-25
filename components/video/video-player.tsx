@@ -44,6 +44,7 @@ function formatTime(seconds: number): string {
   return `${String(mins)}:${String(secs).padStart(2, "0")}`;
 }
 
+// eslint-disable-next-line complexity -- video player state management requires this complexity
 export function VideoPlayer({
   src,
   poster,
@@ -257,6 +258,8 @@ export function VideoPlayer({
   return (
     <div
       ref={containerRef}
+      role="application"
+      aria-label={title ? `Video player: ${title}` : "Video player"}
       className={cn(
         "group relative overflow-hidden rounded-lg bg-black",
         isFullscreen && "fixed inset-0 z-50 rounded-none",

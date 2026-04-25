@@ -158,8 +158,19 @@ export function MessageRow({
   const isUnread = unreadCount > 0;
   const displayName = getDisplayName(subject, participants);
 
+  const handleKeyDown = (e: React.KeyboardEvent): void => {
+    if (e.key === "Enter" || e.key === " ") {
+      // Don't trigger if on checkbox
+      if ((e.target as HTMLElement).closest('[role="checkbox"]')) return;
+      e.preventDefault();
+      onClick();
+    }
+  };
+
   return (
     <div
+      role="button"
+      tabIndex={0}
       className={`group hover:bg-muted/50 flex cursor-pointer items-center gap-3 border-b px-6 py-3 transition-colors ${
         isUnread ? "bg-blue-50/50 dark:bg-blue-950/20" : ""
       }`}
@@ -168,6 +179,7 @@ export function MessageRow({
         if ((e.target as HTMLElement).closest('[role="checkbox"]')) return;
         onClick();
       }}
+      onKeyDown={handleKeyDown}
     >
       <div
         onClick={(e) => {

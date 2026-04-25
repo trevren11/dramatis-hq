@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useId } from "react";
 import { Plus, Edit2, Trash2, Loader2, GripVertical } from "lucide-react";
 import type { BudgetLine } from "@/lib/db/schema/budget";
 import { BUDGET_CATEGORY_OPTIONS } from "@/lib/db/schema/budget";
@@ -32,6 +32,12 @@ export function BudgetLineManager({
   const [customCategoryName, setCustomCategoryName] = useState("");
   const [description, setDescription] = useState("");
   const [budgetedAmount, setBudgetedAmount] = useState("");
+
+  // Form field IDs for accessibility
+  const categoryId = useId();
+  const customCategoryId = useId();
+  const budgetAmountId = useId();
+  const descriptionId = useId();
 
   const resetForm = (): void => {
     setCategory("miscellaneous");
@@ -188,8 +194,11 @@ export function BudgetLineManager({
         <div className="space-y-4 border-b bg-gray-50 p-4">
           <div className="grid gap-4 md:grid-cols-2">
             <div>
-              <label className="mb-1 block text-sm font-medium">Category</label>
+              <label htmlFor={categoryId} className="mb-1 block text-sm font-medium">
+                Category
+              </label>
               <select
+                id={categoryId}
                 value={category}
                 onChange={(e) => {
                   setCategory(e.target.value);
@@ -205,8 +214,11 @@ export function BudgetLineManager({
             </div>
             {category === "custom" && (
               <div>
-                <label className="mb-1 block text-sm font-medium">Custom Category Name</label>
+                <label htmlFor={customCategoryId} className="mb-1 block text-sm font-medium">
+                  Custom Category Name
+                </label>
                 <input
+                  id={customCategoryId}
                   type="text"
                   value={customCategoryName}
                   onChange={(e) => {
@@ -218,12 +230,15 @@ export function BudgetLineManager({
               </div>
             )}
             <div>
-              <label className="mb-1 block text-sm font-medium">Budget Amount</label>
+              <label htmlFor={budgetAmountId} className="mb-1 block text-sm font-medium">
+                Budget Amount
+              </label>
               <div className="relative">
                 <span className="text-muted-foreground absolute top-1/2 left-3 -translate-y-1/2">
                   $
                 </span>
                 <input
+                  id={budgetAmountId}
                   type="number"
                   value={budgetedAmount}
                   onChange={(e) => {
@@ -237,8 +252,11 @@ export function BudgetLineManager({
               </div>
             </div>
             <div className="md:col-span-2">
-              <label className="mb-1 block text-sm font-medium">Description (optional)</label>
+              <label htmlFor={descriptionId} className="mb-1 block text-sm font-medium">
+                Description (optional)
+              </label>
               <input
+                id={descriptionId}
                 type="text"
                 value={description}
                 onChange={(e) => {
