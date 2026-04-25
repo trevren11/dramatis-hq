@@ -7,6 +7,7 @@ import { z } from "zod";
 import { db } from "@/lib/db";
 import { users, passwordResetTokens } from "@/lib/db/schema";
 import { generateSecureToken, getPasswordResetExpiry } from "@/lib/auth/tokens";
+import { emailService, PasswordResetEmail } from "@/lib/email";
 
 const forgotPasswordSchema = z.object({
   email: z.string().email("Invalid email address"),
@@ -47,10 +48,23 @@ export async function POST(request: Request): Promise<NextResponse> {
       expires,
     });
 
-    // TODO: Send email with reset link
-    // For now, log the token (in production, send via email service like Resend)
-    console.log(`Password reset token for ${email}: ${token}`);
-    console.log(`Reset link: ${process.env.NEXTAUTH_URL ?? ""}/reset-password?token=${token}`);
+    // Send password reset email
+    const resetUrl = `${process.env.NEXTAUTH_URL ?? ""}/reset-password?token=${token}`;
+
+    await emailService.send({
+      to: user.email,
+      subject: "Reset your Dramatis HQ password",
+      type: "password_reset",
+      userId: user.id,
+      react: PasswordResetEmail({
+        name: user.name ?? "there",
+        resetUrl,
+        expiresIn: "1 hour",
+      }),
+      metadata: {
+        resetToken: token,
+      },
+    });
 
     return NextResponse.json({
       message: "If an account with that email exists, we sent a password reset link.",
