@@ -5,6 +5,7 @@ import { cn } from "@/lib/utils";
 import { Header } from "./header";
 import { Sidebar, type NavItem } from "./sidebar";
 import { Footer } from "./footer";
+import { SkipLink } from "@/components/ui/skip-link";
 
 export interface DashboardLayoutProps {
   children: React.ReactNode;
@@ -29,6 +30,7 @@ export function DashboardLayout({
 
   return (
     <div className="bg-background min-h-screen">
+      <SkipLink />
       <Header
         user={user}
         onMenuClick={() => {
@@ -46,7 +48,7 @@ export function DashboardLayout({
           }}
         />
 
-        <main className={cn("flex-1", className)}>
+        <main id="main-content" className={cn("flex-1", className)}>
           <div className="min-h-[calc(100vh-4rem)]">{children}</div>
           {showFooter && <Footer />}
         </main>
