@@ -25,3 +25,4 @@ export * from "./materials";
 export * from "./permissions";
 export * from "./talent-search";
 export * from "./emails";
+export * from "./push-notifications";
