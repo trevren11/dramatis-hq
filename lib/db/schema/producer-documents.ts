@@ -98,18 +98,10 @@ export const producerDocuments = pgTable(
     index("producer_docs_doc_type_idx").on(table.documentType),
 
     // Compliance tracking - find missing docs by type and year
-    index("producer_docs_compliance_idx").on(
-      table.organizationId,
-      table.documentType,
-      table.year
-    ),
+    index("producer_docs_compliance_idx").on(table.organizationId, table.documentType, table.year),
 
     // Show-specific compliance
-    index("producer_docs_show_compliance_idx").on(
-      table.showId,
-      table.documentType,
-      table.year
-    ),
+    index("producer_docs_show_compliance_idx").on(table.showId, table.documentType, table.year),
 
     // View tracking queries
     index("producer_docs_viewed_at_idx").on(table.viewedAt),
@@ -173,8 +165,7 @@ export type NewProducerDocument = typeof producerDocuments.$inferInsert;
 export type ComplianceDeadline = typeof complianceDeadlines.$inferSelect;
 export type NewComplianceDeadline = typeof complianceDeadlines.$inferInsert;
 
-export type ProducerDocumentStatus =
-  (typeof producerDocumentStatusEnum.enumValues)[number];
+export type ProducerDocumentStatus = (typeof producerDocumentStatusEnum.enumValues)[number];
 
 // Status labels for UI
 export const PRODUCER_DOCUMENT_STATUS_OPTIONS = [

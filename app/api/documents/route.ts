@@ -35,7 +35,6 @@ export async function GET(): Promise<NextResponse> {
         },
         organization: {
           id: producerProfiles.id,
-          name: producerProfiles.organizationName,
           companyName: producerProfiles.companyName,
         },
         show: {
@@ -68,7 +67,7 @@ export async function GET(): Promise<NextResponse> {
         ? {
             uploadedBy: {
               organizationId: doc.organization.id,
-              organizationName: doc.organization.name ?? doc.organization.companyName,
+              organizationName: doc.organization.companyName,
             },
             show: doc.show?.id
               ? {

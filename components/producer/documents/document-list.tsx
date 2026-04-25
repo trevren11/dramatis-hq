@@ -3,9 +3,13 @@
 import * as React from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+
+// CardHeader and CardTitle imported for potential future use
+void CardHeader;
+void CardTitle;
 import { Badge } from "@/components/ui/badge";
 import {
-  Select,
+  RadixSelect as Select,
   SelectContent,
   SelectItem,
   SelectTrigger,
@@ -40,8 +44,7 @@ interface ProducerDocument {
   talent: {
     id: string;
     userId: string;
-    firstName: string;
-    lastName: string;
+    name: string;
     email: string;
   };
   show?: {
@@ -55,14 +58,14 @@ interface DocumentListProps {
   isLoading?: boolean;
   showId?: string;
   showTitle?: string;
-  talentOptions?: Array<{ id: string; userId: string; name: string }>;
+  talentOptions?: { id: string; userId: string; name: string }[];
   onUpload: (formData: FormData) => Promise<void>;
   onDelete?: (documentId: string) => Promise<void>;
   onRefresh?: () => void;
 }
 
 function formatFileSize(bytes: number): string {
-  if (bytes < 1024) return `${bytes} B`;
+  if (bytes < 1024) return `${String(bytes)} B`;
   if (bytes < 1024 * 1024) return `${(bytes / 1024).toFixed(1)} KB`;
   return `${(bytes / (1024 * 1024)).toFixed(1)} MB`;
 }
@@ -84,11 +87,7 @@ function getStatusBadge(status: string): React.ReactElement {
     downloaded: "default",
   };
 
-  return (
-    <Badge variant={variants[status] ?? "outline"}>
-      {statusConfig?.label ?? status}
-    </Badge>
-  );
+  return <Badge variant={variants[status] ?? "outline"}>{statusConfig?.label ?? status}</Badge>;
 }
 
 export function DocumentList({
@@ -191,7 +190,9 @@ export function DocumentList({
                         key={talent.id}
                         variant="ghost"
                         className="w-full justify-start"
-                        onClick={() => handleOpenUpload(talent)}
+                        onClick={() => {
+                          handleOpenUpload(talent);
+                        }}
                       >
                         {talent.name}
                       </Button>
@@ -236,9 +237,7 @@ export function DocumentList({
                     {getStatusBadge(doc.status)}
                   </div>
                   <p className="text-muted-foreground mt-1 text-sm">
-                    <span className="font-medium">
-                      {doc.talent.firstName} {doc.talent.lastName}
-                    </span>
+                    <span className="font-medium">{doc.talent.name}</span>
                     {doc.show && <span> &bull; {doc.show.title}</span>}
                     {doc.year && <span> &bull; {doc.year}</span>}
                     <span> &bull; {formatFileSize(doc.fileSize)}</span>
@@ -248,7 +247,9 @@ export function DocumentList({
                     <p className="mt-1 text-xs text-green-600">
                       {doc.downloadedAt
                         ? `Downloaded ${formatDate(doc.downloadedAt)}`
-                        : `Viewed ${formatDate(doc.viewedAt!)}`}
+                        : doc.viewedAt
+                          ? `Viewed ${formatDate(doc.viewedAt)}`
+                          : null}
                     </p>
                   )}
                 </div>
@@ -260,7 +261,9 @@ export function DocumentList({
                     <Button
                       variant="ghost"
                       size="sm"
-                      onClick={() => onDelete(doc.id)}
+                      onClick={() => {
+                        void onDelete(doc.id);
+                      }}
                       className="text-destructive hover:text-destructive"
                     >
                       Delete

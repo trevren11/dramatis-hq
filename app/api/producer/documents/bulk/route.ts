@@ -25,6 +25,106 @@ interface UploadResult {
   error?: string;
 }
 
+interface BulkUploadContext {
+  formData: FormData;
+  parsedData: ReturnType<typeof bulkProducerDocumentUploadSchema.parse>;
+  uploaderId: string;
+  organizationId: string;
+  ipAddress: string | null;
+  userAgent: string | null;
+}
+
+function validateFileForUpload(file: File | null, talentUserId: string): UploadResult | null {
+  if (!file) {
+    return { talentUserId, success: false, error: "No file provided" };
+  }
+  if (!validateFileType(file.type)) {
+    return {
+      talentUserId,
+      success: false,
+      error: `Invalid file type. Allowed: ${ALLOWED_DOCUMENT_TYPES.join(", ")}`,
+    };
+  }
+  if (!validateFileSize(file.size)) {
+    return { talentUserId, success: false, error: getFileSizeError() };
+  }
+  return null;
+}
+
+async function processUpload(
+  ctx: BulkUploadContext,
+  uploadItem: { talentUserId: string; name?: string },
+  file: File
+): Promise<UploadResult> {
+  const talentUser = await db.query.users.findFirst({
+    where: eq(users.id, uploadItem.talentUserId),
+  });
+
+  if (talentUser?.userType !== "talent") {
+    return { talentUserId: uploadItem.talentUserId, success: false, error: "Invalid talent user" };
+  }
+
+  const arrayBuffer = await file.arrayBuffer();
+  const result = await uploadProducerDocument({
+    file: { name: file.name, type: file.type, size: file.size, buffer: Buffer.from(arrayBuffer) },
+    input: {
+      name: uploadItem.name ?? file.name,
+      documentType: ctx.parsedData.documentType,
+      talentUserId: uploadItem.talentUserId,
+      showId: ctx.parsedData.showId,
+      year: ctx.parsedData.year,
+      deadline: ctx.parsedData.deadline,
+      notes: ctx.parsedData.notes,
+      sendNotification: ctx.parsedData.sendNotification,
+    },
+    uploaderId: ctx.uploaderId,
+    organizationId: ctx.organizationId,
+    ipAddress: ctx.ipAddress,
+    userAgent: ctx.userAgent,
+  });
+
+  return {
+    talentUserId: uploadItem.talentUserId,
+    success: true,
+    documentId: result.documentId,
+    producerDocumentId: result.producerDocumentId,
+  };
+}
+
+async function processBulkUploads(ctx: BulkUploadContext): Promise<UploadResult[]> {
+  const results: UploadResult[] = [];
+
+  for (let i = 0; i < ctx.parsedData.uploads.length; i++) {
+    const uploadItem = ctx.parsedData.uploads[i];
+    if (!uploadItem) continue;
+
+    const file = ctx.formData.get(`file_${String(i)}`) as File | null;
+    const validationError = validateFileForUpload(file, uploadItem.talentUserId);
+    if (validationError || !file) {
+      results.push(
+        validationError ?? {
+          talentUserId: uploadItem.talentUserId,
+          success: false,
+          error: "No file",
+        }
+      );
+      continue;
+    }
+
+    try {
+      results.push(await processUpload(ctx, uploadItem, file));
+    } catch (error) {
+      results.push({
+        talentUserId: uploadItem.talentUserId,
+        success: false,
+        error: error instanceof Error ? error.message : "Upload failed",
+      });
+    }
+  }
+
+  return results;
+}
+
 /**
  * POST /api/producer/documents/bulk
  * Upload documents for multiple talents at once
@@ -36,11 +136,7 @@ export async function POST(request: Request): Promise<NextResponse> {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
     }
 
-    // Verify user is a producer
-    const user = await db.query.users.findFirst({
-      where: eq(users.id, session.user.id),
-    });
-
+    const user = await db.query.users.findFirst({ where: eq(users.id, session.user.id) });
     if (user?.userType !== "producer") {
       return NextResponse.json(
         { error: "Only producers can upload documents for talent" },
@@ -48,34 +144,22 @@ export async function POST(request: Request): Promise<NextResponse> {
       );
     }
 
-    // Get producer's organization
     const organizationId = await getUserOrganizationId(session.user.id);
     if (!organizationId) {
-      return NextResponse.json(
-        { error: "Producer profile not found" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "Producer profile not found" }, { status: 400 });
     }
 
     const formData = await request.formData();
-
-    // Parse the JSON metadata
     const metadataStr = formData.get("metadata") as string | null;
     if (!metadataStr) {
-      return NextResponse.json(
-        { error: "Missing metadata" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "Missing metadata" }, { status: 400 });
     }
 
     let metadata: unknown;
     try {
       metadata = JSON.parse(metadataStr);
     } catch {
-      return NextResponse.json(
-        { error: "Invalid metadata JSON" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "Invalid metadata JSON" }, { status: 400 });
     }
 
     const parsed = bulkProducerDocumentUploadSchema.safeParse(metadata);
@@ -86,126 +170,30 @@ export async function POST(request: Request): Promise<NextResponse> {
       );
     }
 
-    // Check if this is a tax document - requires owner/admin role
     const isTaxDocument = TAX_DOCUMENT_TYPES.includes(
       parsed.data.documentType as (typeof TAX_DOCUMENT_TYPES)[number]
     );
-    if (isTaxDocument) {
-      const canUpload = await canUploadTaxDocuments(session.user.id, organizationId);
-      if (!canUpload) {
-        return NextResponse.json(
-          { error: "Only organization owners and admins can upload tax documents" },
-          { status: 403 }
-        );
-      }
+    if (isTaxDocument && !(await canUploadTaxDocuments(session.user.id, organizationId))) {
+      return NextResponse.json(
+        { error: "Only organization owners and admins can upload tax documents" },
+        { status: 403 }
+      );
     }
 
-    // Process each upload
-    const results: UploadResult[] = [];
-    const ipAddress = request.headers.get("x-forwarded-for") ?? request.headers.get("x-real-ip");
-    const userAgent = request.headers.get("user-agent");
-
-    for (let i = 0; i < parsed.data.uploads.length; i++) {
-      const uploadItem = parsed.data.uploads[i];
-      if (!uploadItem) continue;
-
-      const file = formData.get(`file_${i}`) as File | null;
-
-      if (!file) {
-        results.push({
-          talentUserId: uploadItem.talentUserId,
-          success: false,
-          error: "No file provided",
-        });
-        continue;
-      }
-
-      if (!validateFileType(file.type)) {
-        results.push({
-          talentUserId: uploadItem.talentUserId,
-          success: false,
-          error: `Invalid file type. Allowed types: ${ALLOWED_DOCUMENT_TYPES.join(", ")}`,
-        });
-        continue;
-      }
-
-      if (!validateFileSize(file.size)) {
-        results.push({
-          talentUserId: uploadItem.talentUserId,
-          success: false,
-          error: getFileSizeError(),
-        });
-        continue;
-      }
-
-      // Verify the talent user exists and is a talent
-      const talentUser = await db.query.users.findFirst({
-        where: eq(users.id, uploadItem.talentUserId),
-      });
-
-      if (talentUser?.userType !== "talent") {
-        results.push({
-          talentUserId: uploadItem.talentUserId,
-          success: false,
-          error: "Invalid talent user",
-        });
-        continue;
-      }
-
-      try {
-        const arrayBuffer = await file.arrayBuffer();
-        const fileBuffer = Buffer.from(arrayBuffer);
-
-        const result = await uploadProducerDocument({
-          file: {
-            name: file.name,
-            type: file.type,
-            size: file.size,
-            buffer: fileBuffer,
-          },
-          input: {
-            name: uploadItem.name ?? file.name,
-            documentType: parsed.data.documentType,
-            talentUserId: uploadItem.talentUserId,
-            showId: parsed.data.showId,
-            year: parsed.data.year,
-            deadline: parsed.data.deadline,
-            notes: parsed.data.notes,
-            sendNotification: parsed.data.sendNotification,
-          },
-          uploaderId: session.user.id,
-          organizationId,
-          ipAddress,
-          userAgent,
-        });
-
-        results.push({
-          talentUserId: uploadItem.talentUserId,
-          success: true,
-          documentId: result.documentId,
-          producerDocumentId: result.producerDocumentId,
-        });
-      } catch (error) {
-        results.push({
-          talentUserId: uploadItem.talentUserId,
-          success: false,
-          error: error instanceof Error ? error.message : "Upload failed",
-        });
-      }
-    }
+    const results = await processBulkUploads({
+      formData,
+      parsedData: parsed.data,
+      uploaderId: session.user.id,
+      organizationId,
+      ipAddress: request.headers.get("x-forwarded-for") ?? request.headers.get("x-real-ip"),
+      userAgent: request.headers.get("user-agent"),
+    });
 
     const successful = results.filter((r) => r.success).length;
-    const failed = results.filter((r) => !r.success).length;
+    const failed = results.length - successful;
 
     return NextResponse.json(
-      {
-        results,
-        summary: {
-          total: results.length,
-          successful,
-          failed,
-        },
-      },
+      { results, summary: { total: results.length, successful, failed } },
       { status: failed === results.length ? 400 : 201 }
     );
   } catch (error) {

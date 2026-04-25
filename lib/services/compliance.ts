@@ -34,8 +34,7 @@ interface ComplianceFilters {
 interface TalentInfo {
   id: string;
   userId: string;
-  firstName: string | null;
-  lastName: string | null;
+  name: string | null;
   email: string | null;
 }
 
@@ -59,18 +58,12 @@ function determineStatus(
     return "delivered";
   }
 
-  const baseStatus = "pending";
-
-  // Check if overdue
-  if (
-    deadline?.deadline &&
-    new Date() > deadline.deadline &&
-    (baseStatus === "pending")
-  ) {
+  // Check if overdue - pending docs past deadline are overdue
+  if (deadline?.deadline && new Date() > deadline.deadline) {
     return "overdue";
   }
 
-  return baseStatus;
+  return "pending";
 }
 
 /**
@@ -98,33 +91,38 @@ function matchesStatusFilter(
   }
 }
 
+interface BuildComplianceRecordParams {
+  talent: TalentInfo;
+  docType: DocumentType;
+  existingDoc: typeof producerDocuments.$inferSelect | undefined;
+  deadline: typeof complianceDeadlines.$inferSelect | undefined;
+  filterYear: number | undefined;
+}
+
+/**
+ * Check if status should be marked as overdue
+ */
+function checkOverdue(
+  status: ComplianceStatus["status"],
+  deadline: typeof complianceDeadlines.$inferSelect | undefined
+): ComplianceStatus["status"] {
+  const isOverdueable = status === "missing" || status === "pending" || status === "delivered";
+  if (deadline?.deadline && new Date() > deadline.deadline && isOverdueable) {
+    return "overdue";
+  }
+  return status;
+}
+
 /**
  * Build compliance record for a talent and document type
  */
-function buildComplianceRecord(
-  talent: TalentInfo,
-  docType: DocumentType,
-  existingDoc: typeof producerDocuments.$inferSelect | undefined,
-  deadline: typeof complianceDeadlines.$inferSelect | undefined,
-  filterYear: number | undefined
-): ComplianceStatus {
-  let status = determineStatus(existingDoc, deadline);
-
-  // Check if overdue after determining base status
-  if (
-    deadline?.deadline &&
-    new Date() > deadline.deadline &&
-    (status === "missing" || status === "pending" || status === "delivered")
-  ) {
-    status = "overdue";
-  }
-
-  const firstName = talent.firstName ?? "";
-  const lastName = talent.lastName ?? "";
+function buildComplianceRecord(params: BuildComplianceRecordParams): ComplianceStatus {
+  const { talent, docType, existingDoc, deadline, filterYear } = params;
+  const status = checkOverdue(determineStatus(existingDoc, deadline), deadline);
 
   return {
     talentProfileId: talent.id,
-    talentName: `${firstName} ${lastName}`.trim(),
+    talentName: talent.name ?? "",
     talentEmail: talent.email ?? "",
     documentType: docType,
     year: existingDoc?.year ?? filterYear ?? null,
@@ -173,8 +171,7 @@ export async function getComplianceStatus(
       .select({
         id: talentProfiles.id,
         userId: talentProfiles.userId,
-        firstName: users.firstName,
-        lastName: users.lastName,
+        name: users.name,
         email: users.email,
       })
       .from(talentProfiles)
@@ -189,7 +186,9 @@ export async function getComplianceStatus(
           eq(producerDocuments.organizationId, organizationId),
           inArray(producerDocuments.talentProfileId, talentIds),
           isNull(producerDocuments.deletedAt),
-          filters.documentType ? eq(producerDocuments.documentType, filters.documentType) : undefined,
+          filters.documentType
+            ? eq(producerDocuments.documentType, filters.documentType)
+            : undefined,
           filters.year ? eq(producerDocuments.year, filters.year) : undefined
         )
       ),
@@ -201,7 +200,9 @@ export async function getComplianceStatus(
         and(
           eq(complianceDeadlines.organizationId, organizationId),
           filters.showId ? eq(complianceDeadlines.showId, filters.showId) : undefined,
-          filters.documentType ? eq(complianceDeadlines.documentType, filters.documentType) : undefined,
+          filters.documentType
+            ? eq(complianceDeadlines.documentType, filters.documentType)
+            : undefined,
           filters.year ? eq(complianceDeadlines.year, filters.year) : undefined
         )
       ),
@@ -220,7 +221,13 @@ export async function getComplianceStatus(
       );
       const deadline = deadlines.find((d) => d.documentType === docType);
 
-      const record = buildComplianceRecord(talent, docType, existingDoc, deadline, filters.year);
+      const record = buildComplianceRecord({
+        talent,
+        docType,
+        existingDoc,
+        deadline,
+        filterYear: filters.year,
+      });
 
       if (matchesStatusFilter(record.status, filters.status)) {
         results.push(record);
@@ -242,7 +249,9 @@ export async function setComplianceDeadline(
   const existing = await db.query.complianceDeadlines.findFirst({
     where: and(
       eq(complianceDeadlines.organizationId, organizationId),
-      input.showId ? eq(complianceDeadlines.showId, input.showId) : isNull(complianceDeadlines.showId),
+      input.showId
+        ? eq(complianceDeadlines.showId, input.showId)
+        : isNull(complianceDeadlines.showId),
       eq(complianceDeadlines.documentType, input.documentType),
       input.year ? eq(complianceDeadlines.year, input.year) : isNull(complianceDeadlines.year)
     ),

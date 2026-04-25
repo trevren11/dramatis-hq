@@ -40,10 +40,7 @@ export async function GET(request: Request): Promise<NextResponse> {
     // Get producer's organization
     const organizationId = await getUserOrganizationId(session.user.id);
     if (!organizationId) {
-      return NextResponse.json(
-        { error: "Producer profile not found" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "Producer profile not found" }, { status: 400 });
     }
 
     const { searchParams } = new URL(request.url);
@@ -109,10 +106,7 @@ export async function POST(request: Request): Promise<NextResponse> {
     // Get producer's organization
     const organizationId = await getUserOrganizationId(session.user.id);
     if (!organizationId) {
-      return NextResponse.json(
-        { error: "Producer profile not found" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "Producer profile not found" }, { status: 400 });
     }
 
     // Only owner/admin can set compliance deadlines
@@ -134,11 +128,7 @@ export async function POST(request: Request): Promise<NextResponse> {
       );
     }
 
-    const deadlineId = await setComplianceDeadline(
-      organizationId,
-      parsed.data,
-      session.user.id
-    );
+    const deadlineId = await setComplianceDeadline(organizationId, parsed.data, session.user.id);
 
     return NextResponse.json({ id: deadlineId }, { status: 201 });
   } catch (error) {

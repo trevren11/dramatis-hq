@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/unbound-method */
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
 
 // Mock dependencies before importing the service
@@ -153,7 +154,7 @@ describe("Producer Documents Service", () => {
     it("returns organization id when profile exists", async () => {
       vi.mocked(db.query.producerProfiles.findFirst).mockResolvedValue({
         id: "org-123",
-      });
+      } as never);
 
       const result = await getUserOrganizationId("user-id");
       expect(result).toBe("org-123");
@@ -173,13 +174,13 @@ describe("Producer Documents Service", () => {
         id: "prod-doc-123",
         documentId: "doc-123",
         viewedAt: null,
-      });
+      } as never);
 
       await recordDocumentView("doc-123", "user-id", "127.0.0.1", "Mozilla/5.0");
 
       // Verify update was called
-      expect(db.update).toHaveBeenCalled();
-      expect(db.insert).toHaveBeenCalled();
+      expect(vi.mocked(db.update)).toHaveBeenCalled();
+      expect(vi.mocked(db.insert)).toHaveBeenCalled();
     });
 
     it("does not update status if already viewed", async () => {
@@ -187,12 +188,12 @@ describe("Producer Documents Service", () => {
         id: "prod-doc-123",
         documentId: "doc-123",
         viewedAt: new Date(),
-      });
+      } as never);
 
       await recordDocumentView("doc-123", "user-id", "127.0.0.1", "Mozilla/5.0");
 
       // Verify insert was called for access log
-      expect(db.insert).toHaveBeenCalled();
+      expect(vi.mocked(db.insert)).toHaveBeenCalled();
     });
 
     it("logs view even when no producer document exists", async () => {
@@ -201,7 +202,7 @@ describe("Producer Documents Service", () => {
       await recordDocumentView("doc-123", "user-id", "127.0.0.1", "Mozilla/5.0");
 
       // Verify insert was called for access log
-      expect(db.insert).toHaveBeenCalled();
+      expect(vi.mocked(db.insert)).toHaveBeenCalled();
     });
   });
 
@@ -210,13 +211,13 @@ describe("Producer Documents Service", () => {
       vi.mocked(db.query.producerDocuments.findFirst).mockResolvedValue({
         id: "prod-doc-123",
         documentId: "doc-123",
-      });
+      } as never);
 
       await recordDocumentDownload("doc-123", "user-id", "127.0.0.1", "Mozilla/5.0");
 
       // Verify update and insert were called
-      expect(db.update).toHaveBeenCalled();
-      expect(db.insert).toHaveBeenCalled();
+      expect(vi.mocked(db.update)).toHaveBeenCalled();
+      expect(vi.mocked(db.insert)).toHaveBeenCalled();
     });
 
     it("logs download even when no producer document exists", async () => {
@@ -225,7 +226,7 @@ describe("Producer Documents Service", () => {
       await recordDocumentDownload("doc-123", "user-id", "127.0.0.1", "Mozilla/5.0");
 
       // Verify insert was called for access log
-      expect(db.insert).toHaveBeenCalled();
+      expect(vi.mocked(db.insert)).toHaveBeenCalled();
     });
   });
 
@@ -234,9 +235,7 @@ describe("Producer Documents Service", () => {
       vi.mocked(db.query.producerDocuments.findFirst).mockResolvedValue(undefined);
 
       // Should not throw
-      await expect(
-        recordDocumentView("doc-123", "user-id", null, null)
-      ).resolves.not.toThrow();
+      await expect(recordDocumentView("doc-123", "user-id", null, null)).resolves.not.toThrow();
     });
 
     it("handles undefined userAgent gracefully", async () => {

@@ -18,10 +18,7 @@ interface RouteParams {
  * GET /api/producer/documents/[id]
  * Get a specific producer document
  */
-export async function GET(
-  request: Request,
-  context: RouteParams
-): Promise<NextResponse> {
+export async function GET(_request: Request, context: RouteParams): Promise<NextResponse> {
   try {
     const session = await auth();
     if (!session?.user.id) {
@@ -45,10 +42,7 @@ export async function GET(
     // Get producer's organization
     const organizationId = await getUserOrganizationId(session.user.id);
     if (!organizationId) {
-      return NextResponse.json(
-        { error: "Producer profile not found" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "Producer profile not found" }, { status: 400 });
     }
 
     // Get the document
@@ -99,9 +93,8 @@ export async function GET(
         talent: {
           id: result.talentProfile.id,
           userId: result.talentUser.id,
-          firstName: result.talentUser.firstName ?? "",
-          lastName: result.talentUser.lastName ?? "",
-          email: result.talentUser.email ?? "",
+          name: result.talentUser.name ?? "",
+          email: result.talentUser.email,
         },
         show: result.show
           ? {
@@ -121,10 +114,7 @@ export async function GET(
  * PATCH /api/producer/documents/[id]
  * Update a producer document (notes, deadline)
  */
-export async function PATCH(
-  request: Request,
-  context: RouteParams
-): Promise<NextResponse> {
+export async function PATCH(request: Request, context: RouteParams): Promise<NextResponse> {
   try {
     const session = await auth();
     if (!session?.user.id) {
@@ -139,19 +129,13 @@ export async function PATCH(
     });
 
     if (user?.userType !== "producer") {
-      return NextResponse.json(
-        { error: "Only producers can update documents" },
-        { status: 403 }
-      );
+      return NextResponse.json({ error: "Only producers can update documents" }, { status: 403 });
     }
 
     // Get producer's organization
     const organizationId = await getUserOrganizationId(session.user.id);
     if (!organizationId) {
-      return NextResponse.json(
-        { error: "Producer profile not found" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "Producer profile not found" }, { status: 400 });
     }
 
     const body: unknown = await request.json();
@@ -177,10 +161,7 @@ export async function PATCH(
  * DELETE /api/producer/documents/[id]
  * Delete a producer document
  */
-export async function DELETE(
-  request: Request,
-  context: RouteParams
-): Promise<NextResponse> {
+export async function DELETE(request: Request, context: RouteParams): Promise<NextResponse> {
   try {
     const session = await auth();
     if (!session?.user.id) {
@@ -195,19 +176,13 @@ export async function DELETE(
     });
 
     if (user?.userType !== "producer") {
-      return NextResponse.json(
-        { error: "Only producers can delete documents" },
-        { status: 403 }
-      );
+      return NextResponse.json({ error: "Only producers can delete documents" }, { status: 403 });
     }
 
     // Get producer's organization
     const organizationId = await getUserOrganizationId(session.user.id);
     if (!organizationId) {
-      return NextResponse.json(
-        { error: "Producer profile not found" },
-        { status: 400 }
-      );
+      return NextResponse.json({ error: "Producer profile not found" }, { status: 400 });
     }
 
     await deleteProducerDocument({
