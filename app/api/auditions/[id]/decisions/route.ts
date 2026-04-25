@@ -74,16 +74,11 @@ export async function GET(
 
     // Count by decision type
     const counts = {
-      callback: 0,
-      no_thanks: 0,
-      callback_role: 0,
+      callback: decisions.filter((d) => d.decision === "callback").length,
+      hold_for_role: decisions.filter((d) => d.decision === "hold_for_role").length,
+      cast_in_role: decisions.filter((d) => d.decision === "cast_in_role").length,
+      release: decisions.filter((d) => d.decision === "release").length,
     };
-
-    for (const d of decisions) {
-      if (d.decision in counts) {
-        counts[d.decision]++;
-      }
-    }
 
     return NextResponse.json({
       decisions: decisions.map((d) => ({
