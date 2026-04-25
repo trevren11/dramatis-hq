@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import { Toaster } from "@/components/ui/toaster";
+import { MonitoringProvider } from "@/components/providers";
 import "./globals.css";
 
 export const metadata: Metadata = {
@@ -19,7 +21,9 @@ export default function RootLayout({
   return (
     <html lang="en" data-theme="dramatis">
       <body className="min-h-screen">
-        {children}
+        <Suspense fallback={null}>
+          <MonitoringProvider>{children}</MonitoringProvider>
+        </Suspense>
         <Toaster />
       </body>
     </html>
