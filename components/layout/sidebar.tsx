@@ -79,7 +79,7 @@ export function Sidebar({
         )}
       >
         <div className="flex h-full flex-col overflow-y-auto py-4">
-          <nav className="flex-1 space-y-1 px-3">
+          <nav className="flex-1 space-y-1 px-3" aria-label="Sidebar navigation">
             {items.map((item) => (
               <React.Fragment key={item.href}>
                 <NavItemComponent item={item} isActive={pathname === item.href} />
