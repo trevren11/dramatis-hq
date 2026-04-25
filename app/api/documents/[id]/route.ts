@@ -4,6 +4,7 @@ import { db } from "@/lib/db";
 import { documents, documentAccessLogs } from "@/lib/db/schema";
 import { downloadDocument, deleteDocument } from "@/lib/storage/document-storage";
 import { decryptDocument } from "@/lib/encryption";
+import { recordDocumentDownload } from "@/lib/services/producer-documents";
 import { eq, and, isNull } from "drizzle-orm";
 
 interface RouteContext {
@@ -44,14 +45,22 @@ export async function GET(request: Request, context: RouteContext): Promise<Next
       document.encryptionSalt
     );
 
-    // Log the download
-    await db.insert(documentAccessLogs).values({
-      documentId: document.id,
-      userId: session.user.id,
-      action: "download",
-      ipAddress: request.headers.get("x-forwarded-for") ?? request.headers.get("x-real-ip"),
-      userAgent: request.headers.get("user-agent"),
-    });
+    // Log the download and update producer document status if applicable
+    const ipAddress = request.headers.get("x-forwarded-for") ?? request.headers.get("x-real-ip");
+    const userAgent = request.headers.get("user-agent");
+
+    if (document.isProducerUploaded && document.ownerId === session.user.id) {
+      // Talent downloading their producer-uploaded document
+      await recordDocumentDownload(document.id, session.user.id, ipAddress, userAgent);
+    } else {
+      await db.insert(documentAccessLogs).values({
+        documentId: document.id,
+        userId: session.user.id,
+        action: "download",
+        ipAddress,
+        userAgent,
+      });
+    }
 
     // Return the decrypted file
     return new NextResponse(new Uint8Array(decryptedData), {
