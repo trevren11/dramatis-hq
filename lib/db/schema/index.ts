@@ -22,3 +22,4 @@ export * from "./production-notes";
 export * from "./schedule";
 export * from "./budget";
 export * from "./materials";
+export * from "./permissions";

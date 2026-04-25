@@ -9,6 +9,7 @@ import {
   PlusCircle,
   ClipboardList,
   BarChart3,
+  UserPlus,
 } from "lucide-react";
 import type { NavItem } from "@/components/layout/sidebar";
 
@@ -45,6 +46,11 @@ export const producerNavItems: NavItem[] = [
     title: "Talent Pool",
     href: "/producer/talent",
     icon: Users,
+  },
+  {
+    title: "Staff",
+    href: "/producer/staff",
+    icon: UserPlus,
   },
   {
     title: "Schedule",
