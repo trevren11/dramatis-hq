@@ -4,7 +4,17 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { ApplicationList } from "./ApplicationList";
-import { Calendar, MapPin, Video, Users, ArrowLeft, Settings, ExternalLink } from "lucide-react";
+import {
+  Calendar,
+  MapPin,
+  Video,
+  Users,
+  ArrowLeft,
+  Settings,
+  ExternalLink,
+  QrCode,
+  RefreshCw,
+} from "lucide-react";
 import Link from "next/link";
 import type { Audition, AuditionApplication } from "@/lib/db/schema/auditions";
 import type { Role } from "@/lib/db/schema/roles";
@@ -92,6 +102,18 @@ export function AuditionManagement({
               </Link>
             </Button>
           )}
+          <Button variant="outline" asChild>
+            <Link href={`/producer/auditions/${audition.id}/checkin`}>
+              <QrCode className="mr-2 h-4 w-4" />
+              Check-in
+            </Link>
+          </Button>
+          <Button variant="outline" asChild>
+            <Link href={`/producer/auditions/${audition.id}/callbacks`}>
+              <RefreshCw className="mr-2 h-4 w-4" />
+              Callbacks
+            </Link>
+          </Button>
           <Button variant="outline">
             <Settings className="mr-2 h-4 w-4" />
             Settings

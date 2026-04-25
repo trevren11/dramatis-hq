@@ -8,7 +8,7 @@ import { Select } from "@/components/ui/select";
 import { cn } from "@/lib/utils";
 import { CheckCircle, XCircle, Undo, Star, Loader2 } from "lucide-react";
 
-type DecisionType = "callback" | "no_thanks" | "callback_role";
+type DecisionType = "callback" | "hold_for_role" | "cast_in_role" | "release";
 
 interface Role {
   id: string;
@@ -55,15 +55,22 @@ export function DecisionPanel({
     setNotes("");
   };
 
-  const handleNoThanks = async (): Promise<void> => {
+  const handleRelease = async (): Promise<void> => {
     if (!talentId) return;
-    await onDecision("no_thanks", undefined, notes || undefined);
+    await onDecision("release", undefined, notes || undefined);
     setNotes("");
   };
 
-  const handleCallbackRole = async (): Promise<void> => {
+  const handleHoldForRole = async (): Promise<void> => {
     if (!talentId || !selectedRole) return;
-    await onDecision("callback_role", selectedRole, notes || undefined);
+    await onDecision("hold_for_role", selectedRole, notes || undefined);
+    setSelectedRole("");
+    setNotes("");
+  };
+
+  const handleCastInRole = async (): Promise<void> => {
+    if (!talentId || !selectedRole) return;
+    await onDecision("cast_in_role", selectedRole, notes || undefined);
     setSelectedRole("");
     setNotes("");
   };
@@ -89,12 +96,13 @@ export function DecisionPanel({
           <span>Decision</span>
           {currentDecision && (
             <Badge
-              variant={currentDecision.type === "no_thanks" ? "destructive" : "default"}
-              className={cn(currentDecision.type !== "no_thanks" && "bg-green-500")}
+              variant={currentDecision.type === "release" ? "destructive" : "default"}
+              className={cn(currentDecision.type !== "release" && "bg-green-500")}
             >
               {currentDecision.type === "callback" && "Callback"}
-              {currentDecision.type === "callback_role" && "Callback for Role"}
-              {currentDecision.type === "no_thanks" && "No Thanks"}
+              {currentDecision.type === "hold_for_role" && "Hold for Role"}
+              {currentDecision.type === "cast_in_role" && "Cast in Role"}
+              {currentDecision.type === "release" && "Released"}
             </Badge>
           )}
         </CardTitle>
@@ -119,7 +127,7 @@ export function DecisionPanel({
           <Button
             variant="outline"
             className="border-red-500 bg-red-500/10 text-red-600 hover:bg-red-500/20"
-            onClick={() => void handleNoThanks()}
+            onClick={() => void handleRelease()}
             disabled={isLoading || !talentId}
           >
             {isLoading ? (
@@ -127,14 +135,14 @@ export function DecisionPanel({
             ) : (
               <XCircle className="mr-2 h-4 w-4" />
             )}
-            No Thanks
+            Release
           </Button>
         </div>
 
-        {/* Callback for specific role */}
+        {/* Role-specific decisions */}
         {roles.length > 0 && (
           <div className="space-y-2">
-            <label className="text-muted-foreground text-xs font-medium">Callback for Role</label>
+            <label className="text-muted-foreground text-xs font-medium">Role Decision</label>
             <div className="flex gap-2">
               <Select
                 value={selectedRole}
@@ -147,12 +155,20 @@ export function DecisionPanel({
               />
               <Button
                 variant="outline"
+                className="border-amber-500 bg-amber-500/10 text-amber-600 hover:bg-amber-500/20"
+                onClick={() => void handleHoldForRole()}
+                disabled={isLoading || !selectedRole}
+              >
+                Hold
+              </Button>
+              <Button
+                variant="outline"
                 className="border-green-600 bg-green-600/10 text-green-700 hover:bg-green-600/20"
-                onClick={() => void handleCallbackRole()}
+                onClick={() => void handleCastInRole()}
                 disabled={isLoading || !selectedRole}
               >
                 <Star className="mr-1 h-4 w-4" />
-                CB
+                Cast
               </Button>
             </div>
           </div>
@@ -189,7 +205,7 @@ export function DecisionPanel({
         {/* Keyboard hints */}
         <div className="text-muted-foreground border-t pt-2 text-center text-xs">
           Press <kbd className="bg-muted rounded px-1 py-0.5">C</kbd> for Callback,{" "}
-          <kbd className="bg-muted rounded px-1 py-0.5">N</kbd> for No Thanks
+          <kbd className="bg-muted rounded px-1 py-0.5">R</kbd> for Release
         </div>
       </CardContent>
     </Card>

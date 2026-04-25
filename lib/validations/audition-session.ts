@@ -1,31 +1,31 @@
 import { z } from "zod";
-import { DECISION_TYPE_VALUES } from "@/lib/db/schema/auditions";
+import { AUDITION_DECISION_VALUES } from "@/lib/db/schema/callbacks";
 
 // Decision create schema
 export const decisionCreateSchema = z.object({
   talentProfileId: z.string().uuid("Invalid talent profile ID"),
-  decision: z.enum(DECISION_TYPE_VALUES),
+  decision: z.enum(AUDITION_DECISION_VALUES),
   roleId: z.string().uuid("Invalid role ID").optional().nullable(),
   notes: z.string().max(2000, "Notes must be at most 2000 characters").optional().nullable(),
 });
 
-// Validate roleId required for callback_role decision
+// Validate roleId required for cast_in_role or hold_for_role decisions
 export const decisionCreateWithRoleSchema = decisionCreateSchema.refine(
   (data) => {
-    if (data.decision === "callback_role") {
+    if (data.decision === "cast_in_role" || data.decision === "hold_for_role") {
       return data.roleId != null;
     }
     return true;
   },
   {
-    message: "Role ID is required for callback_role decisions",
+    message: "Role ID is required for role-specific decisions",
     path: ["roleId"],
   }
 );
 
 // Decision update schema
 export const decisionUpdateSchema = z.object({
-  decision: z.enum(DECISION_TYPE_VALUES).optional(),
+  decision: z.enum(AUDITION_DECISION_VALUES).optional(),
   roleId: z.string().uuid("Invalid role ID").optional().nullable(),
   notes: z.string().max(2000, "Notes must be at most 2000 characters").optional().nullable(),
 });
@@ -33,13 +33,13 @@ export const decisionUpdateSchema = z.object({
 // Decision update with role validation
 export const decisionUpdateWithRoleSchema = decisionUpdateSchema.refine(
   (data) => {
-    if (data.decision === "callback_role") {
+    if (data.decision === "cast_in_role" || data.decision === "hold_for_role") {
       return data.roleId != null;
     }
     return true;
   },
   {
-    message: "Role ID is required for callback_role decisions",
+    message: "Role ID is required for role-specific decisions",
     path: ["roleId"],
   }
 );
@@ -59,7 +59,7 @@ export const noteUpdateSchema = z.object({
 export const queueQuerySchema = z.object({
   status: z.enum(["checked_in", "in_room", "completed", "all"]).optional().default("all"),
   decision: z
-    .enum(["callback", "no_thanks", "callback_role", "undecided", "all"])
+    .enum(["callback", "hold_for_role", "cast_in_role", "release", "undecided", "all"])
     .optional()
     .default("all"),
 });

@@ -65,14 +65,16 @@ export async function PUT(
 
     // Build update object
     const updateData: {
-      decision?: "callback" | "no_thanks" | "callback_role";
+      decision?: "callback" | "hold_for_role" | "cast_in_role" | "release";
       roleId?: string | null;
       notes?: string | null;
       decidedBy: string;
       decidedAt: Date;
+      updatedAt: Date;
     } = {
       decidedBy: session.user.id,
       decidedAt: new Date(),
+      updatedAt: new Date(),
     };
 
     if (decision !== undefined) {
