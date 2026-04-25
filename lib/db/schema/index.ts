@@ -24,3 +24,4 @@ export * from "./budget";
 export * from "./materials";
 export * from "./permissions";
 export * from "./talent-search";
+export * from "./emails";
