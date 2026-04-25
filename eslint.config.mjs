@@ -2,6 +2,7 @@ import eslint from "@eslint/js";
 import tseslint from "typescript-eslint";
 import reactPlugin from "eslint-plugin-react";
 import reactHooksPlugin from "eslint-plugin-react-hooks";
+import jsxA11yPlugin from "eslint-plugin-jsx-a11y";
 import nextPlugin from "@next/eslint-plugin-next";
 import prettier from "eslint-config-prettier";
 import globals from "globals";
@@ -41,14 +42,23 @@ export default tseslint.config(
     plugins: {
       react: reactPlugin,
       "react-hooks": reactHooksPlugin,
+      "jsx-a11y": jsxA11yPlugin,
       "@next/next": nextPlugin,
     },
     rules: {
       ...reactPlugin.configs.recommended.rules,
       ...reactPlugin.configs["jsx-runtime"].rules,
       ...reactHooksPlugin.configs.recommended.rules,
+      ...jsxA11yPlugin.flatConfigs.recommended.rules,
       ...nextPlugin.configs.recommended.rules,
       ...nextPlugin.configs["core-web-vitals"].rules,
+
+      // jsx-a11y: set to warn during accessibility remediation, upgrade to error after completion
+      "jsx-a11y/label-has-associated-control": "warn",
+      "jsx-a11y/click-events-have-key-events": "warn",
+      "jsx-a11y/no-static-element-interactions": "warn",
+      "jsx-a11y/no-noninteractive-tabindex": "warn",
+      "jsx-a11y/media-has-caption": "warn",
 
       complexity: ["error", 15],
       "max-depth": ["error", 4],
