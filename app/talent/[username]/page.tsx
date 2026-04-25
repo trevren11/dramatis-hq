@@ -5,6 +5,7 @@ import {
   workHistory,
   education,
   headshots,
+  videoSamples,
   talentSkills,
   skills,
 } from "@/lib/db/schema";
@@ -52,6 +53,7 @@ export default async function PublicProfilePage({ params }: Props): Promise<Reac
     basicInfo: true,
     bio: true,
     headshots: true,
+    videos: true,
     workHistory: true,
     education: true,
     skills: true,
@@ -59,7 +61,7 @@ export default async function PublicProfilePage({ params }: Props): Promise<Reac
   };
 
   // Fetch related data based on visibility settings
-  const [work, edu, photos, userSkills] = await Promise.all([
+  const [work, edu, photos, videos, userSkills] = await Promise.all([
     sections.workHistory
       ? db.query.workHistory.findMany({
           where: eq(workHistory.talentProfileId, profile.id),
@@ -76,6 +78,12 @@ export default async function PublicProfilePage({ params }: Props): Promise<Reac
       ? db.query.headshots.findMany({
           where: eq(headshots.talentProfileId, profile.id),
           orderBy: [asc(headshots.sortOrder)],
+        })
+      : [],
+    sections.videos
+      ? db.query.videoSamples.findMany({
+          where: eq(videoSamples.talentProfileId, profile.id),
+          orderBy: [asc(videoSamples.sortOrder)],
         })
       : [],
     sections.skills
@@ -100,6 +108,7 @@ export default async function PublicProfilePage({ params }: Props): Promise<Reac
           workHistory={work}
           education={edu}
           headshots={photos}
+          videos={videos}
           skills={skillDetails}
         />
         {sections.contact && (

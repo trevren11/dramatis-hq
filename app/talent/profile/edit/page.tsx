@@ -9,6 +9,7 @@ import {
   headshots,
   talentSkills,
   skills,
+  videoSamples,
 } from "@/lib/db/schema";
 import { eq, asc, inArray } from "drizzle-orm";
 import { ProfileEditForm } from "@/components/talent/profile/profile-edit-form";
@@ -16,6 +17,7 @@ import { WorkHistorySection } from "@/components/talent/profile/work-history-sec
 import { EducationSection } from "@/components/talent/profile/education-section";
 import { SkillsSection } from "@/components/talent/profile/skills-section";
 import { HeadshotsSection } from "@/components/talent/profile/headshots-section";
+import { VideosSection } from "@/components/video";
 import { Button } from "@/components/ui/button";
 import { ArrowLeft } from "lucide-react";
 
@@ -34,7 +36,7 @@ export default async function ProfileEditPage(): Promise<React.ReactElement> {
     redirect("/talent/profile/wizard");
   }
 
-  const [work, edu, photos, userSkills] = await Promise.all([
+  const [work, edu, photos, videos, userSkills] = await Promise.all([
     db.query.workHistory.findMany({
       where: eq(workHistory.talentProfileId, profile.id),
       orderBy: [asc(workHistory.sortOrder)],
@@ -46,6 +48,10 @@ export default async function ProfileEditPage(): Promise<React.ReactElement> {
     db.query.headshots.findMany({
       where: eq(headshots.talentProfileId, profile.id),
       orderBy: [asc(headshots.sortOrder)],
+    }),
+    db.query.videoSamples.findMany({
+      where: eq(videoSamples.talentProfileId, profile.id),
+      orderBy: [asc(videoSamples.sortOrder)],
     }),
     db.query.talentSkills.findMany({
       where: eq(talentSkills.talentProfileId, profile.id),
@@ -74,6 +80,7 @@ export default async function ProfileEditPage(): Promise<React.ReactElement> {
       <div className="space-y-8">
         <ProfileEditForm initialProfile={profile} />
         <HeadshotsSection initialData={photos} />
+        <VideosSection initialData={videos} />
         <WorkHistorySection initialData={work} />
         <EducationSection initialData={edu} />
         <SkillsSection initialData={skillDetails} />

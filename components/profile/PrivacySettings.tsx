@@ -33,6 +33,7 @@ const SECTION_LABELS: Record<keyof PublicSections, { label: string; description:
   basicInfo: { label: "Basic Info", description: "Name, location, pronouns, and unions" },
   bio: { label: "Bio", description: "Your profile bio/about section" },
   headshots: { label: "Headshots", description: "Your uploaded photos" },
+  videos: { label: "Video Samples", description: "Your performance reels and video clips" },
   workHistory: { label: "Work History", description: "Your credits and work experience" },
   education: { label: "Education", description: "Training and education history" },
   skills: { label: "Skills", description: "Your listed skills and abilities" },
