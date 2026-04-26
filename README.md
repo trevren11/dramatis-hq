@@ -55,7 +55,12 @@ pnpm dev
 
 ## Documentation
 
-- [Implementation Plan](./IMPLEMENTATION_PLAN.md) - Complete technical specification and roadmap
+- [Getting Started](./docs/getting-started.md) - Setup and first run guide
+- [Features Guide](./docs/features.md) - Complete feature documentation
+- [Architecture](./docs/architecture.md) - Project structure and design
+- [Database Seeding](./docs/seeding.md) - Test data generation
+- [API Reference](./docs/api.md) - API endpoints and usage
+- [Implementation Plan](./IMPLEMENTATION_PLAN.md) - Technical specification and roadmap
 
 ## Development
 
