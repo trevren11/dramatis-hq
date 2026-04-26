@@ -1,64 +1,73 @@
 import { auth } from "@/lib/auth";
 import { NextResponse } from "next/server";
+import type { NextRequest } from "next/server";
 
 const publicRoutes = ["/", "/login", "/signup", "/forgot-password", "/reset-password", "/invite"];
 const authRoutes = ["/login", "/signup", "/forgot-password", "/reset-password"];
 const talentOnlyRoutes = ["/profile", "/auditions", "/talent"];
 const producerOnlyRoutes = ["/dashboard", "/projects", "/casting"];
 
+function matchesRoute(pathname: string, routes: string[]): boolean {
+  return routes.some((route) => pathname === route || pathname.startsWith(route + "/"));
+}
+
+function matchesSignupOrRoute(pathname: string, routes: string[]): boolean {
+  return routes.some((r) => pathname === r) || pathname.startsWith("/signup/");
+}
+
+function handleRoleBasedRedirect(
+  pathname: string,
+  userRole: string | undefined,
+  nextUrl: NextRequest["nextUrl"]
+): NextResponse | null {
+  const isTalentOnly = matchesRoute(pathname, talentOnlyRoutes);
+  const isProducerOnly = matchesRoute(pathname, producerOnlyRoutes);
+
+  if (isTalentOnly && userRole !== "talent" && userRole !== "admin") {
+    return NextResponse.redirect(new URL("/dashboard", nextUrl));
+  }
+  if (isProducerOnly && userRole !== "producer" && userRole !== "admin") {
+    return NextResponse.redirect(new URL("/profile", nextUrl));
+  }
+  return null;
+}
+
 export default auth((req) => {
   const { nextUrl } = req;
-  const isLoggedIn = !!req.auth;
+  const pathname = nextUrl.pathname;
+  const isLoggedIn = Boolean(req.auth);
   const userRole = req.auth?.user.role;
 
-  const isPublicRoute = publicRoutes.some(
-    (route) => nextUrl.pathname === route || nextUrl.pathname.startsWith("/signup/")
-  );
-  const isAuthRoute = authRoutes.some(
-    (route) => nextUrl.pathname === route || nextUrl.pathname.startsWith("/signup/")
-  );
-  const isApiAuthRoute = nextUrl.pathname.startsWith("/api/auth");
-  const isApiTalentRoute = nextUrl.pathname.startsWith("/api/talent");
-  const isTalentOnlyRoute = talentOnlyRoutes.some((route) => nextUrl.pathname.startsWith(route));
-  const isProducerOnlyRoute = producerOnlyRoutes.some((route) =>
-    nextUrl.pathname.startsWith(route)
-  );
-
-  // Allow API auth routes
-  if (isApiAuthRoute) {
+  // Allow API routes that handle their own auth
+  if (
+    pathname.startsWith("/api/auth") ||
+    pathname === "/api/health" ||
+    pathname.startsWith("/api/talent")
+  ) {
     return NextResponse.next();
   }
 
-  // Allow API talent routes for authenticated users (auth check happens in the route handlers)
-  if (isApiTalentRoute) {
-    return NextResponse.next();
-  }
-
-  // Redirect authenticated users away from auth pages
-  if (isAuthRoute && isLoggedIn) {
-    const redirectTo = userRole === "producer" ? "/dashboard" : "/profile";
+  // Redirect authenticated users away from auth pages and landing page
+  const isAuthRoute = matchesSignupOrRoute(pathname, authRoutes);
+  if ((isAuthRoute || pathname === "/") && isLoggedIn) {
+    const redirectTo = userRole === "producer" ? "/producer/shows" : "/talent/profile";
     return NextResponse.redirect(new URL(redirectTo, nextUrl));
   }
 
   // Allow public routes
-  if (isPublicRoute) {
+  if (matchesSignupOrRoute(pathname, publicRoutes)) {
     return NextResponse.next();
   }
 
   // Redirect unauthenticated users to login
   if (!isLoggedIn) {
-    const callbackUrl = encodeURIComponent(nextUrl.pathname + nextUrl.search);
+    const callbackUrl = encodeURIComponent(pathname + nextUrl.search);
     return NextResponse.redirect(new URL(`/login?callbackUrl=${callbackUrl}`, nextUrl));
   }
 
   // Role-based access control
-  if (isTalentOnlyRoute && userRole !== "talent" && userRole !== "admin") {
-    return NextResponse.redirect(new URL("/dashboard", nextUrl));
-  }
-
-  if (isProducerOnlyRoute && userRole !== "producer" && userRole !== "admin") {
-    return NextResponse.redirect(new URL("/profile", nextUrl));
-  }
+  const roleRedirect = handleRoleBasedRedirect(pathname, userRole, nextUrl);
+  if (roleRedirect) return roleRedirect;
 
   return NextResponse.next();
 });
