@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { db } from "@/lib/db";
 import { auditions, shows, producerProfiles } from "@/lib/db/schema";
 import { auditionSearchSchema } from "@/lib/validations/auditions";
-import { eq, and, ilike, gte, lte, or, desc, sql } from "drizzle-orm";
+import { eq, and, ilike, gte, lte, or, desc, sql, isNull } from "drizzle-orm";
 
 // eslint-disable-next-line complexity
 export async function GET(request: Request): Promise<NextResponse> {
@@ -36,7 +36,7 @@ export async function GET(request: Request): Promise<NextResponse> {
     const conditions = [
       eq(auditions.status, "open"),
       eq(auditions.visibility, "public"),
-      or(eq(auditions.publishAt, sql`NULL`), lte(auditions.publishAt, now)),
+      or(isNull(auditions.publishAt), lte(auditions.publishAt, now)),
     ];
 
     // Search in title and description
@@ -58,7 +58,7 @@ export async function GET(request: Request): Promise<NextResponse> {
 
     // Filter by deadline (only show auditions with future or no deadline)
     conditions.push(
-      or(eq(auditions.submissionDeadline, sql`NULL`), gte(auditions.submissionDeadline, now))
+      or(isNull(auditions.submissionDeadline), gte(auditions.submissionDeadline, now))
     );
 
     const whereConditions = and(...conditions);
