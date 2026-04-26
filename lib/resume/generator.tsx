@@ -1,6 +1,16 @@
 import { renderToBuffer } from "@react-pdf/renderer";
 import { TheatricalResume } from "./templates/theatrical";
-import type { TalentProfile, ResumeConfiguration, WorkHistoryItem, EducationItem } from "./types";
+import { ModernResume } from "./templates/modern";
+import { MinimalResume } from "./templates/minimal";
+import { CreativeResume } from "./templates/creative";
+import { CommercialResume } from "./templates/commercial";
+import type {
+  TalentProfile,
+  ResumeConfiguration,
+  WorkHistoryItem,
+  EducationItem,
+  ResumeTemplate,
+} from "./types";
 
 export interface GenerateResumeOptions {
   profile: TalentProfile;
@@ -8,6 +18,7 @@ export interface GenerateResumeOptions {
   selectedWorkHistoryIds?: string[];
   selectedEducationIds?: string[];
   selectedSkills?: string[];
+  template?: ResumeTemplate;
 }
 
 export interface GeneratedResume {
@@ -47,6 +58,28 @@ function sanitizeFilename(name: string): string {
     .replace(/^-|-$/g, "");
 }
 
+function getResumeComponent(template: ResumeTemplate): React.ComponentType<{
+  profile: TalentProfile;
+  config: Partial<ResumeConfiguration>;
+  selectedWorkHistory?: WorkHistoryItem[];
+  selectedEducation?: EducationItem[];
+  selectedSkills?: string[];
+}> {
+  switch (template) {
+    case "modern":
+      return ModernResume;
+    case "minimal":
+      return MinimalResume;
+    case "creative":
+      return CreativeResume;
+    case "commercial":
+      return CommercialResume;
+    case "theatrical":
+    default:
+      return TheatricalResume;
+  }
+}
+
 export async function generateResumePdf(options: GenerateResumeOptions): Promise<GeneratedResume> {
   const {
     profile,
@@ -54,14 +87,17 @@ export async function generateResumePdf(options: GenerateResumeOptions): Promise
     selectedWorkHistoryIds,
     selectedEducationIds,
     selectedSkills,
+    template = config.template ?? "theatrical",
   } = options;
 
   const filteredWorkHistory = filterWorkHistory(profile.workHistory, selectedWorkHistoryIds);
   const filteredEducation = filterEducation(profile.education, selectedEducationIds);
   const filteredSkills = filterSkills(profile.skills, selectedSkills);
 
+  const ResumeComponent = getResumeComponent(template);
+
   const resumeElement = (
-    <TheatricalResume
+    <ResumeComponent
       profile={profile}
       config={config}
       selectedWorkHistory={filteredWorkHistory}
