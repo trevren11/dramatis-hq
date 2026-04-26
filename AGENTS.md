@@ -408,6 +408,110 @@ STRIPE_PUBLISHABLE_KEY=
 
 ---
 
+## File Locations Reference
+
+Quick reference for finding code in this codebase.
+
+### Documentation
+
+| Path                           | Purpose                     |
+| ------------------------------ | --------------------------- |
+| `docs/README.md`               | Documentation index         |
+| `docs/getting-started.md`      | Setup and first run guide   |
+| `docs/features.md`             | Feature documentation       |
+| `docs/architecture.md`         | Project structure           |
+| `docs/seeding.md`              | Database seeding guide      |
+| `docs/api.md`                  | API reference               |
+| `docs/IMPLEMENTATION_PLAN*.md` | Feature specs               |
+| `lib/db/seed/README.md`        | Seed system quick reference |
+
+### Application Routes
+
+| Path                        | URL                                |
+| --------------------------- | ---------------------------------- |
+| `app/page.tsx`              | `/` - Landing page                 |
+| `app/(auth)/login/`         | `/login` - Login                   |
+| `app/(auth)/signup/`        | `/signup` - Registration           |
+| `app/(dashboard)/talent/`   | `/talent/*` - Talent dashboard     |
+| `app/(dashboard)/producer/` | `/producer/*` - Producer dashboard |
+| `app/auditions/`            | `/auditions` - Browse auditions    |
+| `app/talent/[slug]/`        | `/talent/:slug` - Public profile   |
+| `app/company/[slug]/`       | `/company/:slug` - Company page    |
+| `app/api/`                  | API endpoints                      |
+
+### Components by Feature
+
+| Path                        | Purpose                         |
+| --------------------------- | ------------------------------- |
+| `components/ui/`            | Base UI (Button, Input, Dialog) |
+| `components/layout/`        | Header, Sidebar, navigation     |
+| `components/auth/`          | Login/signup forms              |
+| `components/talent/`        | Talent profile components       |
+| `components/producer/`      | Producer dashboard components   |
+| `components/auditions/`     | Audition listing/details        |
+| `components/casting/`       | Casting board                   |
+| `components/calendar/`      | Calendar/availability           |
+| `components/messages/`      | Messaging UI                    |
+| `components/notifications/` | Notification components         |
+| `components/settings/`      | Settings forms                  |
+| `components/resume/`        | PDF resume builder              |
+| `components/form-builder/`  | Custom form creation            |
+
+### Business Logic (lib/)
+
+| Path                 | Purpose                     |
+| -------------------- | --------------------------- |
+| `lib/db/`            | Database layer              |
+| `lib/db/schema/`     | Drizzle table definitions   |
+| `lib/db/migrations/` | SQL migrations              |
+| `lib/db/seed/`       | Seed data generators        |
+| `lib/auth/`          | NextAuth configuration      |
+| `lib/permissions/`   | RBAC permission checks      |
+| `lib/validations/`   | Zod schemas                 |
+| `lib/storage/`       | S3 file upload/download     |
+| `lib/email/`         | Email templates and sending |
+| `lib/resume/`        | PDF resume generation       |
+| `lib/encryption/`    | Document encryption         |
+| `lib/push/`          | Push notifications          |
+| `lib/realtime/`      | Pusher WebSocket            |
+| `lib/monitoring/`    | Sentry/logging              |
+| `lib/hooks/`         | React hooks                 |
+| `lib/services/`      | External service clients    |
+| `lib/utils.ts`       | General utilities           |
+
+### Testing
+
+| Path                    | Purpose              |
+| ----------------------- | -------------------- |
+| `lib/__tests__/`        | Unit tests for lib/  |
+| `components/__tests__/` | Component tests      |
+| `e2e/tests/`            | Playwright E2E tests |
+| `e2e/fixtures/`         | E2E test fixtures    |
+| `vitest.config.ts`      | Unit test config     |
+| `playwright.config.ts`  | E2E test config      |
+
+### Configuration
+
+| Path                       | Purpose                       |
+| -------------------------- | ----------------------------- |
+| `.env.example`             | Environment variable template |
+| `docker-compose.yml`       | Local dev services            |
+| `docker-compose.limbo.yml` | Production deployment         |
+| `drizzle.config.ts`        | Drizzle ORM config            |
+| `next.config.ts`           | Next.js config                |
+| `tsconfig.json`            | TypeScript config             |
+| `eslint.config.mjs`        | Linting rules                 |
+| `middleware.ts`            | Route protection              |
+
+### Deployment
+
+| Path                      | Purpose           |
+| ------------------------- | ----------------- |
+| `scripts/deploy-limbo.sh` | Deployment script |
+| `Dockerfile`              | Container build   |
+
+---
+
 ## Accumulated Feedback
 
 <!-- Entries added via project feedback commands -->
