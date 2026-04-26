@@ -128,7 +128,7 @@ export function ResumePreview({
         </Button>
       </div>
 
-      <div className="bg-muted/30 relative min-h-[600px] flex-1">
+      <div className="bg-muted/30 relative aspect-[8.5/11]">
         {isLoading && (
           <div className="bg-background/80 absolute inset-0 z-10 flex items-center justify-center">
             <Loader2 className="text-muted-foreground h-8 w-8 animate-spin" />
