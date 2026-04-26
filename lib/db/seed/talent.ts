@@ -26,6 +26,8 @@ import {
   randomBool,
   placeholderImage,
   randomDate,
+  yearsFromNow,
+  currentYear,
   CITIES,
   THEATER_COMPANIES,
   SHOW_TITLES,
@@ -153,10 +155,10 @@ export async function seedTalentProfiles(
 
     seededProfiles.push({ id: profile.id, userId: user.id, slug });
 
-    // Add work history
+    // Add work history (from 10 years ago to 6 months ago)
     const workCount = randomInt(opts.minWorkHistory!, opts.maxWorkHistory!);
     for (let i = 0; i < workCount; i++) {
-      const startDate = randomDate(new Date("2015-01-01"), new Date("2024-06-01"));
+      const startDate = randomDate(yearsFromNow(-10), yearsFromNow(0));
       const endDate = new Date(startDate);
       endDate.setMonth(endDate.getMonth() + randomInt(1, 6));
 
@@ -227,7 +229,8 @@ export async function seedTalentProfiles(
       const degrees = ["BFA", "MFA", "BA", "Certificate"];
       const majors = ["Acting", "Musical Theatre", "Drama", "Theatre Arts", "Performance"];
 
-      const gradYear = randomInt(2010, 2024);
+      // Graduation between 15 years ago and current year
+      const gradYear = randomInt(currentYear() - 15, currentYear());
 
       const startYear = gradYear - randomInt(2, 4);
       await db.insert(education).values({

@@ -27,6 +27,8 @@ import {
   randomInt,
   randomBool,
   randomDate,
+  daysFromNow,
+  monthsFromNow,
   CITIES,
 } from "./base";
 
@@ -81,11 +83,11 @@ export async function seedAuditions(
     const status = randomPick(AUDITION_STATUS_VALUES);
     const visibility = status === "draft" ? "private" : randomPick(AUDITION_VISIBILITY_VALUES);
 
-    // Generate audition dates
+    // Generate audition dates (from 1 month ago to 18 months in the future)
     const auditionDates: AuditionDate[] = [];
     const numDates = randomInt(1, 4);
     for (let i = 0; i < numDates; i++) {
-      const date = randomDate(new Date("2024-06-01"), new Date("2025-12-01"));
+      const date = randomDate(monthsFromNow(-1), monthsFromNow(18));
       auditionDates.push({
         date: date.toISOString().split("T")[0]!,
         startTime: `${randomInt(9, 14)}:00`,
@@ -118,9 +120,9 @@ export async function seedAuditions(
         : undefined,
     };
 
-    // Submission deadline
+    // Submission deadline (from 1 month ago to 12 months in the future)
     const submissionDeadline = randomBool(0.7)
-      ? randomDate(new Date("2024-06-01"), new Date("2025-06-01"))
+      ? randomDate(monthsFromNow(-1), monthsFromNow(12))
       : null;
 
     const result = await db
@@ -212,6 +214,12 @@ export async function seedAuditions(
       for (const talent of applicants) {
         const appStatus = randomPick(APPLICATION_STATUS_VALUES);
 
+        // Applications submitted within the last 6 months
+        const submittedAt = randomDate(monthsFromNow(-6), daysFromNow(0));
+        // If reviewed, it happened after submission
+        const reviewedAt =
+          appStatus !== "submitted" ? randomDate(submittedAt, daysFromNow(0)) : null;
+
         await db
           .insert(auditionApplications)
           .values({
@@ -233,11 +241,8 @@ export async function seedAuditions(
                     null,
                   ])
                 : null,
-            submittedAt: randomDate(new Date("2024-01-01"), new Date("2024-12-01")),
-            reviewedAt:
-              appStatus !== "submitted"
-                ? randomDate(new Date("2024-06-01"), new Date("2024-12-15"))
-                : null,
+            submittedAt,
+            reviewedAt,
           })
           .onConflictDoNothing();
       }

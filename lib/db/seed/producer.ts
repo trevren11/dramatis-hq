@@ -15,6 +15,7 @@ import {
   randomInt,
   randomBool,
   randomDate,
+  monthsFromNow,
   CITIES,
   THEATER_COMPANIES,
   SHOW_TITLES,
@@ -197,7 +198,8 @@ export async function seedProducerProfiles(
       const title = randomPick(SHOW_TITLES);
       const status = randomPick(SHOW_STATUS_VALUES);
 
-      const rehearsalStart = randomDate(new Date("2024-01-01"), new Date("2025-06-01"));
+      // Rehearsals from 12 months ago to 18 months in the future
+      const rehearsalStart = randomDate(monthsFromNow(-12), monthsFromNow(18));
       const performanceStart = new Date(rehearsalStart);
       performanceStart.setMonth(performanceStart.getMonth() + 1);
       const performanceEnd = new Date(performanceStart);

@@ -5,7 +5,7 @@ import { UserMenu } from "@/components/auth/user-menu";
 import { DashboardNav } from "@/components/layout/dashboard-nav";
 import { auth } from "@/lib/auth";
 
-export default async function DashboardLayout({
+export default async function TalentLayout({
   children,
 }: {
   children: React.ReactNode;
@@ -28,7 +28,7 @@ export default async function DashboardLayout({
             <UserMenu userName={session?.user.name} userRole={session?.user.role} />
           </div>
           <div className="border-border/50 border-t py-2">
-            <DashboardNav userRole={session?.user.role} />
+            <DashboardNav userRole="talent" />
           </div>
         </div>
       </header>

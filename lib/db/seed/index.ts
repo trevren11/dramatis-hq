@@ -264,6 +264,22 @@ async function seedTest(): Promise<void> {
     state.shows.push(...shows);
     state.roles.push(...roles);
   }
+
+  // Add calendar entries for talent
+  if (state.talentProfiles.length > 0) {
+    await seedCalendar(state.talentProfiles, state.shows);
+  }
+
+  // Add messages between users
+  await seedMessages(state.users);
+
+  // Add notifications for all test users
+  await seedNotifications(state.users);
+
+  // Add materials for shows
+  if (state.shows.length > 0) {
+    await seedMaterials(state.shows, state.users);
+  }
 }
 
 async function seedMinimal(): Promise<void> {
@@ -293,6 +309,9 @@ async function seedMinimal(): Promise<void> {
   state.producers.push(...producers);
   state.shows.push(...shows);
   state.roles.push(...roles);
+
+  // Add notifications for test users
+  await seedNotifications(state.users);
 }
 
 async function seedDiverseTalentScenario(): Promise<void> {

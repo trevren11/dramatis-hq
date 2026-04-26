@@ -412,7 +412,40 @@ STRIPE_PUBLISHABLE_KEY=
 
 <!-- Entries added via project feedback commands -->
 
-_No feedback recorded yet._
+### Bug Fixing Process (2026-04-25)
+
+When fixing any bug:
+
+1. **Add comments** explaining the bug and the fix intent where behavior isn't obvious
+2. **Write tests** that reproduce the bug (should fail before fix, pass after)
+3. **Validate changes work** - run the tests, manually verify the fix addresses the use case
+
+**E2E test guidance:**
+
+- Use E2E tests for **core functionality** and **important features** (critical user flows, auth, payment, etc.)
+- Do NOT write E2E tests for every minor bug fix - unit/integration tests are sufficient for isolated fixes
+- Reserve E2E for cases where the bug involves cross-component interaction or user-visible workflows
+
+## Limbo Deployment
+
+**CRITICAL: Always use the deploy script. NEVER manually rsync or docker-compose.**
+
+```bash
+./scripts/deploy-limbo.sh        # Deploy to limbo server
+```
+
+The script handles everything: syncing code, building images, restarting containers, running migrations. Do NOT try to do these steps manually - you WILL break the server.
+
+**NEVER DO:**
+
+- `rsync` to limbo manually
+- `docker-compose` commands on limbo directly
+- Create/modify `.env` files on limbo manually
+- SSH into limbo and run build commands
+
+**ALWAYS DO:**
+
+- Run `./scripts/deploy-limbo.sh` and let it handle everything
 
 ## Fixes & Troubleshooting
 
