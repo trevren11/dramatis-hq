@@ -66,22 +66,43 @@ export function HeadshotsSection({ initialData }: HeadshotsSectionProps): React.
   const uploadFile = async (file: File): Promise<void> => {
     setIsUploading(true);
     try {
-      const url = URL.createObjectURL(file);
+      // First, upload the file to storage
+      const formData = new FormData();
+      formData.append("file", file);
 
+      const uploadResponse = await fetch("/api/upload/image", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (!uploadResponse.ok) {
+        const errorData = (await uploadResponse.json()) as { error?: string };
+        throw new Error(errorData.error ?? "Failed to upload image");
+      }
+
+      const uploadData = (await uploadResponse.json()) as {
+        url: string;
+        width?: number;
+        height?: number;
+      };
+
+      // Then create the headshot record with the real URL
       const response = await fetch("/api/talent/headshots", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          url: url,
+          url: uploadData.url,
           originalFilename: file.name,
-          mimeType: file.type,
+          mimeType: "image/webp", // Processed images are converted to WebP
           fileSize: file.size,
+          width: uploadData.width,
+          height: uploadData.height,
         }),
       });
 
       if (!response.ok) {
         const errorData = (await response.json()) as { error?: string };
-        throw new Error(errorData.error ?? "Failed to upload");
+        throw new Error(errorData.error ?? "Failed to save headshot");
       }
 
       const data = (await response.json()) as { headshot: Headshot };

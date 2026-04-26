@@ -1,0 +1,78 @@
+# Docker Compose for Limbo deployment
+# Usage: docker-compose -f docker-compose.limbo.yml up -d
+
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: dramatis
+      POSTGRES_PASSWORD: dramatis
+      POSTGRES_DB: dramatis
+    volumes:
+      - /mnt/user/appdata/dramatis/postgres:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U dramatis"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  minio:
+    image: minio/minio:latest
+    restart: unless-stopped
+    ports:
+      - "9100:9000"
+      - "9101:9001"
+    command: server /data --console-address ":9001"
+    environment:
+      MINIO_ROOT_USER: minioadmin
+      MINIO_ROOT_PASSWORD: minioadmin
+    volumes:
+      - /mnt/user/appdata/dramatis/minio:/data
+    healthcheck:
+      test: ["CMD", "mc", "ready", "local"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  minio-setup:
+    image: minio/mc:latest
+    depends_on:
+      minio:
+        condition: service_healthy
+    entrypoint: >
+      /bin/sh -c "
+      mc alias set local http://minio:9000 minioadmin minioadmin;
+      mc mb --ignore-existing local/headshots;
+      mc mb --ignore-existing local/videos;
+      mc mb --ignore-existing local/documents;
+      mc mb --ignore-existing local/temp;
+      exit 0;
+      "
+
+  dramatis:
+    build:
+      context: .
+    image: dramatis-hq:latest
+    restart: unless-stopped
+    ports:
+      - "6767:3000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      minio:
+        condition: service_healthy
+    env_file:
+      - .env
+    environment:
+      - NODE_ENV=production
+      - AUTH_TRUST_HOST=true
+      - DATABASE_URL=postgresql://dramatis:dramatis@postgres:5432/dramatis
+      - S3_ENDPOINT=http://minio:9000
+      - S3_REGION=auto
+      - S3_ACCESS_KEY_ID=minioadmin
+      - S3_SECRET_ACCESS_KEY=minioadmin
+      - S3_BUCKET_HEADSHOTS=headshots
+      - S3_BUCKET_VIDEOS=videos
+      - S3_BUCKET_DOCUMENTS=documents
+      - S3_BUCKET_TEMP=temp

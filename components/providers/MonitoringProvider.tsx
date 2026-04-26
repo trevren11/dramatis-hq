@@ -6,6 +6,19 @@ import { trackPageView, initAnalytics } from "@/lib/monitoring/analytics";
 import { reportWebVital, observeWebVitals } from "@/lib/monitoring/performance";
 import { setUserContext } from "@/lib/monitoring/sentry";
 
+// Polyfill for crypto.randomUUID (not available on HTTP)
+function generateUUID(): string {
+  if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") {
+    return crypto.randomUUID();
+  }
+  // Fallback for non-secure contexts
+  return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, (c) => {
+    const r = (Math.random() * 16) | 0;
+    const v = c === "x" ? r : (r & 0x3) | 0x8;
+    return v.toString(16);
+  });
+}
+
 interface MonitoringProviderProps {
   children: React.ReactNode;
   userId?: string;
@@ -26,7 +39,7 @@ export function MonitoringProvider({
   useEffect(() => {
     initAnalytics({
       userId,
-      sessionId: crypto.randomUUID(),
+      sessionId: generateUUID(),
       userRole: userRole as "talent" | "producer" | "admin" | undefined,
     });
 

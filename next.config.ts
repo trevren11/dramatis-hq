@@ -2,10 +2,22 @@ import type { NextConfig } from "next";
 import { withSentryConfig } from "@sentry/nextjs";
 
 const nextConfig: NextConfig = {
+  output: "standalone",
   reactStrictMode: true,
   poweredByHeader: false,
   images: {
     formats: ["image/avif", "image/webp"],
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "picsum.photos",
+      },
+      {
+        protocol: "http",
+        hostname: "localhost",
+        port: "9100",
+      },
+    ],
   },
   eslint: {
     ignoreDuringBuilds: true,
