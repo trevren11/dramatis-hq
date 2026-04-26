@@ -2,7 +2,7 @@ export const dynamic = "force-dynamic";
 
 import { db } from "@/lib/db";
 import { auditions, shows, producerProfiles } from "@/lib/db/schema";
-import { eq, and, or, gte, lte, desc, sql } from "drizzle-orm";
+import { eq, and, or, gte, lte, desc, sql, isNull } from "drizzle-orm";
 import { AuditionBrowse } from "@/components/auditions/AuditionBrowse";
 
 export const metadata = {
@@ -38,8 +38,8 @@ export default async function AuditionsPage(): Promise<React.ReactElement> {
       and(
         eq(auditions.status, "open"),
         eq(auditions.visibility, "public"),
-        or(eq(auditions.publishAt, sql`NULL`), lte(auditions.publishAt, now)),
-        or(eq(auditions.submissionDeadline, sql`NULL`), gte(auditions.submissionDeadline, now))
+        or(isNull(auditions.publishAt), lte(auditions.publishAt, now)),
+        or(isNull(auditions.submissionDeadline), gte(auditions.submissionDeadline, now))
       )
     )
     .orderBy(desc(auditions.publishAt), desc(auditions.createdAt))
@@ -55,8 +55,8 @@ export default async function AuditionsPage(): Promise<React.ReactElement> {
       and(
         eq(auditions.status, "open"),
         eq(auditions.visibility, "public"),
-        or(eq(auditions.publishAt, sql`NULL`), lte(auditions.publishAt, now)),
-        or(eq(auditions.submissionDeadline, sql`NULL`), gte(auditions.submissionDeadline, now))
+        or(isNull(auditions.publishAt), lte(auditions.publishAt, now)),
+        or(isNull(auditions.submissionDeadline), gte(auditions.submissionDeadline, now))
       )
     );
 
