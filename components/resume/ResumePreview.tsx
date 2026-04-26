@@ -4,7 +4,7 @@ import * as React from "react";
 import { cn } from "@/lib/utils";
 import { Loader2, RefreshCw } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import type { TalentProfile } from "@/lib/resume/types";
+import type { TalentProfile, ResumeTemplate } from "@/lib/resume/types";
 
 interface ResumePreviewProps {
   profile: TalentProfile;
@@ -13,6 +13,10 @@ interface ResumePreviewProps {
   selectedSkills: string[];
   includeHeadshot: boolean;
   includeContact: boolean;
+  includeHeight?: boolean;
+  includeHair?: boolean;
+  includeEyes?: boolean;
+  template?: ResumeTemplate;
   className?: string;
 }
 
@@ -23,6 +27,10 @@ export function ResumePreview({
   selectedSkills,
   includeHeadshot,
   includeContact,
+  includeHeight = true,
+  includeHair = true,
+  includeEyes = true,
+  template = "theatrical",
   className,
 }: ResumePreviewProps): React.ReactElement {
   const [pdfUrl, setPdfUrl] = React.useState<string | null>(null);
@@ -47,6 +55,10 @@ export function ResumePreview({
           selectedSkills,
           includeHeadshot,
           includeContact,
+          includeHeight,
+          includeHair,
+          includeEyes,
+          template,
         }),
       });
 
@@ -75,6 +87,10 @@ export function ResumePreview({
     selectedSkills,
     includeHeadshot,
     includeContact,
+    includeHeight,
+    includeHair,
+    includeEyes,
+    template,
   ]);
 
   React.useEffect(() => {
@@ -102,6 +118,10 @@ export function ResumePreview({
     selectedSkills,
     includeHeadshot,
     includeContact,
+    includeHeight,
+    includeHair,
+    includeEyes,
+    template,
   ]);
 
   const handleRefresh = (): void => {

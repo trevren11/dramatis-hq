@@ -1,11 +1,15 @@
 import { type NextRequest, NextResponse } from "next/server";
 import { z } from "zod";
-import { createSampleProfile, talentProfileSchema } from "@/lib/resume";
+import { createSampleProfile, talentProfileSchema, resumeTemplateSchema } from "@/lib/resume";
 
 const previewRequestSchema = z.object({
   profile: talentProfileSchema.optional(),
   includeHeadshot: z.boolean().optional(),
   includeContact: z.boolean().optional(),
+  includeHeight: z.boolean().optional(),
+  includeHair: z.boolean().optional(),
+  includeEyes: z.boolean().optional(),
+  template: resumeTemplateSchema.optional(),
   selectedWorkHistory: z.array(z.string()).optional(),
   selectedEducation: z.array(z.string()).optional(),
   selectedSkills: z.array(z.string()).optional(),
@@ -30,6 +34,10 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       profile: profileData,
       includeHeadshot,
       includeContact,
+      includeHeight,
+      includeHair,
+      includeEyes,
+      template,
       selectedWorkHistory,
       selectedEducation,
       selectedSkills,
@@ -42,10 +50,14 @@ export async function POST(request: NextRequest): Promise<NextResponse> {
       config: {
         includeHeadshot: includeHeadshot ?? true,
         includeContact: includeContact ?? true,
+        includeHeight: includeHeight ?? true,
+        includeHair: includeHair ?? true,
+        includeEyes: includeEyes ?? true,
       },
       selectedWorkHistoryIds: selectedWorkHistory,
       selectedEducationIds: selectedEducation,
       selectedSkills,
+      template: template ?? "theatrical",
     });
 
     return new NextResponse(new Uint8Array(buffer), {

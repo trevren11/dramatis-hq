@@ -117,11 +117,25 @@ interface TheatricalResumeProps {
   selectedSkills?: string[];
 }
 
-function formatPhysicalAttributes(profile: TalentProfile): string {
+function capitalizeFirst(str: string): string {
+  return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();
+}
+
+interface PhysicalAttributeOptions {
+  includeHeight?: boolean;
+  includeHair?: boolean;
+  includeEyes?: boolean;
+}
+
+function formatPhysicalAttributes(
+  profile: TalentProfile,
+  options: PhysicalAttributeOptions = {}
+): string {
+  const { includeHeight = true, includeHair = true, includeEyes = true } = options;
   const parts: string[] = [];
-  if (profile.height) parts.push(profile.height);
-  if (profile.hairColor) parts.push(`${profile.hairColor} Hair`);
-  if (profile.eyeColor) parts.push(`${profile.eyeColor} Eyes`);
+  if (includeHeight && profile.height) parts.push(profile.height);
+  if (includeHair && profile.hairColor) parts.push(`${capitalizeFirst(profile.hairColor)} Hair`);
+  if (includeEyes && profile.eyeColor) parts.push(`${capitalizeFirst(profile.eyeColor)} Eyes`);
   return parts.join(" | ");
 }
 
@@ -157,11 +171,13 @@ function ContactInfo({
 function CenteredHeader({
   profile,
   includeContact,
+  physicalAttributeOptions,
 }: {
   profile: TalentProfile;
   includeContact: boolean;
+  physicalAttributeOptions: PhysicalAttributeOptions;
 }): React.ReactElement {
-  const physicalAttributes = formatPhysicalAttributes(profile);
+  const physicalAttributes = formatPhysicalAttributes(profile, physicalAttributeOptions);
 
   return (
     <View style={styles.noHeadshotHeader}>
@@ -177,11 +193,13 @@ function CenteredHeader({
 function HeaderWithHeadshot({
   profile,
   includeContact,
+  physicalAttributeOptions,
 }: {
   profile: TalentProfile;
   includeContact: boolean;
+  physicalAttributeOptions: PhysicalAttributeOptions;
 }): React.ReactElement {
-  const physicalAttributes = formatPhysicalAttributes(profile);
+  const physicalAttributes = formatPhysicalAttributes(profile, physicalAttributeOptions);
 
   return (
     <View style={styles.header}>
@@ -203,18 +221,32 @@ function Header({
   profile,
   includeHeadshot,
   includeContact,
+  physicalAttributeOptions,
 }: {
   profile: TalentProfile;
   includeHeadshot: boolean;
   includeContact: boolean;
+  physicalAttributeOptions: PhysicalAttributeOptions;
 }): React.ReactElement {
   const hasHeadshot = includeHeadshot && profile.headshot;
 
   if (!hasHeadshot) {
-    return <CenteredHeader profile={profile} includeContact={includeContact} />;
+    return (
+      <CenteredHeader
+        profile={profile}
+        includeContact={includeContact}
+        physicalAttributeOptions={physicalAttributeOptions}
+      />
+    );
   }
 
-  return <HeaderWithHeadshot profile={profile} includeContact={includeContact} />;
+  return (
+    <HeaderWithHeadshot
+      profile={profile}
+      includeContact={includeContact}
+      physicalAttributeOptions={physicalAttributeOptions}
+    />
+  );
 }
 
 function CreditSection({
@@ -284,6 +316,12 @@ export function TheatricalResume({
   const includeHeadshot = config.includeHeadshot ?? true;
   const includeContact = config.includeContact ?? true;
 
+  const physicalAttributeOptions: PhysicalAttributeOptions = {
+    includeHeight: config.includeHeight ?? true,
+    includeHair: config.includeHair ?? true,
+    includeEyes: config.includeEyes ?? true,
+  };
+
   const theaterCredits = workHistory.filter((w) => w.category === "theater");
   const filmCredits = workHistory.filter((w) => ["film", "television"].includes(w.category));
   const otherCredits = workHistory.filter(
@@ -297,6 +335,7 @@ export function TheatricalResume({
           profile={profile}
           includeHeadshot={includeHeadshot}
           includeContact={includeContact}
+          physicalAttributeOptions={physicalAttributeOptions}
         />
 
         <CreditSection title="Theater" credits={theaterCredits} />
