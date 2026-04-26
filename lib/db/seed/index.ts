@@ -521,13 +521,7 @@ async function seedReviewQueueScenario(): Promise<void> {
   state.shows.push(...shows);
   state.roles.push(...roles);
 
-  const organizationIdMap = new Map<string, string>();
-  for (const show of state.shows) {
-    organizationIdMap.set(show.id, show.organizationId);
-  }
-
-  // All auditions open with many applications
-  await seedAuditions(state.shows, state.roles, state.talentProfiles, organizationIdMap, {
+  await seedAuditions(state.shows, state.roles, state.talentProfiles, getOrganizationIdMap(), {
     auditionProbability: 1.0,
     minApplications: 25,
     maxApplications: 40,
