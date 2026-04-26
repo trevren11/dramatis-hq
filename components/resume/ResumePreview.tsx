@@ -128,7 +128,7 @@ export function ResumePreview({
         </Button>
       </div>
 
-      <div className="bg-muted/30 relative aspect-[8.5/11]">
+      <div className="bg-muted/30 relative flex min-h-[600px] flex-1 items-start justify-center lg:h-[calc(100vh-7rem)]">
         {isLoading && (
           <div className="bg-background/80 absolute inset-0 z-10 flex items-center justify-center">
             <Loader2 className="text-muted-foreground h-8 w-8 animate-spin" />
@@ -147,7 +147,11 @@ export function ResumePreview({
         )}
 
         {pdfUrl && !error && (
-          <iframe src={pdfUrl} className="h-full w-full" title="Resume Preview" />
+          <iframe
+            src={`${pdfUrl}#toolbar=0&navpanes=0&scrollbar=0`}
+            className="aspect-[8.5/11] h-full max-w-full"
+            title="Resume Preview"
+          />
         )}
       </div>
     </div>
