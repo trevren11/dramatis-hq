@@ -252,3 +252,176 @@ export async function seedAuditions(
   console.log(`Created ${seededAuditions.length} auditions with applications`);
   return seededAuditions;
 }
+
+/**
+ * Seed browsable auditions that will appear on /auditions page
+ * Creates auditions with:
+ * - status: "open" and visibility: "public"
+ * - Some with dates in the next week (upcoming)
+ * - Some with dates that have passed (closed submissions)
+ */
+export async function seedBrowsableAuditions(
+  shows: SeededShow[],
+  roles: SeededRole[],
+  talentProfiles: SeededTalentProfile[],
+  organizationIdMap: Map<string, string>
+): Promise<SeededAudition[]> {
+  const seededAuditions: SeededAudition[] = [];
+
+  if (shows.length === 0) {
+    console.log("No shows available for browsable auditions");
+    return seededAuditions;
+  }
+
+  console.log("Creating browsable auditions for /auditions page...");
+
+  // Audition configurations: mix of upcoming and past
+  const auditionConfigs = [
+    // Upcoming auditions (next 7 days) - will show on browse page
+    { daysUntilDeadline: 2, title: "Spring Musical Auditions", isPast: false },
+    { daysUntilDeadline: 4, title: "Summer Stock Open Call", isPast: false },
+    { daysUntilDeadline: 6, title: "Community Theater Casting", isPast: false },
+    { daysUntilDeadline: 7, title: "New Works Festival Auditions", isPast: false },
+    { daysUntilDeadline: 10, title: "Fall Season Auditions", isPast: false },
+    { daysUntilDeadline: 14, title: "Holiday Production Casting", isPast: false },
+    // Past auditions (deadline passed) - won't show on browse but exist in DB
+    { daysUntilDeadline: -3, title: "Winter Showcase (Closed)", isPast: true },
+    { daysUntilDeadline: -7, title: "Regional Theater Casting (Closed)", isPast: true },
+    { daysUntilDeadline: -14, title: "Student Production (Closed)", isPast: true },
+  ];
+
+  for (let i = 0; i < auditionConfigs.length && i < shows.length; i++) {
+    const show = shows[i]!;
+    const config = auditionConfigs[i]!;
+    const organizationId = organizationIdMap.get(show.id);
+    if (!organizationId) continue;
+
+    const slug = generateSlug(`${config.title}-${randomInt(1000, 9999)}`);
+    const submissionDeadline = daysFromNow(config.daysUntilDeadline);
+
+    // Generate audition dates (1-2 days after submission deadline for upcoming, in the past for closed)
+    const auditionDates: AuditionDate[] = [];
+    const numDates = randomInt(1, 3);
+    for (let j = 0; j < numDates; j++) {
+      const dateOffset = config.isPast
+        ? config.daysUntilDeadline - 1 - j
+        : config.daysUntilDeadline + 2 + j;
+      const date = daysFromNow(dateOffset);
+      auditionDates.push({
+        date: date.toISOString().split("T")[0]!,
+        startTime: `${9 + j * 2}:00`,
+        endTime: `${13 + j * 2}:00`,
+        notes: j === 0 ? "Primary audition date" : undefined,
+      });
+    }
+
+    const requirements: AuditionRequirements = {
+      unionStatus: randomPick(["union", "non_union", "both"]),
+      ageRangeMin: randomInt(18, 25),
+      ageRangeMax: randomInt(35, 55),
+    };
+
+    const materials: AuditionMaterials = {
+      requireHeadshot: true,
+      requireResume: true,
+      requireVideo: randomBool(0.3),
+      additionalInstructions: randomBool(0.5)
+        ? "Please prepare a contemporary monologue (1-2 minutes) and 16 bars of a song."
+        : undefined,
+    };
+
+    const result = await db
+      .insert(auditions)
+      .values({
+        showId: show.id,
+        organizationId,
+        title: config.title,
+        description: `Join us for ${config.title}! We are casting for our upcoming production of ${show.title}. All experience levels welcome.`,
+        slug,
+        location: randomPick(CITIES),
+        isVirtual: randomBool(0.2),
+        auditionDates,
+        submissionDeadline,
+        requirements,
+        materials,
+        visibility: "public",
+        status: "open",
+      })
+      .returning({ id: auditions.id });
+
+    const audition = result[0];
+    if (!audition) continue;
+
+    seededAuditions.push({
+      id: audition.id,
+      showId: show.id,
+      slug,
+      title: config.title,
+    });
+
+    // Link roles to this audition
+    const showRoles = roles.filter((r) => r.showId === show.id);
+    const rolesForAudition = randomPickN(showRoles, randomInt(1, Math.max(1, showRoles.length)));
+
+    for (const role of rolesForAudition) {
+      await db
+        .insert(auditionRoles)
+        .values({
+          auditionId: audition.id,
+          roleId: role.id,
+        })
+        .onConflictDoNothing();
+    }
+
+    // Create applications from talent (more for upcoming, fewer for past)
+    if (talentProfiles.length > 0) {
+      const appCount = config.isPast ? randomInt(5, 15) : randomInt(2, 8);
+      const applicants = randomPickN(talentProfiles, Math.min(appCount, talentProfiles.length));
+
+      for (const talent of applicants) {
+        // For past auditions, only use non-submitted statuses; for current, use all statuses
+        const pastStatuses = APPLICATION_STATUS_VALUES.filter((s) => s !== "submitted");
+        const appStatus = config.isPast
+          ? randomPick(pastStatuses)
+          : randomPick(APPLICATION_STATUS_VALUES);
+
+        const submittedAt = config.isPast
+          ? randomDate(
+              daysFromNow(config.daysUntilDeadline - 10),
+              daysFromNow(config.daysUntilDeadline)
+            )
+          : randomDate(daysFromNow(-5), daysFromNow(0));
+
+        await db
+          .insert(auditionApplications)
+          .values({
+            auditionId: audition.id,
+            talentProfileId: talent.id,
+            status: appStatus,
+            materials: {
+              headshotId: randomBool(0.9) ? crypto.randomUUID() : undefined,
+              resumeId: randomBool(0.9) ? crypto.randomUUID() : undefined,
+            },
+            notes:
+              appStatus !== "submitted"
+                ? randomPick([
+                    "Strong performer, great range",
+                    "Good chemistry with leads",
+                    "Consider for ensemble",
+                    "Callback scheduled",
+                    null,
+                  ])
+                : null,
+            submittedAt,
+            reviewedAt: appStatus !== "submitted" ? daysFromNow(0) : null,
+          })
+          .onConflictDoNothing();
+      }
+    }
+  }
+
+  console.log(
+    `Created ${seededAuditions.length} browsable auditions (${auditionConfigs.filter((c) => !c.isPast).length} upcoming, ${auditionConfigs.filter((c) => c.isPast).length} past)`
+  );
+  return seededAuditions;
+}

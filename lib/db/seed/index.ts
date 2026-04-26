@@ -31,7 +31,7 @@ import { db, runSeed, closeConnection } from "./base";
 import { seedUsers, seedTestUsers } from "./users";
 import { seedTalentProfiles, seedDiverseTalent } from "./talent";
 import { seedProducerProfiles } from "./producer";
-import { seedAuditions } from "./auditions";
+import { seedAuditions, seedBrowsableAuditions } from "./auditions";
 import { seedCalendar } from "./calendar";
 import { seedMessages } from "./messages";
 import { seedNotifications } from "./notifications";
@@ -74,6 +74,12 @@ const state: SeedState = {
   shows: [],
   roles: [],
 };
+
+function getOrganizationIdMap(): Map<string, string> {
+  const map = new Map<string, string>();
+  for (const show of state.shows) map.set(show.id, show.organizationId);
+  return map;
+}
 
 async function clearDatabase(): Promise<void> {
   console.log("Clearing database...");
@@ -181,11 +187,7 @@ async function seedAuditionsOnly(): Promise<void> {
     console.log("No shows found. Run 'producer' seed first.");
     return;
   }
-  const organizationIdMap = new Map<string, string>();
-  for (const show of state.shows) {
-    organizationIdMap.set(show.id, show.organizationId);
-  }
-  await seedAuditions(state.shows, state.roles, state.talentProfiles, organizationIdMap, {
+  await seedAuditions(state.shows, state.roles, state.talentProfiles, getOrganizationIdMap(), {
     auditionProbability: 0.8,
     minApplications: 5,
     maxApplications: 20,
@@ -265,21 +267,22 @@ async function seedTest(): Promise<void> {
     state.roles.push(...roles);
   }
 
-  // Add calendar entries for talent
-  if (state.talentProfiles.length > 0) {
-    await seedCalendar(state.talentProfiles, state.shows);
-  }
-
-  // Add messages between users
-  await seedMessages(state.users);
-
-  // Add notifications for all test users
-  await seedNotifications(state.users);
-
-  // Add materials for shows
+  // Add browsable auditions for /auditions page
   if (state.shows.length > 0) {
-    await seedMaterials(state.shows, state.users);
+    await seedBrowsableAuditions(
+      state.shows,
+      state.roles,
+      state.talentProfiles,
+      getOrganizationIdMap()
+    );
   }
+
+  // Add calendar entries for talent
+  if (state.talentProfiles.length > 0) await seedCalendar(state.talentProfiles, state.shows);
+
+  await seedMessages(state.users);
+  await seedNotifications(state.users);
+  if (state.shows.length > 0) await seedMaterials(state.shows, state.users);
 }
 
 async function seedMinimal(): Promise<void> {
@@ -310,7 +313,15 @@ async function seedMinimal(): Promise<void> {
   state.shows.push(...shows);
   state.roles.push(...roles);
 
-  // Add notifications for test users
+  // Add browsable auditions and notifications
+  if (state.shows.length > 0) {
+    await seedBrowsableAuditions(
+      state.shows,
+      state.roles,
+      state.talentProfiles,
+      getOrganizationIdMap()
+    );
+  }
   await seedNotifications(state.users);
 }
 
@@ -359,13 +370,7 @@ async function seedActiveAuditionsScenario(): Promise<void> {
   state.shows.push(...shows);
   state.roles.push(...roles);
 
-  // Create auditions for most shows
-  const organizationIdMap = new Map<string, string>();
-  for (const show of state.shows) {
-    organizationIdMap.set(show.id, show.organizationId);
-  }
-
-  await seedAuditions(state.shows, state.roles, state.talentProfiles, organizationIdMap, {
+  await seedAuditions(state.shows, state.roles, state.talentProfiles, getOrganizationIdMap(), {
     auditionProbability: 0.95,
     minApplications: 10,
     maxApplications: 30,
@@ -411,12 +416,7 @@ async function seedLargeScale(): Promise<void> {
   state.shows.push(...shows);
   state.roles.push(...roles);
 
-  const organizationIdMap = new Map<string, string>();
-  for (const show of state.shows) {
-    organizationIdMap.set(show.id, show.organizationId);
-  }
-
-  await seedAuditions(state.shows, state.roles, state.talentProfiles, organizationIdMap, {
+  await seedAuditions(state.shows, state.roles, state.talentProfiles, getOrganizationIdMap(), {
     auditionProbability: 0.9,
     minApplications: 15,
     maxApplications: 50,
@@ -459,16 +459,11 @@ async function seedNewTalentScenario(): Promise<void> {
   state.shows.push(...shows);
   state.roles.push(...roles);
 
-  const organizationIdMap = new Map<string, string>();
-  for (const show of state.shows) {
-    organizationIdMap.set(show.id, show.organizationId);
-  }
-
   // Most auditions should be open for the new talent to apply to
-  await seedAuditions(state.shows, state.roles, [], organizationIdMap, {
+  await seedAuditions(state.shows, state.roles, [], getOrganizationIdMap(), {
     auditionProbability: 1.0,
     minApplications: 0,
-    maxApplications: 0, // No applications yet
+    maxApplications: 0,
   });
 }
 
@@ -526,13 +521,7 @@ async function seedReviewQueueScenario(): Promise<void> {
   state.shows.push(...shows);
   state.roles.push(...roles);
 
-  const organizationIdMap = new Map<string, string>();
-  for (const show of state.shows) {
-    organizationIdMap.set(show.id, show.organizationId);
-  }
-
-  // All auditions open with many applications
-  await seedAuditions(state.shows, state.roles, state.talentProfiles, organizationIdMap, {
+  await seedAuditions(state.shows, state.roles, state.talentProfiles, getOrganizationIdMap(), {
     auditionProbability: 1.0,
     minApplications: 25,
     maxApplications: 40,
@@ -567,27 +556,17 @@ async function seedFull(): Promise<void> {
   state.shows.push(...shows);
   state.roles.push(...roles);
 
-  const organizationIdMap = new Map<string, string>();
-  for (const show of state.shows) {
-    organizationIdMap.set(show.id, show.organizationId);
-  }
-
-  await seedAuditions(state.shows, state.roles, state.talentProfiles, organizationIdMap, {
+  const orgMap = getOrganizationIdMap();
+  await seedAuditions(state.shows, state.roles, state.talentProfiles, orgMap, {
     auditionProbability: 0.8,
     minApplications: 5,
     maxApplications: 20,
   });
+  await seedBrowsableAuditions(state.shows, state.roles, state.talentProfiles, orgMap);
 
-  // Seed calendar entries for talent
   await seedCalendar(state.talentProfiles, state.shows);
-
-  // Seed messages between users
   await seedMessages(state.users);
-
-  // Seed notifications for all users
   await seedNotifications(state.users);
-
-  // Seed materials (scripts and tracks) for shows
   await seedMaterials(state.shows, state.users);
 }
 
