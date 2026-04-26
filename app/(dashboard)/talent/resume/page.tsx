@@ -8,14 +8,16 @@ import {
   headshots,
   talentSkills,
   skills,
+  resumeConfigurations,
 } from "@/lib/db/schema";
-import { eq, asc, inArray } from "drizzle-orm";
-import { ResumeBuilder } from "@/components/resume";
+import { eq, asc, inArray, desc } from "drizzle-orm";
+import { ResumeBuilderWithSave } from "./ResumeBuilderWithSave";
 import type {
   TalentProfile,
   WorkHistoryItem,
   EducationItem,
   WorkHistoryCategory,
+  ResumeTemplate,
 } from "@/lib/resume/types";
 
 export const metadata = {
@@ -63,7 +65,7 @@ export default async function ResumeBuilderPage(): Promise<React.ReactElement> {
   }
 
   // Fetch all related data in parallel
-  const [work, edu, photos, userSkills] = await Promise.all([
+  const [work, edu, photos, userSkills, savedConfigs] = await Promise.all([
     db.query.workHistory.findMany({
       where: eq(workHistory.talentProfileId, profile.id),
       orderBy: [asc(workHistory.sortOrder)],
@@ -78,6 +80,10 @@ export default async function ResumeBuilderPage(): Promise<React.ReactElement> {
     }),
     db.query.talentSkills.findMany({
       where: eq(talentSkills.talentProfileId, profile.id),
+    }),
+    db.query.resumeConfigurations.findMany({
+      where: eq(resumeConfigurations.userId, session.user.id),
+      orderBy: [desc(resumeConfigurations.updatedAt)],
     }),
   ]);
 
@@ -131,17 +137,32 @@ export default async function ResumeBuilderPage(): Promise<React.ReactElement> {
     skills: skillDetails.map((s) => s.name),
   };
 
+  // Transform saved configs to the format expected by the component
+  const savedResumes = savedConfigs.map((config) => ({
+    id: config.id,
+    name: config.name,
+    template: config.template as ResumeTemplate,
+    selectedWorkHistory: config.selectedWorkHistory ?? [],
+    selectedEducation: config.selectedEducation ?? [],
+    selectedSkills: config.selectedSkills ?? [],
+    includeHeadshot: config.includeHeadshot ?? true,
+    includeContact: config.includeContact ?? true,
+    includeHeight: config.includeHeight ?? true,
+    includeHair: config.includeHair ?? true,
+    includeEyes: config.includeEyes ?? true,
+  }));
+
   return (
     <div>
       <div className="mb-8">
         <h1 className="text-3xl font-bold tracking-tight">Resume Builder</h1>
         <p className="text-muted-foreground mt-2">
-          Select which credits, training, and skills to include in your resume. Preview updates in
-          real-time.
+          Create multiple resumes for different purposes. Select which credits, training, and skills
+          to include. Preview updates in real-time.
         </p>
       </div>
 
-      <ResumeBuilder profile={resumeProfile} />
+      <ResumeBuilderWithSave profile={resumeProfile} initialSavedResumes={savedResumes} />
     </div>
   );
 }

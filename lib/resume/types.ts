@@ -65,10 +65,21 @@ export const resumeSectionSchema = z.enum([
 
 export type ResumeSection = z.infer<typeof resumeSectionSchema>;
 
+export const resumeTemplateSchema = z.enum([
+  "theatrical",
+  "modern",
+  "minimal",
+  "creative",
+  "commercial",
+]);
+
+export type ResumeTemplate = z.infer<typeof resumeTemplateSchema>;
+
 export const resumeConfigurationSchema = z.object({
   id: z.string().uuid(),
   userId: z.string().uuid(),
   name: z.string().min(1).max(100),
+  template: resumeTemplateSchema.default("theatrical"),
   selectedWorkHistory: z.array(z.string().uuid()).default([]),
   selectedEducation: z.array(z.string().uuid()).default([]),
   selectedSkills: z.array(z.string()).default([]),
@@ -77,6 +88,13 @@ export const resumeConfigurationSchema = z.object({
     .default(["header", "theater", "film_television", "training", "skills"]),
   includeHeadshot: z.boolean().default(true),
   includeContact: z.boolean().default(true),
+  includeHeight: z.boolean().default(true),
+  includeHair: z.boolean().default(true),
+  includeEyes: z.boolean().default(true),
+  // Custom text overrides for sections
+  customHeaderText: z.string().optional(),
+  customSkillsText: z.string().optional(),
+  customTrainingText: z.string().optional(),
   createdAt: z.date(),
   updatedAt: z.date(),
 });
