@@ -2,7 +2,7 @@ import { pgTable, uuid, varchar, timestamp, text, boolean, json, index } from "d
 import { users } from "./users";
 
 export const resumeTalentProfiles = pgTable(
-  "talent_profiles",
+  "resume_profiles",
   {
     id: uuid("id").primaryKey().defaultRandom(),
     userId: uuid("user_id")
@@ -24,7 +24,7 @@ export const resumeTalentProfiles = pgTable(
 );
 
 export const resumeWorkHistory = pgTable(
-  "work_history",
+  "resume_work_history",
   {
     id: uuid("id").primaryKey().defaultRandom(),
     profileId: uuid("profile_id")
@@ -48,7 +48,7 @@ export const resumeWorkHistory = pgTable(
 );
 
 export const resumeEducation = pgTable(
-  "education",
+  "resume_education",
   {
     id: uuid("id").primaryKey().defaultRandom(),
     profileId: uuid("profile_id")
