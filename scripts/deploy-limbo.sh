@@ -135,16 +135,20 @@ sshpass -p "${LIMBO_PASS}" ssh ${SSH_OPTS} "${LIMBO_USER}@${LIMBO_HOST}" \
 echo "  Containers started"
 echo ""
 
-# -- 5. Run database migrations (via psql, not drizzle-kit) ----------------------
+# -- 5. Run database migrations (via drizzle-kit push) ---------------------------
 echo "> Waiting for database to be ready..."
 sleep 5
-echo "> Running database migrations..."
-# drizzle-kit doesn't work in standalone Docker build, so run SQL directly
-MIGRATION_FILE="${PROJECT_DIR}/lib/db/migrations/0000_great_genesis.sql"
-if [ -f "$MIGRATION_FILE" ]; then
-  sshpass -p "${LIMBO_PASS}" ssh ${SSH_OPTS} "${LIMBO_USER}@${LIMBO_HOST}" \
-    "docker exec -i ${PROJECT_NAME}-postgres-1 psql -U dramatis 2>&1" < "$MIGRATION_FILE" | tail -5 || true
-fi
+echo "> Running database migrations (drizzle-kit push)..."
+# Use drizzle-kit push to apply schema changes automatically
+# This runs in a temporary node container with access to the synced source code
+sshpass -p "${LIMBO_PASS}" ssh ${SSH_OPTS} "${LIMBO_USER}@${LIMBO_HOST}" \
+  "docker run --rm \
+    --network ${PROJECT_NAME}_default \
+    -e DATABASE_URL=postgresql://dramatis:dramatis@postgres:5432/dramatis \
+    -v ${LIMBO_APP_DIR}:/app \
+    -w /app \
+    node:22-alpine \
+    sh -c 'npm install -g pnpm && pnpm install --frozen-lockfile && pnpm db:push' 2>&1 | tail -20" || true
 echo "  Migrations complete"
 echo ""
 
