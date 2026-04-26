@@ -51,6 +51,12 @@ CREATE TYPE "public"."email_frequency" AS ENUM('immediate', 'daily', 'weekly', '
 CREATE TYPE "public"."email_status" AS ENUM('queued', 'sending', 'sent', 'delivered', 'opened', 'clicked', 'bounced', 'complained', 'failed');--> statement-breakpoint
 CREATE TYPE "public"."email_type" AS ENUM('welcome', 'email_verification', 'password_reset', 'login_notification', 'audition_submission', 'callback_notification', 'cast_notification', 'rejection_notification', 'schedule_update', 'new_message', 'document_shared', 'rehearsal_reminder', 'subscription_confirmation', 'payment_receipt', 'payment_failed', 'subscription_ending');--> statement-breakpoint
 CREATE TYPE "public"."in_app_notification_type" AS ENUM('new_message', 'schedule_change', 'rehearsal_reminder', 'callback_notification', 'cast_decision', 'document_shared', 'comment_mention', 'audition_submission', 'system_announcement');--> statement-breakpoint
+CREATE TYPE "public"."video_category" AS ENUM('acting', 'singing', 'dance', 'instrument', 'monologue', 'scene', 'other');--> statement-breakpoint
+CREATE TYPE "public"."video_source_type" AS ENUM('upload', 'youtube', 'vimeo');--> statement-breakpoint
+CREATE TYPE "public"."video_status" AS ENUM('processing', 'ready', 'failed');--> statement-breakpoint
+CREATE TYPE "public"."video_visibility" AS ENUM('public', 'producers_only', 'private');--> statement-breakpoint
+CREATE TYPE "public"."producer_document_status" AS ENUM('pending', 'delivered', 'viewed', 'downloaded');--> statement-breakpoint
+CREATE TYPE "public"."theme_mode" AS ENUM('light', 'dark', 'system');--> statement-breakpoint
 CREATE TABLE IF NOT EXISTS "accounts" (
 	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
 	"user_id" uuid NOT NULL,
@@ -1150,6 +1156,105 @@ CREATE TABLE IF NOT EXISTS "push_subscriptions" (
 	"updated_at" timestamp DEFAULT now() NOT NULL
 );
 --> statement-breakpoint
+CREATE TABLE IF NOT EXISTS "video_samples" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"talent_profile_id" uuid NOT NULL,
+	"title" varchar(200) NOT NULL,
+	"description" text,
+	"category" "video_category" NOT NULL,
+	"tags" varchar(500),
+	"visibility" "video_visibility" DEFAULT 'public' NOT NULL,
+	"source_type" "video_source_type" DEFAULT 'upload' NOT NULL,
+	"source_url" varchar(1024),
+	"processed_url" varchar(1024),
+	"thumbnail_url" varchar(1024),
+	"original_filename" varchar(255),
+	"mime_type" varchar(50),
+	"file_size" integer,
+	"duration" integer,
+	"width" integer,
+	"height" integer,
+	"status" "video_status" DEFAULT 'processing' NOT NULL,
+	"processing_error" text,
+	"sort_order" integer DEFAULT 0 NOT NULL,
+	"is_featured" boolean DEFAULT false NOT NULL,
+	"uploaded_at" timestamp DEFAULT now() NOT NULL,
+	"created_at" timestamp DEFAULT now() NOT NULL,
+	"updated_at" timestamp DEFAULT now() NOT NULL
+);
+--> statement-breakpoint
+CREATE TABLE IF NOT EXISTS "compliance_deadlines" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"organization_id" uuid NOT NULL,
+	"show_id" uuid,
+	"document_type" "document_type" NOT NULL,
+	"year" integer,
+	"deadline" timestamp NOT NULL,
+	"reminder_days" integer DEFAULT 7,
+	"reminder_sent" timestamp,
+	"description" text,
+	"created_by" uuid,
+	"created_at" timestamp DEFAULT now() NOT NULL,
+	"updated_at" timestamp DEFAULT now() NOT NULL,
+	CONSTRAINT "compliance_deadlines_unique" UNIQUE("organization_id","show_id","document_type","year")
+);
+--> statement-breakpoint
+CREATE TABLE IF NOT EXISTS "producer_documents" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"document_id" uuid NOT NULL,
+	"organization_id" uuid NOT NULL,
+	"show_id" uuid,
+	"talent_profile_id" uuid NOT NULL,
+	"document_type" "document_type" NOT NULL,
+	"year" integer,
+	"status" "producer_document_status" DEFAULT 'pending' NOT NULL,
+	"notification_sent_at" timestamp,
+	"email_id" varchar(255),
+	"viewed_at" timestamp,
+	"viewed_by_user_id" uuid,
+	"downloaded_at" timestamp,
+	"uploaded_by" uuid NOT NULL,
+	"deadline" timestamp,
+	"notes" text,
+	"deleted_at" timestamp,
+	"created_at" timestamp DEFAULT now() NOT NULL,
+	"updated_at" timestamp DEFAULT now() NOT NULL,
+	CONSTRAINT "producer_docs_unique_doc_talent" UNIQUE("document_id","talent_profile_id")
+);
+--> statement-breakpoint
+CREATE TABLE IF NOT EXISTS "blocked_users" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"user_id" uuid NOT NULL,
+	"blocked_user_id" uuid NOT NULL,
+	"created_at" timestamp DEFAULT now() NOT NULL
+);
+--> statement-breakpoint
+CREATE TABLE IF NOT EXISTS "login_history" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"user_id" uuid NOT NULL,
+	"browser" varchar(255),
+	"location" varchar(255),
+	"ip_address" varchar(45),
+	"successful" boolean DEFAULT true,
+	"created_at" timestamp DEFAULT now() NOT NULL
+);
+--> statement-breakpoint
+CREATE TABLE IF NOT EXISTS "user_settings" (
+	"id" uuid PRIMARY KEY DEFAULT gen_random_uuid() NOT NULL,
+	"user_id" uuid NOT NULL,
+	"theme" "theme_mode" DEFAULT 'system',
+	"language" varchar(10) DEFAULT 'en',
+	"timezone" varchar(100) DEFAULT 'UTC',
+	"activity_visible" boolean DEFAULT true,
+	"two_factor_enabled" boolean DEFAULT false,
+	"two_factor_secret" varchar(255),
+	"security_notifications" boolean DEFAULT true,
+	"blocked_user_ids" jsonb DEFAULT '[]'::jsonb,
+	"created_at" timestamp DEFAULT now() NOT NULL,
+	"updated_at" timestamp DEFAULT now() NOT NULL,
+	CONSTRAINT "user_settings_user_id_unique" UNIQUE("user_id")
+);
+--> statement-breakpoint
 DO $$ BEGIN
  ALTER TABLE "accounts" ADD CONSTRAINT "accounts_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;
 EXCEPTION
@@ -2026,6 +2131,90 @@ EXCEPTION
  WHEN duplicate_object THEN null;
 END $$;
 --> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "video_samples" ADD CONSTRAINT "video_samples_talent_profile_id_talent_profiles_id_fk" FOREIGN KEY ("talent_profile_id") REFERENCES "public"."talent_profiles"("id") ON DELETE cascade ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "compliance_deadlines" ADD CONSTRAINT "compliance_deadlines_organization_id_producer_profiles_id_fk" FOREIGN KEY ("organization_id") REFERENCES "public"."producer_profiles"("id") ON DELETE cascade ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "compliance_deadlines" ADD CONSTRAINT "compliance_deadlines_show_id_shows_id_fk" FOREIGN KEY ("show_id") REFERENCES "public"."shows"("id") ON DELETE cascade ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "compliance_deadlines" ADD CONSTRAINT "compliance_deadlines_created_by_users_id_fk" FOREIGN KEY ("created_by") REFERENCES "public"."users"("id") ON DELETE set null ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "producer_documents" ADD CONSTRAINT "producer_documents_document_id_documents_id_fk" FOREIGN KEY ("document_id") REFERENCES "public"."documents"("id") ON DELETE cascade ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "producer_documents" ADD CONSTRAINT "producer_documents_organization_id_producer_profiles_id_fk" FOREIGN KEY ("organization_id") REFERENCES "public"."producer_profiles"("id") ON DELETE cascade ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "producer_documents" ADD CONSTRAINT "producer_documents_show_id_shows_id_fk" FOREIGN KEY ("show_id") REFERENCES "public"."shows"("id") ON DELETE set null ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "producer_documents" ADD CONSTRAINT "producer_documents_talent_profile_id_talent_profiles_id_fk" FOREIGN KEY ("talent_profile_id") REFERENCES "public"."talent_profiles"("id") ON DELETE cascade ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "producer_documents" ADD CONSTRAINT "producer_documents_viewed_by_user_id_users_id_fk" FOREIGN KEY ("viewed_by_user_id") REFERENCES "public"."users"("id") ON DELETE set null ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "producer_documents" ADD CONSTRAINT "producer_documents_uploaded_by_users_id_fk" FOREIGN KEY ("uploaded_by") REFERENCES "public"."users"("id") ON DELETE set null ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "blocked_users" ADD CONSTRAINT "blocked_users_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "blocked_users" ADD CONSTRAINT "blocked_users_blocked_user_id_users_id_fk" FOREIGN KEY ("blocked_user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "login_history" ADD CONSTRAINT "login_history_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
+DO $$ BEGIN
+ ALTER TABLE "user_settings" ADD CONSTRAINT "user_settings_user_id_users_id_fk" FOREIGN KEY ("user_id") REFERENCES "public"."users"("id") ON DELETE cascade ON UPDATE no action;
+EXCEPTION
+ WHEN duplicate_object THEN null;
+END $$;
+--> statement-breakpoint
 CREATE INDEX IF NOT EXISTS "accounts_user_id_idx" ON "accounts" USING btree ("user_id");--> statement-breakpoint
 CREATE INDEX IF NOT EXISTS "password_reset_tokens_user_id_idx" ON "password_reset_tokens" USING btree ("user_id");--> statement-breakpoint
 CREATE INDEX IF NOT EXISTS "sessions_user_id_idx" ON "sessions" USING btree ("user_id");--> statement-breakpoint
@@ -2269,4 +2458,29 @@ CREATE INDEX IF NOT EXISTS "in_app_notifications_created_at_idx" ON "in_app_noti
 CREATE INDEX IF NOT EXISTS "notif_prefs_user_id_idx" ON "notification_preferences" USING btree ("user_id");--> statement-breakpoint
 CREATE INDEX IF NOT EXISTS "push_subscriptions_user_id_idx" ON "push_subscriptions" USING btree ("user_id");--> statement-breakpoint
 CREATE INDEX IF NOT EXISTS "push_subscriptions_endpoint_idx" ON "push_subscriptions" USING btree ("endpoint");--> statement-breakpoint
-CREATE INDEX IF NOT EXISTS "push_subscriptions_is_active_idx" ON "push_subscriptions" USING btree ("is_active");
+CREATE INDEX IF NOT EXISTS "push_subscriptions_is_active_idx" ON "push_subscriptions" USING btree ("is_active");--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS "video_samples_talent_profile_id_idx" ON "video_samples" USING btree ("talent_profile_id");--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS "video_samples_category_idx" ON "video_samples" USING btree ("category");--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS "video_samples_visibility_idx" ON "video_samples" USING btree ("visibility");--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS "video_samples_status_idx" ON "video_samples" USING btree ("status");--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS "video_samples_is_featured_idx" ON "video_samples" USING btree ("talent_profile_id","is_featured");--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS "video_samples_sort_order_idx" ON "video_samples" USING btree ("talent_profile_id","sort_order");--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS "compliance_deadlines_org_id_idx" ON "compliance_deadlines" USING btree ("organization_id");--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS "compliance_deadlines_show_id_idx" ON "compliance_deadlines" USING btree ("show_id");--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS "compliance_deadlines_deadline_idx" ON "compliance_deadlines" USING btree ("deadline");--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS "compliance_deadlines_doc_type_idx" ON "compliance_deadlines" USING btree ("document_type");--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS "producer_docs_org_id_idx" ON "producer_documents" USING btree ("organization_id");--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS "producer_docs_show_id_idx" ON "producer_documents" USING btree ("show_id");--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS "producer_docs_talent_profile_id_idx" ON "producer_documents" USING btree ("talent_profile_id");--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS "producer_docs_document_id_idx" ON "producer_documents" USING btree ("document_id");--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS "producer_docs_status_idx" ON "producer_documents" USING btree ("status");--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS "producer_docs_deadline_idx" ON "producer_documents" USING btree ("deadline");--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS "producer_docs_doc_type_idx" ON "producer_documents" USING btree ("document_type");--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS "producer_docs_compliance_idx" ON "producer_documents" USING btree ("organization_id","document_type","year");--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS "producer_docs_show_compliance_idx" ON "producer_documents" USING btree ("show_id","document_type","year");--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS "producer_docs_viewed_at_idx" ON "producer_documents" USING btree ("viewed_at");--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS "blocked_users_user_id_idx" ON "blocked_users" USING btree ("user_id");--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS "blocked_users_blocked_user_id_idx" ON "blocked_users" USING btree ("blocked_user_id");--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS "login_history_user_id_idx" ON "login_history" USING btree ("user_id");--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS "login_history_created_at_idx" ON "login_history" USING btree ("created_at");--> statement-breakpoint
+CREATE INDEX IF NOT EXISTS "user_settings_user_id_idx" ON "user_settings" USING btree ("user_id");

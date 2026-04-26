@@ -282,3 +282,38 @@ export const BIOS = [
   "Brings a unique perspective and energy to every project. Trained extensively in movement, voice, and various acting techniques.",
   "Known for collaborative spirit and commitment to ensemble work. Experience spans theater, film, and television with a foundation in live performance.",
 ];
+
+// Date utilities for relative seed data
+const MS_PER_DAY = 24 * 60 * 60 * 1000;
+
+/**
+ * Get a date relative to now (positive = future, negative = past)
+ */
+export function daysFromNow(days: number): Date {
+  return new Date(Date.now() + days * MS_PER_DAY);
+}
+
+/**
+ * Get a date relative to now in months
+ */
+export function monthsFromNow(months: number): Date {
+  const date = new Date();
+  date.setMonth(date.getMonth() + months);
+  return date;
+}
+
+/**
+ * Get a date relative to now in years
+ */
+export function yearsFromNow(years: number): Date {
+  const date = new Date();
+  date.setFullYear(date.getFullYear() + years);
+  return date;
+}
+
+/**
+ * Get current year
+ */
+export function currentYear(): number {
+  return new Date().getFullYear();
+}
