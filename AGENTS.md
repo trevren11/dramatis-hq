@@ -2,6 +2,31 @@
 
 Theatrical production management platform connecting talent with producers. Full-stack Next.js application with PostgreSQL, real-time collaboration, and SOC 2 compliant document storage.
 
+## ⚠️ CRITICAL: Git Configuration
+
+**NEVER use Elementum email in this repo!**
+
+This is a PERSONAL project. Always use:
+
+- **Name:** Trevor Renshaw
+- **Email:** trevren11@gmail.com
+
+Before ANY commit, verify git config:
+
+```bash
+git config user.email  # MUST be trevren11@gmail.com
+git config user.name   # MUST be Trevor Renshaw
+```
+
+If wrong, fix immediately:
+
+```bash
+git config user.email "trevren11@gmail.com"
+git config user.name "Trevor Renshaw"
+```
+
+**DO NOT** use `trenshaw@elementum.com` or any `trenshaw-elem` identity.
+
 **See [IMPLEMENTATION_PLAN.md](./IMPLEMENTATION_PLAN.md) for complete technical specification, database schema, and roadmap.**
 
 ## Setup
