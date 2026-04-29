@@ -38,6 +38,7 @@ const createMockProfile = (overrides: Partial<TalentProfile> = {}): TalentProfil
   location: null,
   socialLinks: null,
   heightInches: 70,
+  weightLbs: null,
   hairColor: "brown",
   naturalHairColor: "brown",
   eyeColor: "blue",
@@ -46,8 +47,9 @@ const createMockProfile = (overrides: Partial<TalentProfile> = {}): TalentProfil
   ageRangeLow: 25,
   ageRangeHigh: 35,
   vocalRange: "tenor",
-  willingnessToRemoveHair: "negotiable",
+  willingnessToChangeHair: "negotiable",
   isOver18: true,
+  metricVisibility: null,
   unionMemberships: [],
   isPublic: true,
   hideFromSearch: false,
@@ -167,7 +169,7 @@ describe("Privacy Boundaries", () => {
       expect(stripped).not.toHaveProperty("ageRangeLow");
       expect(stripped).not.toHaveProperty("ageRangeHigh");
       expect(stripped).not.toHaveProperty("vocalRange");
-      expect(stripped).not.toHaveProperty("willingnessToRemoveHair");
+      expect(stripped).not.toHaveProperty("willingnessToChangeHair");
       expect(stripped).not.toHaveProperty("isOver18");
       expect(stripped).not.toHaveProperty("hideFromSearch");
     });

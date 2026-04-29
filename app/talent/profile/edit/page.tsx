@@ -13,6 +13,7 @@ import {
 } from "@/lib/db/schema";
 import { eq, asc, inArray } from "drizzle-orm";
 import { ProfileEditForm } from "@/components/talent/profile/profile-edit-form";
+import { MetricsSection } from "@/components/talent/profile/metrics-section";
 import { WorkHistorySection } from "@/components/talent/profile/work-history-section";
 import { EducationSection } from "@/components/talent/profile/education-section";
 import { SkillsSection } from "@/components/talent/profile/skills-section";
@@ -79,6 +80,7 @@ export default async function ProfileEditPage(): Promise<React.ReactElement> {
 
       <div className="space-y-8">
         <ProfileEditForm initialProfile={profile} />
+        <MetricsSection initialProfile={profile} />
         <HeadshotsSection initialData={photos} />
         <VideosSection initialData={videos} />
         <WorkHistorySection initialData={work} />

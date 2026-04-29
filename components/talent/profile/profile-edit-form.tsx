@@ -56,6 +56,10 @@ export function ProfileEditForm({ initialProfile }: ProfileEditFormProps): React
 
       setHasChanges(false);
       setLastSaved(new Date());
+      toast({
+        title: "Changes saved",
+        description: "Your profile has been updated successfully.",
+      });
     } catch (error) {
       toast({
         variant: "destructive",
@@ -131,7 +135,11 @@ export function ProfileEditForm({ initialProfile }: ProfileEditFormProps): React
             )}
           </p>
         </div>
-        <Button onClick={() => void saveProfile()} disabled={isSaving || !hasChanges}>
+        <Button
+          onClick={() => void saveProfile()}
+          disabled={isSaving || !hasChanges}
+          className="bg-primary/90 hover:bg-primary active:bg-primary/70 transition-colors"
+        >
           {isSaving ? (
             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
           ) : (

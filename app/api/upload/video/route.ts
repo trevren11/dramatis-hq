@@ -103,6 +103,7 @@ export async function POST(request: Request): Promise<NextResponse> {
     );
   } catch (error) {
     console.error("Video upload error:", error);
-    return NextResponse.json({ error: "Internal server error" }, { status: 500 });
+    const message = error instanceof Error ? error.message : "Internal server error";
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }

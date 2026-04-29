@@ -19,7 +19,7 @@ export const physicalAttributesSchema = z
     ageRangeLow: z.number().min(0).max(100).nullable().optional(),
     ageRangeHigh: z.number().min(0).max(100).nullable().optional(),
     vocalRange: z.enum(VOCAL_RANGES).nullable().optional(),
-    willingnessToRemoveHair: z.enum(WILLINGNESS_OPTIONS).nullable().optional(),
+    willingnessToChangeHair: z.enum(WILLINGNESS_OPTIONS).nullable().optional(),
     isOver18: z.boolean().nullable().optional(),
     hideFromSearch: z.boolean().optional(),
   })
