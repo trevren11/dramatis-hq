@@ -14,6 +14,7 @@ export type MediaType = "headshot" | "video" | "document" | "temp";
 
 export interface StorageConfig {
   endpoint: string;
+  publicUrl: string;
   region: string;
   accessKeyId: string;
   secretAccessKey: string;
@@ -38,6 +39,7 @@ function getConfig(): StorageConfig {
 
   return {
     endpoint,
+    publicUrl: process.env.S3_PUBLIC_URL ?? endpoint,
     region: process.env.S3_REGION ?? "auto",
     accessKeyId,
     secretAccessKey,
@@ -117,7 +119,7 @@ export async function uploadFile(options: UploadFileOptions): Promise<UploadResu
   return {
     key,
     bucket,
-    url: `${getConfig().endpoint}/${bucket}/${key}`,
+    url: `${getConfig().publicUrl}/${bucket}/${key}`,
   };
 }
 
@@ -182,6 +184,12 @@ export async function getSignedUploadUrl(
   });
 
   return getSignedUrl(client, command, { expiresIn });
+}
+
+export function getPublicUrl(key: string, type: MediaType): string {
+  const config = getConfig();
+  const bucket = getBucket(type);
+  return `${config.publicUrl}/${bucket}/${key}`;
 }
 
 // Document-specific storage functions

@@ -82,6 +82,7 @@ export function HeadshotsSection({ initialData }: HeadshotsSectionProps): React.
 
       const uploadData = (await uploadResponse.json()) as {
         url: string;
+        thumbnailUrl?: string;
         width?: number;
         height?: number;
       };
@@ -92,6 +93,7 @@ export function HeadshotsSection({ initialData }: HeadshotsSectionProps): React.
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           url: uploadData.url,
+          thumbnailUrl: uploadData.thumbnailUrl,
           originalFilename: file.name,
           mimeType: "image/webp", // Processed images are converted to WebP
           fileSize: file.size,
