@@ -139,17 +139,64 @@ echo ""
 echo "> Waiting for database to be ready..."
 sleep 5
 echo "> Running database migrations (drizzle-kit push)..."
-# Use drizzle-kit push to apply schema changes automatically
-# This runs in a temporary node container with access to the synced source code
-sshpass -p "${LIMBO_PASS}" ssh ${SSH_OPTS} "${LIMBO_USER}@${LIMBO_HOST}" \
+# Use drizzle-kit push with --force to apply schema changes automatically
+# --force is required for non-interactive environments (skips confirmation prompts)
+# Capture full output to diagnose any issues
+DB_PUSH_OUTPUT=$(sshpass -p "${LIMBO_PASS}" ssh ${SSH_OPTS} "${LIMBO_USER}@${LIMBO_HOST}" \
   "docker run --rm \
     --network ${PROJECT_NAME}_default \
     -e DATABASE_URL=postgresql://dramatis:dramatis@postgres:5432/dramatis \
     -v ${LIMBO_APP_DIR}:/app \
     -w /app \
     node:22-alpine \
-    sh -c 'npm install -g pnpm && pnpm install --frozen-lockfile && pnpm db:push' 2>&1 | tail -20" || true
+    sh -c 'npm install -g pnpm && pnpm install --frozen-lockfile && pnpm db:push:force' 2>&1")
+DB_PUSH_EXIT=$?
+
+# Show last 30 lines of output for debugging
+echo "$DB_PUSH_OUTPUT" | tail -30
+
+if [ $DB_PUSH_EXIT -ne 0 ]; then
+  echo "  ERROR: db:push failed with exit code $DB_PUSH_EXIT"
+  echo "  Full output:"
+  echo "$DB_PUSH_OUTPUT"
+  exit 1
+fi
 echo "  Migrations complete"
+echo ""
+
+# -- 5a. Validate schema was applied correctly ------------------------------------
+echo "> Validating schema..."
+# Check that critical columns exist (columns that were missing before this fix)
+VALIDATION_ERRORS=0
+
+# Check weight_lbs column in talent_profiles
+WEIGHT_COL=$(sshpass -p "${LIMBO_PASS}" ssh ${SSH_OPTS} "${LIMBO_USER}@${LIMBO_HOST}" \
+  "docker exec ${PROJECT_NAME}-postgres-1 psql -U dramatis -t -c \"SELECT column_name FROM information_schema.columns WHERE table_name='talent_profiles' AND column_name='weight_lbs'\"" 2>/dev/null | tr -d ' ')
+if [ -z "$WEIGHT_COL" ]; then
+  echo "  ERROR: talent_profiles.weight_lbs column missing"
+  VALIDATION_ERRORS=$((VALIDATION_ERRORS + 1))
+else
+  echo "  talent_profiles.weight_lbs: OK"
+fi
+
+# Check template column in resumes
+TEMPLATE_COL=$(sshpass -p "${LIMBO_PASS}" ssh ${SSH_OPTS} "${LIMBO_USER}@${LIMBO_HOST}" \
+  "docker exec ${PROJECT_NAME}-postgres-1 psql -U dramatis -t -c \"SELECT column_name FROM information_schema.columns WHERE table_name='resumes' AND column_name='template'\"" 2>/dev/null | tr -d ' ')
+if [ -z "$TEMPLATE_COL" ]; then
+  echo "  ERROR: resumes.template column missing"
+  VALIDATION_ERRORS=$((VALIDATION_ERRORS + 1))
+else
+  echo "  resumes.template: OK"
+fi
+
+if [ $VALIDATION_ERRORS -gt 0 ]; then
+  echo ""
+  echo "  SCHEMA VALIDATION FAILED: $VALIDATION_ERRORS missing column(s)"
+  echo "  This usually means drizzle-kit push didn't apply changes."
+  echo "  Check the db:push output above for errors."
+  exit 1
+fi
+echo "  Schema validation: OK"
 echo ""
 
 # -- 5b. Run seed data ------------------------------------------------------------
