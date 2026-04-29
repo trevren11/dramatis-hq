@@ -19,7 +19,7 @@ describe("Physical Attributes Validation", () => {
         ageRangeLow: 25,
         ageRangeHigh: 35,
         vocalRange: "tenor",
-        willingnessToRemoveHair: "yes",
+        willingnessToChangeHair: "yes",
         isOver18: true,
         hideFromSearch: false,
       };
@@ -86,7 +86,7 @@ describe("Physical Attributes Validation", () => {
     it("accepts all valid willingness options", () => {
       const options = ["yes", "no", "negotiable"];
       for (const option of options) {
-        const result = physicalAttributesSchema.safeParse({ willingnessToRemoveHair: option });
+        const result = physicalAttributesSchema.safeParse({ willingnessToChangeHair: option });
         expect(result.success).toBe(true);
       }
     });

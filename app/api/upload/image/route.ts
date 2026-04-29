@@ -5,7 +5,7 @@ import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { media, type MediaMetadata } from "@/lib/db/schema";
-import { uploadFile, generateKey } from "@/lib/storage";
+import { uploadFile, generateKey, getPublicUrl } from "@/lib/storage";
 import { processHeadshot, generateThumbnail } from "@/lib/storage/image-processing";
 import { validateFile, validateFileContent } from "@/lib/storage/validation";
 
@@ -103,11 +103,15 @@ export async function POST(request: Request): Promise<NextResponse> {
       return NextResponse.json({ error: "Failed to save media record" }, { status: 500 });
     }
 
+    // Generate public thumbnail URL
+    const thumbnailPublicUrl = getPublicUrl(thumbnailKey, "headshot");
+
     return NextResponse.json(
       {
         id: newMedia.id,
         url: newMedia.url,
         key: newMedia.key,
+        thumbnailUrl: thumbnailPublicUrl,
         width: processed.width,
         height: processed.height,
       },

@@ -51,7 +51,7 @@ export type PhysicalAttributeField =
   | "ageRangeLow"
   | "ageRangeHigh"
   | "vocalRange"
-  | "willingnessToRemoveHair"
+  | "willingnessToChangeHair"
   | "isOver18"
   | "hideFromSearch";
 
@@ -68,7 +68,7 @@ export function stripPhysicalAttributes<T extends Partial<TalentProfile>>(
     ageRangeLow: _arl,
     ageRangeHigh: _arh,
     vocalRange: _vr,
-    willingnessToRemoveHair: _wtr,
+    willingnessToChangeHair: _wtr,
     isOver18: _io,
     hideFromSearch: _hfs,
     ...rest

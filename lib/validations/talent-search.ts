@@ -57,7 +57,7 @@ function checkWillingnessMatch(profile: TalentProfile, filters: TalentSearchInpu
   }
 
   const isWilling =
-    profile.willingnessToRemoveHair === "yes" || profile.willingnessToRemoveHair === "negotiable";
+    profile.willingnessToChangeHair === "yes" || profile.willingnessToChangeHair === "negotiable";
 
   return { matched: isWilling ? 1 : 0, total: 1 };
 }

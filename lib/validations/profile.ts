@@ -1,6 +1,12 @@
 import { z } from "zod";
 import { WORK_CATEGORIES } from "@/lib/db/schema/work-history";
 import { SKILL_CATEGORIES } from "@/lib/db/schema/skills";
+import {
+  HAIR_COLORS,
+  EYE_COLORS,
+  ETHNICITIES,
+  WILLINGNESS_OPTIONS,
+} from "@/lib/db/schema/talent-profiles";
 
 export const profileBasicInfoSchema = z.object({
   firstName: z.string().min(1, "First name is required").max(100),
@@ -49,11 +55,31 @@ export const profileVisibilitySchema = z.object({
   publicSections: publicSectionsSchema.optional().nullable(),
 });
 
+export const metricVisibilitySchema = z.object({
+  height: z.boolean().default(true),
+  weight: z.boolean().default(false),
+  eyeColor: z.boolean().default(true),
+  hairColor: z.boolean().default(true),
+  ethnicity: z.boolean().default(false),
+  willingnessToChangeHair: z.boolean().default(false),
+});
+
+export const profileMetricsSchema = z.object({
+  heightInches: z.number().int().min(36).max(96).optional().nullable(),
+  weightLbs: z.number().int().min(50).max(500).optional().nullable(),
+  eyeColor: z.enum(EYE_COLORS).optional().nullable(),
+  hairColor: z.enum(HAIR_COLORS).optional().nullable(),
+  ethnicity: z.enum(ETHNICITIES).optional().nullable(),
+  willingnessToChangeHair: z.enum(WILLINGNESS_OPTIONS).optional().nullable(),
+  metricVisibility: metricVisibilitySchema.optional().nullable(),
+});
+
 export const profileUpdateSchema = z.object({
   ...profileBasicInfoSchema.shape,
   ...profileContactSchema.shape,
   ...profileUnionsSchema.shape,
   ...profileVisibilitySchema.shape,
+  ...profileMetricsSchema.shape,
 });
 
 export const workHistorySchema = z.object({
@@ -115,6 +141,8 @@ export type ProfileBasicInfo = z.infer<typeof profileBasicInfoSchema>;
 export type ProfileContact = z.infer<typeof profileContactSchema>;
 export type ProfileUnions = z.infer<typeof profileUnionsSchema>;
 export type ProfileVisibility = z.infer<typeof profileVisibilitySchema>;
+export type ProfileMetrics = z.infer<typeof profileMetricsSchema>;
+export type MetricVisibility = z.infer<typeof metricVisibilitySchema>;
 export type ProfileUpdate = z.infer<typeof profileUpdateSchema>;
 export type WorkHistoryInput = z.infer<typeof workHistorySchema>;
 export type EducationInput = z.infer<typeof educationSchema>;
