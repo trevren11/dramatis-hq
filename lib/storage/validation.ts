@@ -105,7 +105,8 @@ const MAGIC_BYTES: { type: string; bytes: number[]; offset?: number }[] = [
   { type: "image/jpeg", bytes: [0xff, 0xd8, 0xff] },
   { type: "image/png", bytes: [0x89, 0x50, 0x4e, 0x47] },
   { type: "image/webp", bytes: [0x52, 0x49, 0x46, 0x46], offset: 0 }, // RIFF
-  { type: "video/mp4", bytes: [0x66, 0x74, 0x79, 0x70], offset: 4 }, // ftyp
+  { type: "video/mp4", bytes: [0x66, 0x74, 0x79, 0x70], offset: 4 }, // ftyp (also matches MOV)
+  { type: "video/webm", bytes: [0x1a, 0x45, 0xdf, 0xa3] }, // EBML header
   { type: "application/pdf", bytes: [0x25, 0x50, 0x44, 0x46] }, // %PDF
 ];
 
