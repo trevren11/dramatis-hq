@@ -20,6 +20,7 @@ const createMockProfile = (overrides: Partial<TalentProfile> = {}): TalentProfil
   location: null,
   socialLinks: null,
   heightInches: 70,
+  weightLbs: null,
   hairColor: "brown",
   naturalHairColor: "brown",
   eyeColor: "blue",
@@ -28,8 +29,9 @@ const createMockProfile = (overrides: Partial<TalentProfile> = {}): TalentProfil
   ageRangeLow: 25,
   ageRangeHigh: 35,
   vocalRange: "tenor",
-  willingnessToRemoveHair: "yes",
+  willingnessToChangeHair: "yes",
   isOver18: true,
+  metricVisibility: null,
   unionMemberships: [],
   isPublic: true,
   hideFromSearch: false,
@@ -164,9 +166,9 @@ describe("Talent Search", () => {
     });
 
     it("handles willingness to cut hair filter", () => {
-      const willingProfile = createMockProfile({ willingnessToRemoveHair: "yes" });
-      const negotiableProfile = createMockProfile({ willingnessToRemoveHair: "negotiable" });
-      const unwillingProfile = createMockProfile({ willingnessToRemoveHair: "no" });
+      const willingProfile = createMockProfile({ willingnessToChangeHair: "yes" });
+      const negotiableProfile = createMockProfile({ willingnessToChangeHair: "negotiable" });
+      const unwillingProfile = createMockProfile({ willingnessToChangeHair: "no" });
 
       const filters: TalentSearchInput = {
         willingToCutHair: true,

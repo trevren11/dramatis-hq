@@ -242,12 +242,12 @@ export function PhysicalAttributesForm({
 
           {/* Willingness to cut hair */}
           <div className="space-y-2">
-            <Label htmlFor="willingnessToRemoveHair">Willing to cut or color hair?</Label>
+            <Label htmlFor="willingnessToChangeHair">Willing to cut or color hair?</Label>
             <Select
-              id="willingnessToRemoveHair"
+              id="willingnessToChangeHair"
               options={willingnessOptions}
               placeholder="Select option"
-              {...register("willingnessToRemoveHair")}
+              {...register("willingnessToChangeHair")}
             />
           </div>
 

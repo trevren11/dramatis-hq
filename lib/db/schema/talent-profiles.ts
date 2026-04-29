@@ -100,6 +100,7 @@ export const talentProfiles = pgTable(
 
     // Physical Attributes (private, searchable by producers)
     heightInches: integer("height_inches"),
+    weightLbs: integer("weight_lbs"),
     hairColor: hairColorEnum("hair_color"),
     naturalHairColor: hairColorEnum("natural_hair_color"),
     eyeColor: eyeColorEnum("eye_color"),
@@ -108,8 +109,27 @@ export const talentProfiles = pgTable(
     ageRangeLow: integer("age_range_low"),
     ageRangeHigh: integer("age_range_high"),
     vocalRange: vocalRangeEnum("vocal_range"),
-    willingnessToRemoveHair: willingnessEnum("willingness_to_remove_hair"),
+    willingnessToChangeHair: willingnessEnum("willingness_to_change_hair"),
     isOver18: boolean("is_over_18"),
+
+    // Metric visibility settings (which metrics to show on public profile)
+    metricVisibility: jsonb("metric_visibility")
+      .$type<{
+        height: boolean;
+        weight: boolean;
+        eyeColor: boolean;
+        hairColor: boolean;
+        ethnicity: boolean;
+        willingnessToChangeHair: boolean;
+      }>()
+      .default({
+        height: true,
+        weight: false,
+        eyeColor: true,
+        hairColor: true,
+        ethnicity: false,
+        willingnessToChangeHair: false,
+      }),
 
     // Union Memberships (stored as array)
     unionMemberships: jsonb("union_memberships").$type<string[]>().default([]),
@@ -179,6 +199,24 @@ export const DEFAULT_PUBLIC_SECTIONS: PublicSections = {
   education: true,
   skills: true,
   contact: false,
+};
+
+export interface MetricVisibility {
+  height: boolean;
+  weight: boolean;
+  eyeColor: boolean;
+  hairColor: boolean;
+  ethnicity: boolean;
+  willingnessToChangeHair: boolean;
+}
+
+export const DEFAULT_METRIC_VISIBILITY: MetricVisibility = {
+  height: true,
+  weight: false,
+  eyeColor: true,
+  hairColor: true,
+  ethnicity: false,
+  willingnessToChangeHair: false,
 };
 
 export const HAIR_COLORS = [

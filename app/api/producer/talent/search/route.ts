@@ -152,8 +152,8 @@ export async function GET(request: Request): Promise<NextResponse> {
     // Willing to cut hair filter
     if (parsed.data.willingToCutHair) {
       const hairCondition = or(
-        eq(talentProfiles.willingnessToRemoveHair, "yes"),
-        eq(talentProfiles.willingnessToRemoveHair, "negotiable")
+        eq(talentProfiles.willingnessToChangeHair, "yes"),
+        eq(talentProfiles.willingnessToChangeHair, "negotiable")
       );
       if (hairCondition) conditions.push(hairCondition);
     }

@@ -133,7 +133,14 @@ export function validateFileContent(
     const mimeBase = declaredMimeType.split("/")[0];
     const detectedBase = detectedMime.split("/")[0];
 
-    if (mimeBase !== detectedBase) {
+    // Allow video/mp4 and video/quicktime to be interchangeable (MOV uses same ftyp signature)
+    const isCompatibleVideo =
+      mimeBase === "video" &&
+      detectedBase === "video" &&
+      ["video/mp4", "video/quicktime"].includes(declaredMimeType) &&
+      detectedMime === "video/mp4";
+
+    if (mimeBase !== detectedBase && !isCompatibleVideo) {
       return {
         valid: false,
         error: "File content does not match declared type",
