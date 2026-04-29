@@ -13,6 +13,12 @@ export interface ServiceCheck {
   message?: string;
 }
 
+export interface SchemaCheck {
+  status: "ok" | "error";
+  missingColumns?: string[];
+  message?: string;
+}
+
 export interface HealthResponse {
   status: HealthStatus;
   version: string;
@@ -20,6 +26,7 @@ export interface HealthResponse {
   uptime: number;
   checks: {
     database: ServiceCheck;
+    schema?: SchemaCheck;
     redis?: ServiceCheck;
     storage?: ServiceCheck;
   };
@@ -43,6 +50,54 @@ async function checkDatabase(): Promise<ServiceCheck> {
       status: "error",
       latency: Date.now() - start,
       message: error instanceof Error ? error.message : "Unknown error",
+    };
+  }
+}
+
+/**
+ * Critical columns that have caused issues in the past.
+ * If any of these are missing, the schema check will fail.
+ */
+const CRITICAL_COLUMNS: { table: string; column: string }[] = [
+  { table: "resume_configurations", column: "template" },
+  { table: "talent_profiles", column: "weight_lbs" },
+  { table: "users", column: "id" },
+  { table: "users", column: "email" },
+];
+
+async function checkSchema(): Promise<SchemaCheck> {
+  try {
+    const missingColumns: string[] = [];
+
+    for (const { table, column } of CRITICAL_COLUMNS) {
+      const result = await db.execute(sql`
+        SELECT column_name
+        FROM information_schema.columns
+        WHERE table_name = ${table} AND column_name = ${column}
+      `);
+
+      if (result.length === 0) {
+        missingColumns.push(`${table}.${column}`);
+      }
+    }
+
+    if (missingColumns.length > 0) {
+      logger.warn("Schema check found missing columns", { missingColumns });
+      return {
+        status: "error",
+        missingColumns,
+        message: `Missing columns: ${missingColumns.join(", ")}`,
+      };
+    }
+
+    return { status: "ok" };
+  } catch (error) {
+    logger.error("Schema check failed", {
+      error: error instanceof Error ? error : new Error(String(error)),
+    });
+    return {
+      status: "error",
+      message: error instanceof Error ? error.message : "Schema check failed",
     };
   }
 }
@@ -82,19 +137,19 @@ function checkStorage(): ServiceCheck {
 }
 
 function determineOverallStatus(checks: HealthResponse["checks"]): HealthStatus {
-  const statuses = Object.values(checks);
-
-  if (statuses.every((check) => check.status === "ok")) {
-    return "healthy";
-  }
-
   // If database is down, system is unhealthy
   if (checks.database.status === "error") {
     return "unhealthy";
   }
 
-  // Other service failures result in degraded status
-  if (statuses.some((check) => check.status === "error")) {
+  // Schema errors are degraded - app can partially function
+  if (checks.schema?.status === "error") {
+    return "degraded";
+  }
+
+  // Check other services
+  const otherChecks = [checks.redis, checks.storage].filter(Boolean);
+  if (otherChecks.some((check) => check?.status === "error")) {
     return "degraded";
   }
 
@@ -106,8 +161,12 @@ export async function GET(): Promise<NextResponse<HealthResponse>> {
   const redis = checkRedis();
   const storage = checkStorage();
 
+  // Only check schema if database is healthy
+  const schema = database.status === "ok" ? await checkSchema() : undefined;
+
   const checks = {
     database,
+    schema,
     redis,
     storage,
   };
@@ -128,6 +187,7 @@ export async function GET(): Promise<NextResponse<HealthResponse>> {
     status,
     checks: {
       database: database.status,
+      schema: schema?.status,
       redis: redis.status,
       storage: storage.status,
     },

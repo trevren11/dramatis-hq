@@ -10,3 +10,6 @@ const client = postgres(connectionString, { prepare: false });
 
 export const db = drizzle(client, { schema });
 export type Database = typeof db;
+
+// Re-export safe query utilities
+export { safeQuery, safeQueryWithDefault, type SafeQueryResult } from "./safe-query";
