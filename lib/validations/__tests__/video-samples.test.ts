@@ -364,7 +364,7 @@ describe("Video Validation Helper Functions", () => {
 
     it("rejects file size over limit", () => {
       expect(validateVideoFileSize(MAX_VIDEO_FILE_SIZE + 1)).toBe(false);
-      expect(validateVideoFileSize(600 * 1024 * 1024)).toBe(false); // 600MB
+      expect(validateVideoFileSize(3 * 1024 * 1024 * 1024)).toBe(false); // 3GB
     });
 
     it("accepts small file sizes", () => {
@@ -376,7 +376,7 @@ describe("Video Validation Helper Functions", () => {
   describe("getVideoFileSizeError", () => {
     it("returns error message with correct size", () => {
       const error = getVideoFileSizeError();
-      expect(error).toContain("500");
+      expect(error).toContain("2048");
       expect(error).toContain("MB");
     });
   });
