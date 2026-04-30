@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { talentProfiles, users } from "@/lib/db/schema";
-import { profileUpdateSchema } from "@/lib/validations/profile";
+import { profileUpdateSchema, isMinor } from "@/lib/validations/profile";
 import { eq } from "drizzle-orm";
 
 export async function GET(): Promise<NextResponse> {
@@ -60,8 +60,14 @@ export async function PUT(request: Request): Promise<NextResponse> {
       where: eq(talentProfiles.userId, session.user.id),
     });
 
+    // Calculate isOver18 from birthday and enforce minor protection
+    const userIsMinor = isMinor(parsed.data.birthday);
     const profileData = {
       ...parsed.data,
+      // Compute isOver18 from birthday (only set if birthday is provided)
+      ...(userIsMinor !== null && { isOver18: !userIsMinor }),
+      // Minors must be hidden from search - enforce this regardless of user input
+      hideFromSearch: userIsMinor === true ? true : parsed.data.hideFromSearch,
       updatedAt: new Date(),
     };
 
@@ -116,11 +122,17 @@ export async function POST(request: Request): Promise<NextResponse> {
       );
     }
 
+    // Calculate isOver18 from birthday and enforce minor protection for new profiles
+    const userIsMinor = isMinor(parsed.data.birthday);
     const [profile] = await db
       .insert(talentProfiles)
       .values({
         ...parsed.data,
         userId: session.user.id,
+        // Compute isOver18 from birthday (only set if birthday is provided)
+        ...(userIsMinor !== null && { isOver18: !userIsMinor }),
+        // Minors must be hidden from search
+        hideFromSearch: userIsMinor === true ? true : parsed.data.hideFromSearch,
       })
       .returning();
 

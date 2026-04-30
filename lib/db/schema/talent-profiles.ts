@@ -9,6 +9,7 @@ import {
   boolean,
   jsonb,
   index,
+  date,
 } from "drizzle-orm/pg-core";
 import { users } from "./users";
 
@@ -84,6 +85,7 @@ export const talentProfiles = pgTable(
     stageName: varchar("stage_name", { length: 100 }),
     pronouns: varchar("pronouns", { length: 50 }),
     bio: text("bio"),
+    birthday: date("birthday", { mode: "date" }),
 
     // Contact
     phone: varchar("phone", { length: 20 }),
@@ -173,6 +175,7 @@ export const talentProfiles = pgTable(
     index("talent_profiles_eye_color_idx").on(table.eyeColor),
     index("talent_profiles_ethnicity_idx").on(table.ethnicity),
     index("talent_profiles_vocal_range_idx").on(table.vocalRange),
+    index("talent_profiles_birthday_idx").on(table.birthday),
   ]
 );
 

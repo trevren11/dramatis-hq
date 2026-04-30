@@ -15,6 +15,7 @@ export const profileBasicInfoSchema = z.object({
   pronouns: z.string().max(50).optional().nullable(),
   bio: z.string().max(2000).optional().nullable(),
   location: z.string().max(200).optional().nullable(),
+  birthday: z.coerce.date().optional().nullable(),
 });
 
 export const profileContactSchema = z.object({
@@ -162,3 +163,34 @@ export const UNION_OPTIONS = [
   { value: "iatse", label: "IATSE" },
   { value: "non-union", label: "Non-Union" },
 ] as const;
+
+/**
+ * Calculate age from birthday
+ * @param birthday - Date of birth
+ * @returns Age in years, or null if birthday is not provided
+ */
+export function calculateAge(birthday: Date | null | undefined): number | null {
+  if (!birthday) return null;
+
+  const today = new Date();
+  const birthDate = new Date(birthday);
+  let age = today.getFullYear() - birthDate.getFullYear();
+  const monthDiff = today.getMonth() - birthDate.getMonth();
+
+  if (monthDiff < 0 || (monthDiff === 0 && today.getDate() < birthDate.getDate())) {
+    age--;
+  }
+
+  return age;
+}
+
+/**
+ * Check if user is a minor (under 18) based on birthday
+ * @param birthday - Date of birth
+ * @returns true if under 18, false if 18+, null if birthday not provided
+ */
+export function isMinor(birthday: Date | null | undefined): boolean | null {
+  const age = calculateAge(birthday);
+  if (age === null) return null;
+  return age < 18;
+}

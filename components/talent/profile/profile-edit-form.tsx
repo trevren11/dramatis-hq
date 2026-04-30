@@ -5,8 +5,8 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useToast } from "@/components/ui/use-toast";
-import { Loader2, Save, Check } from "lucide-react";
-import { UNION_OPTIONS, type ProfileUpdate } from "@/lib/validations/profile";
+import { Loader2, Save, Check, Lock } from "lucide-react";
+import { UNION_OPTIONS, isMinor, type ProfileUpdate } from "@/lib/validations/profile";
 import type { TalentProfile } from "@/lib/db/schema";
 
 interface ProfileEditFormProps {
@@ -38,7 +38,11 @@ export function ProfileEditForm({ initialProfile }: ProfileEditFormProps): React
     unionMemberships: initialProfile.unionMemberships ?? [],
     isPublic: initialProfile.isPublic ?? true,
     hideFromSearch: initialProfile.hideFromSearch ?? false,
+    birthday: initialProfile.birthday,
   });
+
+  // Determine if the user is a minor based on birthday
+  const userIsMinor = isMinor(formData.birthday);
 
   const saveProfile = useCallback(async () => {
     setIsSaving(true);
@@ -208,6 +212,30 @@ export function ProfileEditForm({ initialProfile }: ProfileEditFormProps): React
             </div>
           </div>
 
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div className="space-y-2">
+              <label htmlFor="birthday" className="text-sm font-medium">
+                Birthday
+              </label>
+              <Input
+                id="birthday"
+                type="date"
+                value={
+                  formData.birthday ? new Date(formData.birthday).toISOString().split("T")[0] : ""
+                }
+                onChange={(e) => {
+                  updateFormData({
+                    birthday: e.target.value ? new Date(e.target.value) : null,
+                  });
+                }}
+                max={new Date().toISOString().split("T")[0]}
+              />
+              <p className="text-muted-foreground text-xs">
+                Used to determine age range for casting calls
+              </p>
+            </div>
+          </div>
+
           <div className="space-y-2">
             <label htmlFor="location" className="text-sm font-medium">
               Location
@@ -360,6 +388,21 @@ export function ProfileEditForm({ initialProfile }: ProfileEditFormProps): React
           <CardTitle>Privacy Settings</CardTitle>
         </CardHeader>
         <CardContent className="space-y-4">
+          {userIsMinor && (
+            <div className="flex items-start gap-3 rounded-lg border border-amber-200 bg-amber-50 p-4 dark:border-amber-900 dark:bg-amber-950/30">
+              <Lock className="mt-0.5 h-5 w-5 flex-shrink-0 text-amber-600 dark:text-amber-400" />
+              <div>
+                <p className="font-medium text-amber-800 dark:text-amber-200">
+                  Minor Protection Active
+                </p>
+                <p className="text-sm text-amber-700 dark:text-amber-300">
+                  For your safety, profiles of users under 18 are automatically hidden from public
+                  search. This setting cannot be changed until you turn 18.
+                </p>
+              </div>
+            </div>
+          )}
+
           <label className="flex cursor-pointer items-center justify-between rounded-lg border p-4">
             <div>
               <p className="font-medium">Public Profile</p>
@@ -375,22 +418,34 @@ export function ProfileEditForm({ initialProfile }: ProfileEditFormProps): React
             />
           </label>
 
-          <label className="flex cursor-pointer items-center justify-between rounded-lg border p-4">
+          <div
+            className={`flex items-center justify-between rounded-lg border p-4 ${
+              userIsMinor ? "bg-muted/50" : "cursor-pointer"
+            }`}
+          >
             <div>
-              <p className="font-medium">Hide from Search</p>
+              <p className="flex items-center gap-2 font-medium">
+                Hide from Search
+                {userIsMinor && <Lock className="text-muted-foreground h-4 w-4" />}
+              </p>
               <p className="text-muted-foreground text-sm">
-                Don&apos;t show your profile in producer searches
+                {userIsMinor
+                  ? "Profiles of users under 18 are automatically hidden from search"
+                  : "Don't show your profile in producer searches"}
               </p>
             </div>
             <input
               type="checkbox"
-              checked={formData.hideFromSearch ?? false}
+              checked={userIsMinor ? true : (formData.hideFromSearch ?? false)}
+              disabled={userIsMinor === true}
               onChange={(e) => {
-                updateFormData({ hideFromSearch: e.target.checked });
+                if (!userIsMinor) {
+                  updateFormData({ hideFromSearch: e.target.checked });
+                }
               }}
-              className="text-primary focus:ring-primary h-5 w-5 rounded border-gray-300"
+              className="text-primary focus:ring-primary h-5 w-5 rounded border-gray-300 disabled:cursor-not-allowed disabled:opacity-50"
             />
-          </label>
+          </div>
         </CardContent>
       </Card>
     </div>
