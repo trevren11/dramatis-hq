@@ -2,7 +2,7 @@ import { NextResponse } from "next/server";
 import { auth } from "@/lib/auth";
 import { db } from "@/lib/db";
 import { talentProfiles, users } from "@/lib/db/schema";
-import { profileUpdateSchema, isMinor } from "@/lib/validations/profile";
+import { profileUpdateSchema, profileFullSchema, isMinor } from "@/lib/validations/profile";
 import { eq } from "drizzle-orm";
 
 export async function GET(): Promise<NextResponse> {
@@ -60,6 +60,13 @@ export async function PUT(request: Request): Promise<NextResponse> {
       where: eq(talentProfiles.userId, session.user.id),
     });
 
+    if (!existingProfile) {
+      return NextResponse.json(
+        { error: "Profile not found. Use POST to create a new profile." },
+        { status: 404 }
+      );
+    }
+
     // Calculate isOver18 from birthday and enforce minor protection
     const userIsMinor = isMinor(parsed.data.birthday);
     const profileData = {
@@ -71,24 +78,11 @@ export async function PUT(request: Request): Promise<NextResponse> {
       updatedAt: new Date(),
     };
 
-    let profile;
-    if (existingProfile) {
-      const [updated] = await db
-        .update(talentProfiles)
-        .set(profileData)
-        .where(eq(talentProfiles.id, existingProfile.id))
-        .returning();
-      profile = updated;
-    } else {
-      const [created] = await db
-        .insert(talentProfiles)
-        .values({
-          ...profileData,
-          userId: session.user.id,
-        })
-        .returning();
-      profile = created;
-    }
+    const [profile] = await db
+      .update(talentProfiles)
+      .set(profileData)
+      .where(eq(talentProfiles.id, existingProfile.id))
+      .returning();
 
     return NextResponse.json({ profile });
   } catch (error) {
@@ -113,7 +107,8 @@ export async function POST(request: Request): Promise<NextResponse> {
     }
 
     const body: unknown = await request.json();
-    const parsed = profileUpdateSchema.safeParse(body);
+    // Use full schema for profile creation (requires firstName/lastName)
+    const parsed = profileFullSchema.safeParse(body);
 
     if (!parsed.success) {
       return NextResponse.json(
