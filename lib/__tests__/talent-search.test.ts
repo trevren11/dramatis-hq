@@ -15,6 +15,7 @@ const createMockProfile = (overrides: Partial<TalentProfile> = {}): TalentProfil
   stageName: null,
   pronouns: null,
   bio: null,
+  birthday: null,
   phone: null,
   website: null,
   location: null,
