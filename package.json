@@ -41,6 +41,9 @@
     "db:seed:new-talent": "tsx lib/db/seed/index.ts new-talent",
     "db:seed:new-producer": "tsx lib/db/seed/index.ts new-producer",
     "db:seed:review-queue": "tsx lib/db/seed/index.ts review-queue",
+    "schema:validate": "tsx scripts/validate-schema.ts",
+    "schema:fix": "tsx scripts/fix-schema.ts",
+    "test:e2e:login": "playwright test e2e/tests/login.spec.ts --project=chromium",
     "prepare": "husky"
   },
   "dependencies": {

@@ -41,6 +41,7 @@ export default defineConfig({
         "**/e2e/**",
         "**/public/**",
         "**/documentation.ts",
+        "**/scripts/**",
       ],
       thresholds: {
         statements: 80,
