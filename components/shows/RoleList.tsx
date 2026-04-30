@@ -4,8 +4,9 @@ import { useState, useCallback } from "react";
 import { Button } from "@/components/ui/button";
 import { RoleCard } from "./RoleCard";
 import { RoleFormDialog } from "./RoleFormDialog";
+import { RoleImportDialog } from "./RoleImportDialog";
 import { useToast } from "@/components/ui/use-toast";
-import { Plus } from "lucide-react";
+import { Plus, Upload } from "lucide-react";
 import type { Role } from "@/lib/db/schema/roles";
 
 interface RoleListProps {
@@ -22,6 +23,7 @@ export function RoleList({
   const toastApi = useToast();
   const [roles, setRoles] = useState<Role[]>(initialRoles);
   const [dialogOpen, setDialogOpen] = useState(false);
+  const [importDialogOpen, setImportDialogOpen] = useState(false);
   const [editingRole, setEditingRole] = useState<Role | undefined>();
 
   const updateRoles = useCallback(
@@ -53,6 +55,13 @@ export function RoleList({
       }
     },
     [editingRole, roles, updateRoles, toastApi]
+  );
+
+  const handleImportSuccess = useCallback(
+    (importedRoles: Role[]): void => {
+      updateRoles([...roles, ...importedRoles]);
+    },
+    [roles, updateRoles]
   );
 
   const handleDeleteRole = useCallback(
@@ -142,10 +151,21 @@ export function RoleList({
             {String(roles.length)} role{roles.length !== 1 ? "s" : ""} defined
           </p>
         </div>
-        <Button onClick={handleAddRole}>
-          <Plus className="mr-2 h-4 w-4" />
-          Add Role
-        </Button>
+        <div className="flex gap-2">
+          <Button
+            variant="outline"
+            onClick={() => {
+              setImportDialogOpen(true);
+            }}
+          >
+            <Upload className="mr-2 h-4 w-4" />
+            Import from Excel
+          </Button>
+          <Button onClick={handleAddRole}>
+            <Plus className="mr-2 h-4 w-4" />
+            Add Role
+          </Button>
+        </div>
       </div>
 
       {roles.length === 0 ? (
@@ -190,6 +210,13 @@ export function RoleList({
         open={dialogOpen}
         onOpenChange={setDialogOpen}
         onSuccess={handleRoleSuccess}
+      />
+
+      <RoleImportDialog
+        showId={showId}
+        open={importDialogOpen}
+        onOpenChange={setImportDialogOpen}
+        onSuccess={handleImportSuccess}
       />
     </div>
   );
