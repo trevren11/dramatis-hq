@@ -35,18 +35,34 @@ export function DatesVenueStep({ data, onUpdate }: Props): React.ReactElement {
         <h3 className="mb-4 text-sm font-medium">Key Dates</h3>
 
         <div className="space-y-4">
-          <div className="space-y-2">
-            <Label htmlFor="rehearsalStart">Rehearsal Start Date</Label>
-            <Input
-              id="rehearsalStart"
-              type="date"
-              value={formatDateForInput(data.rehearsalStart)}
-              onChange={(e) => {
-                onUpdate({
-                  rehearsalStart: e.target.value ? new Date(e.target.value) : null,
-                });
-              }}
-            />
+          <div className="grid gap-4 sm:grid-cols-2">
+            <div className="space-y-2">
+              <Label htmlFor="rehearsalStart">Rehearsal Start Date</Label>
+              <Input
+                id="rehearsalStart"
+                type="date"
+                value={formatDateForInput(data.rehearsalStart)}
+                onChange={(e) => {
+                  onUpdate({
+                    rehearsalStart: e.target.value ? new Date(e.target.value) : null,
+                  });
+                }}
+              />
+            </div>
+
+            <div className="space-y-2">
+              <Label htmlFor="rehearsalEnd">Rehearsal End Date</Label>
+              <Input
+                id="rehearsalEnd"
+                type="date"
+                value={formatDateForInput(data.rehearsalEnd)}
+                onChange={(e) => {
+                  onUpdate({
+                    rehearsalEnd: e.target.value ? new Date(e.target.value) : null,
+                  });
+                }}
+              />
+            </div>
           </div>
 
           <div className="grid gap-4 sm:grid-cols-2">

@@ -65,6 +65,10 @@ export function ReviewStep({ data }: Props): React.ReactElement {
               <dd>{formatDate(data.rehearsalStart)}</dd>
             </div>
             <div className="flex justify-between">
+              <dt className="text-muted-foreground">Rehearsal End</dt>
+              <dd>{formatDate(data.rehearsalEnd)}</dd>
+            </div>
+            <div className="flex justify-between">
               <dt className="text-muted-foreground">Performance Start</dt>
               <dd>{formatDate(data.performanceStart)}</dd>
             </div>
