@@ -28,10 +28,24 @@ import {
   Sparkles,
   Camera,
   Video,
+  User,
 } from "lucide-react";
+import { heightToFeetInches } from "@/lib/validations/physical-attributes";
 
 function getUnionLabel(value: string): string {
   return UNION_OPTIONS.find((u) => u.value === value)?.label ?? value;
+}
+
+function formatLabel(value: string): string {
+  return value
+    .split("_")
+    .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+    .join(" ");
+}
+
+function formatHeight(inches: number): string {
+  const { feet, inches: inchesRemainder } = heightToFeetInches(inches);
+  return `${String(feet)}'${String(inchesRemainder)}"`;
 }
 
 interface ProfileCounts {
@@ -230,6 +244,73 @@ export default async function ProfilePage(): Promise<React.ReactElement> {
               </CardContent>
             </Card>
           )}
+          {(() => {
+            const visibility = profile.metricVisibility ?? {
+              height: true,
+              weight: false,
+              eyeColor: true,
+              hairColor: true,
+              ethnicity: false,
+              willingnessToChangeHair: false,
+            };
+            const visibleAttributes: { label: string; value: string }[] = [];
+            if (visibility.height && profile.heightInches) {
+              visibleAttributes.push({
+                label: "Height",
+                value: formatHeight(profile.heightInches),
+              });
+            }
+            if (visibility.weight && profile.weightLbs) {
+              visibleAttributes.push({
+                label: "Weight",
+                value: `${String(profile.weightLbs)} lbs`,
+              });
+            }
+            if (visibility.eyeColor && profile.eyeColor) {
+              visibleAttributes.push({ label: "Eye Color", value: formatLabel(profile.eyeColor) });
+            }
+            if (visibility.hairColor && profile.hairColor) {
+              visibleAttributes.push({
+                label: "Hair Color",
+                value: formatLabel(profile.hairColor),
+              });
+            }
+            if (visibility.ethnicity && profile.ethnicity) {
+              visibleAttributes.push({ label: "Ethnicity", value: formatLabel(profile.ethnicity) });
+            }
+            if (visibility.willingnessToChangeHair && profile.willingnessToChangeHair) {
+              visibleAttributes.push({
+                label: "Willing to Change Hair",
+                value: formatLabel(profile.willingnessToChangeHair),
+              });
+            }
+
+            if (visibleAttributes.length === 0) return null;
+
+            return (
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between">
+                  <CardTitle className="flex items-center text-lg">
+                    <User className="mr-2 h-5 w-5" />
+                    Physical Attributes
+                  </CardTitle>
+                  <Button variant="outline" size="sm" asChild>
+                    <Link href="/talent/profile/edit#physical-attributes">Manage</Link>
+                  </Button>
+                </CardHeader>
+                <CardContent>
+                  <div className="grid grid-cols-2 gap-4 sm:grid-cols-3">
+                    {visibleAttributes.map((attr) => (
+                      <div key={attr.label}>
+                        <p className="text-muted-foreground text-sm">{attr.label}</p>
+                        <p className="font-medium">{attr.value}</p>
+                      </div>
+                    ))}
+                  </div>
+                </CardContent>
+              </Card>
+            );
+          })()}
           <Card>
             <CardHeader className="flex flex-row items-center justify-between">
               <CardTitle className="flex items-center text-lg">
@@ -244,12 +325,16 @@ export default async function ProfilePage(): Promise<React.ReactElement> {
               {photos.length > 0 ? (
                 <div className="grid grid-cols-3 gap-4 sm:grid-cols-4 md:grid-cols-5">
                   {photos.map((p) => (
-                    <div key={p.id} className="relative aspect-[3/4] overflow-hidden rounded-lg">
+                    <div
+                      key={p.id}
+                      className="bg-muted relative aspect-[3/4] overflow-hidden rounded-lg"
+                    >
                       <Image
                         src={p.thumbnailUrl ?? p.url}
                         alt="Headshot"
                         fill
                         className="object-cover"
+                        unoptimized
                       />
                     </div>
                   ))}
@@ -278,7 +363,13 @@ export default async function ProfilePage(): Promise<React.ReactElement> {
                       className="relative aspect-video overflow-hidden rounded-lg bg-black"
                     >
                       {v.thumbnailUrl ? (
-                        <Image src={v.thumbnailUrl} alt={v.title} fill className="object-cover" />
+                        <Image
+                          src={v.thumbnailUrl}
+                          alt={v.title}
+                          fill
+                          className="object-cover"
+                          unoptimized
+                        />
                       ) : (
                         <div className="flex h-full items-center justify-center">
                           <Video className="text-muted-foreground h-8 w-8" />

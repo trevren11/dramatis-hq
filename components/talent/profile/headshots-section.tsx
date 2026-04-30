@@ -232,13 +232,14 @@ export function HeadshotsSection({ initialData }: HeadshotsSectionProps): React.
             {headshots.map((headshot) => (
               <div
                 key={headshot.id}
-                className="group relative aspect-[3/4] overflow-hidden rounded-lg"
+                className="group bg-muted relative aspect-[3/4] overflow-hidden rounded-lg"
               >
                 <Image
                   src={headshot.thumbnailUrl ?? headshot.url}
                   alt="Headshot"
                   fill
                   className="object-cover"
+                  unoptimized
                 />
                 {headshot.isPrimary && (
                   <div className="bg-primary text-primary-foreground absolute top-2 left-2 flex items-center gap-1 rounded-full px-2 py-1 text-xs">
