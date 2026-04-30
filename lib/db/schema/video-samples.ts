@@ -120,4 +120,4 @@ export const VIDEO_STATUSES = ["processing", "ready", "failed"] as const;
 
 export const MAX_VIDEO_SAMPLES = 20;
 export const ALLOWED_VIDEO_TYPES = ["video/mp4", "video/quicktime", "video/webm"];
-export const MAX_VIDEO_FILE_SIZE = 500 * 1024 * 1024; // 500MB
+export const MAX_VIDEO_FILE_SIZE = 2 * 1024 * 1024 * 1024; // 2GB

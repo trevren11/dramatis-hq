@@ -98,7 +98,7 @@ export function VideoForm({
       showToast({
         variant: "destructive",
         title: "File too large",
-        description: "Maximum file size is 500MB",
+        description: "Maximum file size is 2GB",
       });
       return;
     }
@@ -320,7 +320,7 @@ function UploadArea({
         <>
           <Video className="text-muted-foreground mb-2 h-10 w-10" />
           <p className="text-sm">Click to upload or drag and drop</p>
-          <p className="text-muted-foreground text-xs">MP4, MOV, or WebM up to 500MB</p>
+          <p className="text-muted-foreground text-xs">MP4, MOV, or WebM up to 2GB</p>
         </>
       )}
     </div>
