@@ -14,6 +14,7 @@ const showBaseSchema = z.object({
     .nullable(),
   venue: z.string().max(255, "Venue must be at most 255 characters").optional().nullable(),
   rehearsalStart: z.coerce.date().optional().nullable(),
+  rehearsalEnd: z.coerce.date().optional().nullable(),
   performanceStart: z.coerce.date().optional().nullable(),
   performanceEnd: z.coerce.date().optional().nullable(),
   unionStatus: z.enum(UNION_STATUS_VALUES).default("both"),

@@ -22,6 +22,7 @@ interface FormData {
   description: string | null;
   venue: string | null;
   rehearsalStart: Date | null;
+  rehearsalEnd: Date | null;
   performanceStart: Date | null;
   performanceEnd: Date | null;
   unionStatus: string;
@@ -138,7 +139,7 @@ function DatesVenueCard({
           />
         </div>
 
-        <div className="grid gap-4 sm:grid-cols-3">
+        <div className="grid gap-4 sm:grid-cols-2">
           <div className="space-y-2">
             <Label htmlFor="rehearsalStart">Rehearsal Start</Label>
             <Input
@@ -148,6 +149,20 @@ function DatesVenueCard({
               onChange={(e) => {
                 onFormChange({
                   rehearsalStart: e.target.value ? new Date(e.target.value) : null,
+                });
+              }}
+            />
+          </div>
+
+          <div className="space-y-2">
+            <Label htmlFor="rehearsalEnd">Rehearsal End</Label>
+            <Input
+              id="rehearsalEnd"
+              type="date"
+              value={formatDateForInput(formData.rehearsalEnd)}
+              onChange={(e) => {
+                onFormChange({
+                  rehearsalEnd: e.target.value ? new Date(e.target.value) : null,
                 });
               }}
             />
@@ -302,6 +317,7 @@ export function ShowSettings({ show }: ShowSettingsProps): React.ReactElement {
     description: show.description,
     venue: show.venue,
     rehearsalStart: show.rehearsalStart,
+    rehearsalEnd: show.rehearsalEnd,
     performanceStart: show.performanceStart,
     performanceEnd: show.performanceEnd,
     unionStatus: show.unionStatus ?? "both",

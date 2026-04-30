@@ -45,6 +45,7 @@ export default async function ProducerShowsPage(): Promise<React.ReactElement> {
       description: shows.description,
       venue: shows.venue,
       rehearsalStart: shows.rehearsalStart,
+      rehearsalEnd: shows.rehearsalEnd,
       performanceStart: shows.performanceStart,
       performanceEnd: shows.performanceEnd,
       unionStatus: shows.unionStatus,

@@ -45,6 +45,7 @@ export const shows = pgTable(
 
     // Dates
     rehearsalStart: timestamp("rehearsal_start", { mode: "date" }),
+    rehearsalEnd: timestamp("rehearsal_end", { mode: "date" }),
     performanceStart: timestamp("performance_start", { mode: "date" }),
     performanceEnd: timestamp("performance_end", { mode: "date" }),
 
