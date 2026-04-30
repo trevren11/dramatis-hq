@@ -25,8 +25,10 @@ interface ShowCardProps {
 const STATUS_COLORS: Record<string, "default" | "secondary" | "success" | "warning" | "info"> = {
   planning: "secondary",
   auditions: "info",
+  in_production: "info",
   rehearsal: "warning",
   running: "success",
+  completed: "success",
   closed: "default",
 };
 

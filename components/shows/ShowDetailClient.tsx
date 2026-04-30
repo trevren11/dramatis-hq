@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { ShowDashboard } from "./ShowDashboard";
 import { ShowSettings } from "./ShowSettings";
@@ -29,8 +29,15 @@ export function ShowDetailClient({
 }: ShowDetailClientProps): React.ReactElement {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const [activeTab, setActiveTab] = useState(initialTab);
+  const currentTab = searchParams.get("tab") ?? initialTab;
+  const [activeTab, setActiveTab] = useState(currentTab);
   const [roles, setRoles] = useState<Role[]>(initialRoles);
+
+  // Sync tab state with URL changes
+  useEffect(() => {
+    const tab = searchParams.get("tab") ?? "overview";
+    setActiveTab(tab);
+  }, [searchParams]);
 
   const handleTabChange = (tab: string): void => {
     setActiveTab(tab);
