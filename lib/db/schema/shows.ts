@@ -22,8 +22,10 @@ export const showTypeEnum = pgEnum("show_type", [
 export const showStatusEnum = pgEnum("show_status", [
   "planning",
   "auditions",
+  "in_production",
   "rehearsal",
   "running",
+  "completed",
   "closed",
 ]);
 
@@ -81,16 +83,20 @@ export const SHOW_TYPE_VALUES = ["musical", "play", "opera", "dance", "concert",
 
 export const SHOW_STATUS_OPTIONS = [
   { value: "planning", label: "Planning" },
-  { value: "auditions", label: "Auditions" },
+  { value: "auditions", label: "Auditioning" },
+  { value: "in_production", label: "In Production" },
   { value: "rehearsal", label: "Rehearsal" },
   { value: "running", label: "Running" },
+  { value: "completed", label: "Completed" },
   { value: "closed", label: "Closed" },
 ] as const;
 
 export const SHOW_STATUS_VALUES = [
   "planning",
   "auditions",
+  "in_production",
   "rehearsal",
   "running",
+  "completed",
   "closed",
 ] as const;

@@ -1,13 +1,34 @@
 "use client";
 
+import { useState, useTransition } from "react";
+import { useRouter } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Calendar, MapPin, Users, Clock, Pencil, LayoutGrid, CalendarDays } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import {
+  Calendar,
+  MapPin,
+  Users,
+  Clock,
+  Pencil,
+  LayoutGrid,
+  CalendarDays,
+  ChevronDown,
+} from "lucide-react";
 import Link from "next/link";
+import { useToast } from "@/components/ui/use-toast";
 import type { Show } from "@/lib/db/schema/shows";
 import type { Role } from "@/lib/db/schema/roles";
 import { SHOW_TYPE_OPTIONS, SHOW_STATUS_OPTIONS } from "@/lib/db/schema/shows";
+import type { SHOW_STATUS_VALUES } from "@/lib/db/schema/shows";
+
+type ShowStatus = (typeof SHOW_STATUS_VALUES)[number];
 
 interface ShowDashboardProps {
   show: Show;
@@ -17,8 +38,10 @@ interface ShowDashboardProps {
 const STATUS_COLORS: Record<string, "default" | "secondary" | "success" | "warning" | "info"> = {
   planning: "secondary",
   auditions: "info",
+  in_production: "info",
   rehearsal: "warning",
   running: "success",
+  completed: "success",
   closed: "default",
 };
 
@@ -33,9 +56,45 @@ function formatDate(date: Date | null): string {
 }
 
 export function ShowDashboard({ show, roles }: ShowDashboardProps): React.ReactElement {
+  const router = useRouter();
+  const { toast } = useToast();
+  const [isPending, startTransition] = useTransition();
+  const [currentStatus, setCurrentStatus] = useState(show.status ?? "planning");
+
   const showType = SHOW_TYPE_OPTIONS.find((t) => t.value === show.type);
-  const showStatus = SHOW_STATUS_OPTIONS.find((s) => s.value === show.status);
+  const showStatus = SHOW_STATUS_OPTIONS.find((s) => s.value === currentStatus);
   const totalPositions = roles.reduce((sum, role) => sum + (role.positionCount ?? 1), 0);
+
+  const handleStatusChange = (newStatus: ShowStatus): void => {
+    startTransition(async () => {
+      try {
+        const response = await fetch(`/api/shows/${show.id}`, {
+          method: "PUT",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ status: newStatus }),
+        });
+
+        if (!response.ok) {
+          throw new Error("Failed to update status");
+        }
+
+        setCurrentStatus(newStatus);
+        const newStatusLabel =
+          SHOW_STATUS_OPTIONS.find((s) => s.value === newStatus)?.label ?? newStatus;
+        toast({
+          title: "Status updated",
+          description: `Show status changed to ${newStatusLabel}`,
+        });
+        router.refresh();
+      } catch {
+        toast({
+          title: "Error",
+          description: "Failed to update status",
+          variant: "destructive",
+        });
+      }
+    });
+  };
 
   return (
     <div className="space-y-6">
@@ -44,9 +103,35 @@ export function ShowDashboard({ show, roles }: ShowDashboardProps): React.ReactE
         <div>
           <div className="flex items-center gap-3">
             <h1 className="text-3xl font-bold">{show.title}</h1>
-            <Badge variant={STATUS_COLORS[show.status ?? "planning"]}>
-              {showStatus?.label ?? "Planning"}
-            </Badge>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild disabled={isPending}>
+                <button className="focus:ring-primary rounded-full focus:ring-2 focus:ring-offset-2 focus:outline-none">
+                  <Badge
+                    variant={STATUS_COLORS[currentStatus]}
+                    className="flex cursor-pointer items-center gap-1 transition-opacity hover:opacity-80"
+                  >
+                    {showStatus?.label ?? "Planning"}
+                    <ChevronDown className="h-3 w-3" />
+                  </Badge>
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start">
+                {SHOW_STATUS_OPTIONS.map((option) => (
+                  <DropdownMenuItem
+                    key={option.value}
+                    onClick={() => {
+                      handleStatusChange(option.value);
+                    }}
+                    className={currentStatus === option.value ? "bg-accent" : ""}
+                  >
+                    <Badge variant={STATUS_COLORS[option.value]} className="mr-2">
+                      {option.label}
+                    </Badge>
+                    {currentStatus === option.value && <span className="ml-auto">✓</span>}
+                  </DropdownMenuItem>
+                ))}
+              </DropdownMenuContent>
+            </DropdownMenu>
           </div>
           <p className="text-muted-foreground mt-1">{showType?.label ?? "Production"}</p>
         </div>

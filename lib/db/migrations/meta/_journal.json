@@ -15,6 +15,13 @@
       "when": 1777526317126,
       "tag": "0001_add_rehearsal_end",
       "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1777694400000,
+      "tag": "0002_add_show_status_values",
+      "breakpoints": true
     }
   ]
 }
