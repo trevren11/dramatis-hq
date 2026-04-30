@@ -165,38 +165,66 @@ echo "  Migrations complete"
 echo ""
 
 # -- 5a. Validate schema was applied correctly ------------------------------------
-echo "> Validating schema..."
-# Check that critical columns exist (columns that were missing before this fix)
-VALIDATION_ERRORS=0
+echo "> Validating schema (dynamic check)..."
+# Run the schema validation script which compares all Drizzle schema tables
+# to the actual database columns. This catches any missing columns automatically.
+SCHEMA_VALIDATION=$(sshpass -p "${LIMBO_PASS}" ssh ${SSH_OPTS} "${LIMBO_USER}@${LIMBO_HOST}" \
+  "docker run --rm \
+    --network ${PROJECT_NAME}_default \
+    -e DATABASE_URL=postgresql://dramatis:dramatis@postgres:5432/dramatis \
+    -v ${LIMBO_APP_DIR}:/app \
+    -w /app \
+    node:22-alpine \
+    sh -c 'npm install -g pnpm && pnpm install --frozen-lockfile && pnpm schema:validate' 2>&1")
+SCHEMA_EXIT=$?
 
-# Check weight_lbs column in talent_profiles
-WEIGHT_COL=$(sshpass -p "${LIMBO_PASS}" ssh ${SSH_OPTS} "${LIMBO_USER}@${LIMBO_HOST}" \
-  "docker exec ${PROJECT_NAME}-postgres-1 psql -U dramatis -t -c \"SELECT column_name FROM information_schema.columns WHERE table_name='talent_profiles' AND column_name='weight_lbs'\"" 2>/dev/null | tr -d ' ')
-if [ -z "$WEIGHT_COL" ]; then
-  echo "  ERROR: talent_profiles.weight_lbs column missing"
-  VALIDATION_ERRORS=$((VALIDATION_ERRORS + 1))
-else
-  echo "  talent_profiles.weight_lbs: OK"
-fi
+echo "$SCHEMA_VALIDATION" | tail -20
 
-# Check template column in resumes
-TEMPLATE_COL=$(sshpass -p "${LIMBO_PASS}" ssh ${SSH_OPTS} "${LIMBO_USER}@${LIMBO_HOST}" \
-  "docker exec ${PROJECT_NAME}-postgres-1 psql -U dramatis -t -c \"SELECT column_name FROM information_schema.columns WHERE table_name='resumes' AND column_name='template'\"" 2>/dev/null | tr -d ' ')
-if [ -z "$TEMPLATE_COL" ]; then
-  echo "  ERROR: resumes.template column missing"
-  VALIDATION_ERRORS=$((VALIDATION_ERRORS + 1))
-else
-  echo "  resumes.template: OK"
-fi
-
-if [ $VALIDATION_ERRORS -gt 0 ]; then
+if [ $SCHEMA_EXIT -ne 0 ]; then
   echo ""
-  echo "  SCHEMA VALIDATION FAILED: $VALIDATION_ERRORS missing column(s)"
-  echo "  This usually means drizzle-kit push didn't apply changes."
-  echo "  Check the db:push output above for errors."
-  exit 1
+  echo "  Schema validation failed. Attempting auto-fix..."
+
+  # Run schema:fix --apply to auto-generate and apply ALTER TABLE statements
+  SCHEMA_FIX=$(sshpass -p "${LIMBO_PASS}" ssh ${SSH_OPTS} "${LIMBO_USER}@${LIMBO_HOST}" \
+    "docker run --rm \
+      --network ${PROJECT_NAME}_default \
+      -e DATABASE_URL=postgresql://dramatis:dramatis@postgres:5432/dramatis \
+      -v ${LIMBO_APP_DIR}:/app \
+      -w /app \
+      node:22-alpine \
+      sh -c 'npm install -g pnpm && pnpm install --frozen-lockfile && pnpm schema:fix --apply' 2>&1")
+  FIX_EXIT=$?
+
+  echo "$SCHEMA_FIX" | tail -20
+
+  if [ $FIX_EXIT -ne 0 ]; then
+    echo "  Auto-fix failed. Manual intervention required."
+    exit 1
+  fi
+
+  # Re-validate after fix
+  echo "> Re-validating schema after auto-fix..."
+  SCHEMA_REVALIDATE=$(sshpass -p "${LIMBO_PASS}" ssh ${SSH_OPTS} "${LIMBO_USER}@${LIMBO_HOST}" \
+    "docker run --rm \
+      --network ${PROJECT_NAME}_default \
+      -e DATABASE_URL=postgresql://dramatis:dramatis@postgres:5432/dramatis \
+      -v ${LIMBO_APP_DIR}:/app \
+      -w /app \
+      node:22-alpine \
+      sh -c 'npm install -g pnpm && pnpm install --frozen-lockfile && pnpm schema:validate' 2>&1")
+  REVALIDATE_EXIT=$?
+
+  echo "$SCHEMA_REVALIDATE" | tail -10
+
+  if [ $REVALIDATE_EXIT -ne 0 ]; then
+    echo ""
+    echo "  FATAL: Schema still invalid after auto-fix"
+    echo "  Manual intervention required."
+    exit 1
+  fi
+
+  echo "  Schema auto-fix successful!"
 fi
-echo "  Schema validation: OK"
 echo ""
 
 # -- 5b. Run seed data ------------------------------------------------------------
@@ -270,6 +298,23 @@ if [ "${USER_COUNT:-0}" -lt 1 ]; then
   exit 1
 fi
 echo "  Seed data: OK"
+
+# -- 7a. E2E Login Test (optional) ------------------------------------------------
+# Run quick E2E login test to verify the app actually works end-to-end
+# Skip if playwright not installed or if --skip-e2e flag passed
+if [ "$1" != "--skip-e2e" ] && [ "$MODE" = "full" ]; then
+  echo ""
+  echo "> Running E2E login test..."
+  # Run from local machine against deployed app
+  if command -v pnpm &> /dev/null && [ -f "playwright.config.ts" ]; then
+    PLAYWRIGHT_BASE_URL="http://${LIMBO_HOST}:6767" pnpm test:e2e:login 2>&1 | tail -20 || {
+      echo "  WARNING: E2E login test failed (non-blocking)"
+      echo "  Run 'PLAYWRIGHT_BASE_URL=http://${LIMBO_HOST}:6767 pnpm test:e2e:login' to debug"
+    }
+  else
+    echo "  Skipping (playwright not configured locally)"
+  fi
+fi
 
 # -- 8. Status -------------------------------------------------------------------
 echo ""
