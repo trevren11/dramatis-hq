@@ -95,6 +95,7 @@ function parseHeight(feet: string, inches: string): number | null {
 export function MetricsSection({ initialProfile }: MetricsSectionProps): React.ReactElement {
   const { toast } = useToast();
   const [isSaving, setIsSaving] = useState(false);
+  const [hasChanges, setHasChanges] = useState(false);
   const saveTimeoutRef = useRef<NodeJS.Timeout | null>(null);
 
   const initialHeight = formatHeight(initialProfile.heightInches);
@@ -136,6 +137,7 @@ export function MetricsSection({ initialProfile }: MetricsSectionProps): React.R
         throw new Error("Failed to save metrics");
       }
 
+      setHasChanges(false);
       toast({
         title: "Metrics saved",
         description: "Your physical attributes have been updated.",
@@ -161,8 +163,10 @@ export function MetricsSection({ initialProfile }: MetricsSectionProps): React.R
     toast,
   ]);
 
-  // Auto-save on changes
+  // Auto-save on changes (only when user has made changes)
   useEffect(() => {
+    if (!hasChanges) return;
+
     if (saveTimeoutRef.current) {
       clearTimeout(saveTimeoutRef.current);
     }
@@ -175,20 +179,11 @@ export function MetricsSection({ initialProfile }: MetricsSectionProps): React.R
         clearTimeout(saveTimeoutRef.current);
       }
     };
-  }, [
-    heightFeet,
-    heightInches,
-    weight,
-    eyeColor,
-    hairColor,
-    ethnicity,
-    willingnessToChangeHair,
-    visibility,
-    saveMetrics,
-  ]);
+  }, [hasChanges, saveMetrics]);
 
   const toggleVisibility = (key: keyof MetricVisibility): void => {
     setVisibility((prev) => ({ ...prev, [key]: !prev[key] }));
+    setHasChanges(true);
   };
 
   return (
@@ -218,6 +213,7 @@ export function MetricsSection({ initialProfile }: MetricsSectionProps): React.R
                 value={heightFeet}
                 onChange={(e) => {
                   setHeightFeet(e.target.value);
+                  setHasChanges(true);
                 }}
                 className="w-20"
                 placeholder="ft"
@@ -230,6 +226,7 @@ export function MetricsSection({ initialProfile }: MetricsSectionProps): React.R
                 value={heightInches}
                 onChange={(e) => {
                   setHeightInches(e.target.value);
+                  setHasChanges(true);
                 }}
                 className="w-20"
                 placeholder="in"
@@ -257,6 +254,7 @@ export function MetricsSection({ initialProfile }: MetricsSectionProps): React.R
                 value={weight}
                 onChange={(e) => {
                   setWeight(e.target.value);
+                  setHasChanges(true);
                 }}
                 className="w-24"
                 placeholder="lbs"
@@ -280,6 +278,7 @@ export function MetricsSection({ initialProfile }: MetricsSectionProps): React.R
               value={eyeColor ?? ""}
               onValueChange={(v) => {
                 setEyeColor(v || null);
+                setHasChanges(true);
               }}
             >
               <SelectTrigger className="w-full max-w-xs">
@@ -310,6 +309,7 @@ export function MetricsSection({ initialProfile }: MetricsSectionProps): React.R
               value={hairColor ?? ""}
               onValueChange={(v) => {
                 setHairColor(v || null);
+                setHasChanges(true);
               }}
             >
               <SelectTrigger className="w-full max-w-xs">
@@ -340,6 +340,7 @@ export function MetricsSection({ initialProfile }: MetricsSectionProps): React.R
               value={willingnessToChangeHair ?? ""}
               onValueChange={(v) => {
                 setWillingnessToChangeHair(v || null);
+                setHasChanges(true);
               }}
             >
               <SelectTrigger className="w-full max-w-xs">
@@ -370,6 +371,7 @@ export function MetricsSection({ initialProfile }: MetricsSectionProps): React.R
               value={ethnicity ?? ""}
               onValueChange={(v) => {
                 setEthnicity(v || null);
+                setHasChanges(true);
               }}
             >
               <SelectTrigger className="w-full max-w-xs">

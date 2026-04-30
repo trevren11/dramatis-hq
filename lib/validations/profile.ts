@@ -75,13 +75,17 @@ export const profileMetricsSchema = z.object({
   metricVisibility: metricVisibilitySchema.optional().nullable(),
 });
 
-export const profileUpdateSchema = z.object({
+// Full profile schema (for profile creation/wizard)
+export const profileFullSchema = z.object({
   ...profileBasicInfoSchema.shape,
   ...profileContactSchema.shape,
   ...profileUnionsSchema.shape,
   ...profileVisibilitySchema.shape,
   ...profileMetricsSchema.shape,
 });
+
+// Partial profile schema (for updates - all fields optional)
+export const profileUpdateSchema = profileFullSchema.partial();
 
 export const workHistorySchema = z.object({
   showName: z.string().min(1, "Show name is required").max(255),
@@ -144,6 +148,7 @@ export type ProfileUnions = z.infer<typeof profileUnionsSchema>;
 export type ProfileVisibility = z.infer<typeof profileVisibilitySchema>;
 export type ProfileMetrics = z.infer<typeof profileMetricsSchema>;
 export type MetricVisibility = z.infer<typeof metricVisibilitySchema>;
+export type ProfileFull = z.infer<typeof profileFullSchema>;
 export type ProfileUpdate = z.infer<typeof profileUpdateSchema>;
 export type WorkHistoryInput = z.infer<typeof workHistorySchema>;
 export type EducationInput = z.infer<typeof educationSchema>;
