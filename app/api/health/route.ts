@@ -57,12 +57,20 @@ async function checkDatabase(): Promise<ServiceCheck> {
 /**
  * Critical columns that have caused issues in the past.
  * If any of these are missing, the schema check will fail.
+ *
+ * Add columns here that have previously been missing after deploys.
+ * This serves as a quick sanity check - for comprehensive validation,
+ * run 'pnpm schema:validate' which checks ALL columns.
  */
 const CRITICAL_COLUMNS: { table: string; column: string }[] = [
-  { table: "resume_configurations", column: "template" },
-  { table: "talent_profiles", column: "weight_lbs" },
+  // Core tables - must exist for app to function
   { table: "users", column: "id" },
   { table: "users", column: "email" },
+  // Columns that have been missing in past deploys (see issue #99)
+  { table: "resume_configurations", column: "template" },
+  { table: "talent_profiles", column: "weight_lbs" },
+  { table: "talent_profiles", column: "willingness_to_change_hair" },
+  { table: "talent_profiles", column: "metric_visibility" },
 ];
 
 async function checkSchema(): Promise<SchemaCheck> {

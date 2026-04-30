@@ -165,37 +165,68 @@ echo "  Migrations complete"
 echo ""
 
 # -- 5a. Validate schema was applied correctly ------------------------------------
-echo "> Validating schema..."
-# Check that critical columns exist (columns that were missing before this fix)
-VALIDATION_ERRORS=0
+echo "> Validating schema (comprehensive check)..."
+# Run the schema validation script which compares ALL Drizzle schema columns against DB
+VALIDATION_OUTPUT=$(sshpass -p "${LIMBO_PASS}" ssh ${SSH_OPTS} "${LIMBO_USER}@${LIMBO_HOST}" \
+  "docker run --rm \
+    --network ${PROJECT_NAME}_default \
+    -e DATABASE_URL=postgresql://dramatis:dramatis@postgres:5432/dramatis \
+    -v ${LIMBO_APP_DIR}:/app \
+    -w /app \
+    node:22-alpine \
+    sh -c 'npm install -g pnpm && pnpm install --frozen-lockfile && pnpm schema:validate' 2>&1")
+VALIDATION_EXIT=$?
 
-# Check weight_lbs column in talent_profiles
-WEIGHT_COL=$(sshpass -p "${LIMBO_PASS}" ssh ${SSH_OPTS} "${LIMBO_USER}@${LIMBO_HOST}" \
-  "docker exec ${PROJECT_NAME}-postgres-1 psql -U dramatis -t -c \"SELECT column_name FROM information_schema.columns WHERE table_name='talent_profiles' AND column_name='weight_lbs'\"" 2>/dev/null | tr -d ' ')
-if [ -z "$WEIGHT_COL" ]; then
-  echo "  ERROR: talent_profiles.weight_lbs column missing"
-  VALIDATION_ERRORS=$((VALIDATION_ERRORS + 1))
-else
-  echo "  talent_profiles.weight_lbs: OK"
-fi
+echo "$VALIDATION_OUTPUT" | tail -20
 
-# Check template column in resumes
-TEMPLATE_COL=$(sshpass -p "${LIMBO_PASS}" ssh ${SSH_OPTS} "${LIMBO_USER}@${LIMBO_HOST}" \
-  "docker exec ${PROJECT_NAME}-postgres-1 psql -U dramatis -t -c \"SELECT column_name FROM information_schema.columns WHERE table_name='resumes' AND column_name='template'\"" 2>/dev/null | tr -d ' ')
-if [ -z "$TEMPLATE_COL" ]; then
-  echo "  ERROR: resumes.template column missing"
-  VALIDATION_ERRORS=$((VALIDATION_ERRORS + 1))
-else
-  echo "  resumes.template: OK"
-fi
-
-if [ $VALIDATION_ERRORS -gt 0 ]; then
+if [ $VALIDATION_EXIT -ne 0 ]; then
   echo ""
-  echo "  SCHEMA VALIDATION FAILED: $VALIDATION_ERRORS missing column(s)"
-  echo "  This usually means drizzle-kit push didn't apply changes."
-  echo "  Check the db:push output above for errors."
-  exit 1
+  echo "  SCHEMA VALIDATION FAILED - attempting auto-fix..."
+
+  # Run schema:fix to generate and apply ALTER TABLE statements
+  FIX_OUTPUT=$(sshpass -p "${LIMBO_PASS}" ssh ${SSH_OPTS} "${LIMBO_USER}@${LIMBO_HOST}" \
+    "docker run --rm \
+      --network ${PROJECT_NAME}_default \
+      -e DATABASE_URL=postgresql://dramatis:dramatis@postgres:5432/dramatis \
+      -v ${LIMBO_APP_DIR}:/app \
+      -w /app \
+      node:22-alpine \
+      sh -c 'npm install -g pnpm && pnpm install --frozen-lockfile && pnpm schema:fix:apply' 2>&1")
+  FIX_EXIT=$?
+
+  echo "$FIX_OUTPUT" | tail -30
+
+  if [ $FIX_EXIT -ne 0 ]; then
+    echo ""
+    echo "  SCHEMA FIX FAILED - manual intervention required"
+    echo "  Run 'pnpm schema:fix' locally to see what needs to be fixed."
+    exit 1
+  fi
+
+  # Re-validate after fix
+  echo ""
+  echo "> Re-validating schema after fix..."
+  REVALIDATION_OUTPUT=$(sshpass -p "${LIMBO_PASS}" ssh ${SSH_OPTS} "${LIMBO_USER}@${LIMBO_HOST}" \
+    "docker run --rm \
+      --network ${PROJECT_NAME}_default \
+      -e DATABASE_URL=postgresql://dramatis:dramatis@postgres:5432/dramatis \
+      -v ${LIMBO_APP_DIR}:/app \
+      -w /app \
+      node:22-alpine \
+      sh -c 'npm install -g pnpm && pnpm install --frozen-lockfile && pnpm schema:validate' 2>&1")
+  REVALIDATION_EXIT=$?
+
+  echo "$REVALIDATION_OUTPUT" | tail -10
+
+  if [ $REVALIDATION_EXIT -ne 0 ]; then
+    echo ""
+    echo "  SCHEMA STILL INVALID after auto-fix - manual intervention required"
+    exit 1
+  fi
+
+  echo "  Schema auto-fix: OK"
 fi
+
 echo "  Schema validation: OK"
 echo ""
 
