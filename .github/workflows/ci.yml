@@ -129,6 +129,7 @@ jobs:
       DATABASE_URL: postgresql://postgres:postgres@localhost:5432/dramatis_test
       NEXTAUTH_SECRET: test-secret-for-ci-only
       NEXTAUTH_URL: http://localhost:3000
+      AUTH_TRUST_HOST: true
       PLAYWRIGHT_BASE_URL: http://localhost:3000
 
     steps:
