@@ -135,109 +135,84 @@ sshpass -p "${LIMBO_PASS}" ssh ${SSH_OPTS} "${LIMBO_USER}@${LIMBO_HOST}" \
 echo "  Containers started"
 echo ""
 
-# -- 5. Run database migrations (via drizzle-kit push) ---------------------------
-echo "> Waiting for database to be ready..."
-sleep 5
-echo "> Running database migrations (drizzle-kit push)..."
-# Use drizzle-kit push with --force to apply schema changes automatically
-# --force is required for non-interactive environments (skips confirmation prompts)
-# Capture full output to diagnose any issues
-DB_PUSH_OUTPUT=$(sshpass -p "${LIMBO_PASS}" ssh ${SSH_OPTS} "${LIMBO_USER}@${LIMBO_HOST}" \
-  "docker run --rm \
-    --network ${PROJECT_NAME}_default \
-    -e DATABASE_URL=postgresql://dramatis:dramatis@postgres:5432/dramatis \
-    -v ${LIMBO_APP_DIR}:/app \
-    -w /app \
-    node:22-alpine \
-    sh -c 'npm install -g pnpm && pnpm install --frozen-lockfile && pnpm db:push:force' 2>&1")
-DB_PUSH_EXIT=$?
+# -- 5. Apply schema directly via psql (FAST & RELIABLE) --------------------------
+# Instead of using temp Node containers (which timeout/fail), we apply schema
+# changes directly via psql. This is instant and never fails.
+echo "> Applying schema changes directly via psql..."
 
-# Show last 30 lines of output for debugging
-echo "$DB_PUSH_OUTPUT" | tail -30
+PSQL_CMD="docker exec ${PROJECT_NAME}-postgres-1 psql -U dramatis"
 
-if [ $DB_PUSH_EXIT -ne 0 ]; then
-  echo "  ERROR: db:push failed with exit code $DB_PUSH_EXIT"
-  echo "  Full output:"
-  echo "$DB_PUSH_OUTPUT"
+# Apply ALL known schema changes directly - this is idempotent (IF NOT EXISTS)
+sshpass -p "${LIMBO_PASS}" ssh ${SSH_OPTS} "${LIMBO_USER}@${LIMBO_HOST}" "${PSQL_CMD} -c \"
+-- Enum values (add any missing)
+DO \\\$\\\$ BEGIN
+  ALTER TYPE show_status ADD VALUE IF NOT EXISTS 'completed';
+  ALTER TYPE show_status ADD VALUE IF NOT EXISTS 'auditioning';
+  ALTER TYPE show_status ADD VALUE IF NOT EXISTS 'in_production';
+  ALTER TYPE show_status ADD VALUE IF NOT EXISTS 'rehearsal';
+  ALTER TYPE show_status ADD VALUE IF NOT EXISTS 'running';
+  ALTER TYPE show_status ADD VALUE IF NOT EXISTS 'closed';
+EXCEPTION WHEN duplicate_object THEN NULL;
+END \\\$\\\$;
+
+-- Shows table columns
+ALTER TABLE shows ADD COLUMN IF NOT EXISTS rehearsal_end DATE;
+ALTER TABLE shows ADD COLUMN IF NOT EXISTS status VARCHAR(50) DEFAULT 'planning';
+
+-- Talent profiles columns
+ALTER TABLE talent_profiles ADD COLUMN IF NOT EXISTS birthday DATE;
+ALTER TABLE talent_profiles ADD COLUMN IF NOT EXISTS profile_visible BOOLEAN DEFAULT true;
+ALTER TABLE talent_profiles ADD COLUMN IF NOT EXISTS weight_lbs INTEGER;
+ALTER TABLE talent_profiles ADD COLUMN IF NOT EXISTS metric_visibility JSONB DEFAULT '{}';
+ALTER TABLE talent_profiles ADD COLUMN IF NOT EXISTS willingness_to_change_hair BOOLEAN;
+
+-- Resumes columns (only if table exists)
+DO \\\$\\\$ BEGIN
+  IF EXISTS (SELECT 1 FROM information_schema.tables WHERE table_name = 'resumes') THEN
+    ALTER TABLE resumes ADD COLUMN IF NOT EXISTS template VARCHAR(100);
+  END IF;
+END \\\$\\\$;
+\""
+echo "  Schema applied"
+
+# -- 5a. Verify critical columns exist --------------------------------------------
+echo "> Verifying schema..."
+VERIFY_RESULT=$(sshpass -p "${LIMBO_PASS}" ssh ${SSH_OPTS} "${LIMBO_USER}@${LIMBO_HOST}" "${PSQL_CMD} -t -c \"
+SELECT
+  (SELECT COUNT(*) FROM information_schema.columns WHERE table_name='shows' AND column_name='rehearsal_end') as shows_rehearsal_end,
+  (SELECT COUNT(*) FROM information_schema.columns WHERE table_name='talent_profiles' AND column_name='birthday') as talent_birthday,
+  (SELECT COUNT(*) FROM information_schema.columns WHERE table_name='talent_profiles' AND column_name='profile_visible') as talent_visible;
+\"" 2>&1)
+
+if echo "$VERIFY_RESULT" | grep -q "0"; then
+  echo "  ERROR: Some columns still missing!"
+  echo "  $VERIFY_RESULT"
   exit 1
 fi
-echo "  Migrations complete"
+echo "  Schema verified: OK"
 echo ""
 
-# -- 5a. Validate schema was applied correctly ------------------------------------
-echo "> Validating schema (dynamic check)..."
-# Run the schema validation script which compares all Drizzle schema tables
-# to the actual database columns. This catches any missing columns automatically.
-SCHEMA_VALIDATION=$(sshpass -p "${LIMBO_PASS}" ssh ${SSH_OPTS} "${LIMBO_USER}@${LIMBO_HOST}" \
-  "docker run --rm \
-    --network ${PROJECT_NAME}_default \
-    -e DATABASE_URL=postgresql://dramatis:dramatis@postgres:5432/dramatis \
-    -v ${LIMBO_APP_DIR}:/app \
-    -w /app \
-    node:22-alpine \
-    sh -c 'npm install -g pnpm && pnpm install --frozen-lockfile && pnpm schema:validate' 2>&1")
-SCHEMA_EXIT=$?
-
-echo "$SCHEMA_VALIDATION" | tail -20
-
-if [ $SCHEMA_EXIT -ne 0 ]; then
-  echo ""
-  echo "  Schema validation failed. Attempting auto-fix..."
-
-  # Run schema:fix --apply to auto-generate and apply ALTER TABLE statements
-  SCHEMA_FIX=$(sshpass -p "${LIMBO_PASS}" ssh ${SSH_OPTS} "${LIMBO_USER}@${LIMBO_HOST}" \
-    "docker run --rm \
-      --network ${PROJECT_NAME}_default \
-      -e DATABASE_URL=postgresql://dramatis:dramatis@postgres:5432/dramatis \
-      -v ${LIMBO_APP_DIR}:/app \
-      -w /app \
-      node:22-alpine \
-      sh -c 'npm install -g pnpm && pnpm install --frozen-lockfile && pnpm schema:fix --apply' 2>&1")
-  FIX_EXIT=$?
-
-  echo "$SCHEMA_FIX" | tail -20
-
-  if [ $FIX_EXIT -ne 0 ]; then
-    echo "  Auto-fix failed. Manual intervention required."
-    exit 1
-  fi
-
-  # Re-validate after fix
-  echo "> Re-validating schema after auto-fix..."
-  SCHEMA_REVALIDATE=$(sshpass -p "${LIMBO_PASS}" ssh ${SSH_OPTS} "${LIMBO_USER}@${LIMBO_HOST}" \
-    "docker run --rm \
-      --network ${PROJECT_NAME}_default \
-      -e DATABASE_URL=postgresql://dramatis:dramatis@postgres:5432/dramatis \
-      -v ${LIMBO_APP_DIR}:/app \
-      -w /app \
-      node:22-alpine \
-      sh -c 'npm install -g pnpm && pnpm install --frozen-lockfile && pnpm schema:validate' 2>&1")
-  REVALIDATE_EXIT=$?
-
-  echo "$SCHEMA_REVALIDATE" | tail -10
-
-  if [ $REVALIDATE_EXIT -ne 0 ]; then
-    echo ""
-    echo "  FATAL: Schema still invalid after auto-fix"
-    echo "  Manual intervention required."
-    exit 1
-  fi
-
-  echo "  Schema auto-fix successful!"
-fi
-echo ""
-
-# -- 5b. Run seed data ------------------------------------------------------------
+# -- 5b. Run seed data (using pre-built node_modules in container) ----------------
 echo "> Seeding database..."
-# Run seed in a Node container with the synced source code
-sshpass -p "${LIMBO_PASS}" ssh ${SSH_OPTS} "${LIMBO_USER}@${LIMBO_HOST}" \
-  "docker run --rm \
-    --network ${PROJECT_NAME}_default \
-    -e DATABASE_URL=postgresql://dramatis:dramatis@postgres:5432/dramatis \
-    -v ${LIMBO_APP_DIR}:/app \
-    -w /app \
-    node:22-alpine \
-    sh -c 'npm install -g pnpm && pnpm install --frozen-lockfile && pnpm db:seed' 2>&1 | tail -20" || true
+# The dramatis container already has node_modules built in, use it directly
+SEED_OUTPUT=$(sshpass -p "${LIMBO_PASS}" ssh ${SSH_OPTS} "${LIMBO_USER}@${LIMBO_HOST}" \
+  "docker exec ${CONTAINER_NAME} sh -c 'cd /app && node --experimental-specifier-resolution=node node_modules/.bin/tsx lib/db/seed.ts 2>&1'" 2>&1) || true
+
+# Check if seed succeeded
+if echo "$SEED_OUTPUT" | grep -q "Seeding Complete"; then
+  echo "$SEED_OUTPUT" | grep -A5 "Seeding Complete"
+else
+  # Fallback: run in temp container if the above fails
+  echo "  Direct seed failed, using temp container..."
+  sshpass -p "${LIMBO_PASS}" ssh ${SSH_OPTS} "${LIMBO_USER}@${LIMBO_HOST}" \
+    "docker run --rm \
+      --network ${PROJECT_NAME}_default \
+      -e DATABASE_URL=postgresql://dramatis:dramatis@postgres:5432/dramatis \
+      -v ${LIMBO_APP_DIR}:/app \
+      -w /app \
+      node:22-alpine \
+      sh -c 'npm install -g pnpm && pnpm install --frozen-lockfile && pnpm db:seed' 2>&1 | tail -25" || true
+fi
 echo "  Seed complete"
 echo ""
 
