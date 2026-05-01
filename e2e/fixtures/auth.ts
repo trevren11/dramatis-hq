@@ -30,6 +30,7 @@ export type UserType = keyof typeof TEST_USERS;
 
 /**
  * Login helper function
+ * Includes retry logic for CI stability
  */
 export async function login(
   page: Page,
@@ -37,27 +38,51 @@ export async function login(
   options?: { rememberMe?: boolean }
 ): Promise<void> {
   const user = TEST_USERS[userType];
+  const maxRetries = 3;
 
-  await page.goto("/login");
-  await page.waitForLoadState("networkidle");
+  for (let attempt = 1; attempt <= maxRetries; attempt++) {
+    try {
+      await page.goto("/login");
+      await page.waitForLoadState("networkidle");
 
-  // Fill in credentials - use exact label text
-  await page.getByLabel("Email").fill(user.email);
-  await page.getByLabel("Password").fill(user.password);
+      // Ensure form is ready
+      const emailField = page.getByLabel("Email");
+      await expect(emailField).toBeVisible({ timeout: 5000 });
 
-  // Check remember me if requested
-  if (options?.rememberMe) {
-    const rememberMe = page.getByLabel(/remember/i);
-    if (await rememberMe.isVisible()) {
-      await rememberMe.check();
+      // Clear and fill credentials
+      await emailField.clear();
+      await emailField.fill(user.email);
+
+      const passwordField = page.getByLabel("Password");
+      await passwordField.clear();
+      await passwordField.fill(user.password);
+
+      // Check remember me if requested
+      if (options?.rememberMe) {
+        const rememberMe = page.getByLabel(/remember/i);
+        if (await rememberMe.isVisible()) {
+          await rememberMe.check();
+        }
+      }
+
+      // Submit form - button text is "Sign In"
+      const signInButton = page.getByRole("button", { name: "Sign In" });
+      await expect(signInButton).toBeEnabled({ timeout: 3000 });
+      await signInButton.click();
+
+      // Wait for navigation away from login page
+      await expect(page).not.toHaveURL(/\/login/, { timeout: 15000 });
+
+      // Success - login completed
+      return;
+    } catch (error) {
+      if (attempt === maxRetries) {
+        throw error;
+      }
+      // Wait before retry
+      await page.waitForTimeout(1000);
     }
   }
-
-  // Submit form - button text is "Sign In"
-  await page.getByRole("button", { name: "Sign In" }).click();
-
-  // Wait for navigation away from login page (longer timeout for CI)
-  await expect(page).not.toHaveURL(/\/login/, { timeout: 30000 });
 }
 
 /**
