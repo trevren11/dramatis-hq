@@ -56,8 +56,8 @@ export async function login(
   // Submit form - button text is "Sign In"
   await page.getByRole("button", { name: "Sign In" }).click();
 
-  // Wait for navigation away from login page
-  await expect(page).not.toHaveURL(/\/login/);
+  // Wait for navigation away from login page (longer timeout for CI)
+  await expect(page).not.toHaveURL(/\/login/, { timeout: 30000 });
 }
 
 /**
