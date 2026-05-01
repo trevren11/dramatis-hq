@@ -13,6 +13,7 @@ declare module "next-auth" {
 
   interface User {
     role: UserRole;
+    rememberMe?: boolean;
   }
 }
 
@@ -23,4 +24,5 @@ export interface ExtendedJWT {
   name?: string | null;
   picture?: string | null;
   sub?: string;
+  rememberMe?: boolean;
 }
