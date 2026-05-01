@@ -232,6 +232,10 @@ async function seedMaterialsOnly(): Promise<void> {
 
 async function seedTest(): Promise<void> {
   console.log("\n=== Creating Test Seed ===");
+
+  // Clear existing data first to ensure clean state
+  await clearDatabase();
+
   console.log("Test credentials:");
   console.log("  - talent@test.com / test123");
   console.log("  - producer@test.com / test123");

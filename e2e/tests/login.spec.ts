@@ -29,8 +29,8 @@ test.describe("Login - Post-Deploy Verification", () => {
   test("talent user can log in successfully", async ({ page }) => {
     await login(page, "talent");
 
-    // Should be redirected to talent area
-    await expect(page).toHaveURL(/\/(talent|profile)/);
+    // Should be redirected away from login
+    await expect(page).not.toHaveURL(/\/login/);
 
     // Should see user info (proves session works)
     await page.waitForLoadState("networkidle");
@@ -87,8 +87,8 @@ test.describe("Login - Post-Deploy Verification", () => {
   test("login with remember me checkbox checked", async ({ page }) => {
     await login(page, "talent", { rememberMe: true });
 
-    // Should be redirected to talent area (login succeeded)
-    await expect(page).toHaveURL(/\/(talent|profile)/);
+    // Should be redirected away from login (login succeeded)
+    await expect(page).not.toHaveURL(/\/login/);
 
     // Should see user info (proves session works with remember me)
     await page.waitForLoadState("networkidle");

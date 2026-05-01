@@ -132,6 +132,7 @@ export async function seedUsers(options: UserSeedOptions = {}): Promise<SeededUs
 
 /**
  * Create specific test users with known credentials
+ * Uses upsert to handle re-runs without errors
  */
 export async function seedTestUsers(): Promise<SeededUser[]> {
   const passwordHash = await hashPassword("test123");
@@ -144,6 +145,7 @@ export async function seedTestUsers(): Promise<SeededUser[]> {
   ];
 
   for (const account of testAccounts) {
+    // Use upsert: insert or update if email exists (ensures password is always correct)
     const result = await db
       .insert(users)
       .values({
@@ -153,14 +155,25 @@ export async function seedTestUsers(): Promise<SeededUser[]> {
         name: account.name,
         emailVerified: new Date(),
       })
+      .onConflictDoUpdate({
+        target: users.email,
+        set: {
+          passwordHash,
+          userType: account.userType,
+          name: account.name,
+          emailVerified: new Date(),
+          updatedAt: new Date(),
+        },
+      })
       .returning({ id: users.id });
 
     const user = result[0];
     if (user) {
       testUsers.push({ id: user.id, ...account });
+      console.log(`  ✓ ${account.email} (${account.userType})`);
     }
   }
 
-  console.log(`Created ${testUsers.length} test users (password: test123)`);
+  console.log(`Created/updated ${testUsers.length} test users (password: test123)`);
   return testUsers;
 }
