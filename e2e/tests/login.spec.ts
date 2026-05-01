@@ -83,4 +83,18 @@ test.describe("Login - Post-Deploy Verification", () => {
     // Should remain on login page
     await expect(page).toHaveURL(/\/login/);
   });
+
+  test("login with remember me checkbox checked", async ({ page }) => {
+    await login(page, "talent", { rememberMe: true });
+
+    // Should be redirected to talent area (login succeeded)
+    await expect(page).toHaveURL(/\/(talent|profile)/);
+
+    // Should see user info (proves session works with remember me)
+    await page.waitForLoadState("networkidle");
+    const userName = page
+      .getByText(TEST_USERS.talent.name)
+      .or(page.getByText(TEST_USERS.talent.email));
+    await expect(userName.first()).toBeVisible({ timeout: 10000 });
+  });
 });

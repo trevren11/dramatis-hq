@@ -15,6 +15,7 @@ import "./types";
 const credentialsSchema = z.object({
   email: z.string().email(),
   password: z.string().min(1),
+  rememberMe: z.string().optional(),
 });
 
 export const authConfig: NextAuthConfig = {
@@ -50,7 +51,7 @@ export const authConfig: NextAuthConfig = {
           return null;
         }
 
-        const { email, password } = parsed.data;
+        const { email, password, rememberMe } = parsed.data;
 
         const user = await db.query.users.findFirst({
           where: eq(users.email, email.toLowerCase()),
@@ -71,6 +72,7 @@ export const authConfig: NextAuthConfig = {
           name: user.name,
           image: user.image,
           role: user.userType,
+          rememberMe: rememberMe === "true",
         };
       },
     }),
@@ -82,6 +84,13 @@ export const authConfig: NextAuthConfig = {
       if (user?.id) {
         token.id = user.id;
         token.role = user.role;
+
+        // Handle "remember me" - extend session to 30 days
+        if (user.rememberMe) {
+          const thirtyDaysInSeconds = 30 * 24 * 60 * 60;
+          token.exp = Math.floor(Date.now() / 1000) + thirtyDaysInSeconds;
+          token.rememberMe = true;
+        }
       }
 
       // For OAuth sign-ins, fetch the user's role from the database
