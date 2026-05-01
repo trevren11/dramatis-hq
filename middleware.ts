@@ -36,7 +36,10 @@ export default auth((req) => {
   const { nextUrl } = req;
   const pathname = nextUrl.pathname;
   const isLoggedIn = Boolean(req.auth);
-  const userRole = req.auth?.user.role;
+  // Extra optional chain needed for safety: auth errors can produce malformed sessions
+  // where user is undefined despite types suggesting otherwise (GitHub issue #121)
+  // eslint-disable-next-line @typescript-eslint/no-unnecessary-condition
+  const userRole = req.auth?.user?.role;
 
   // Allow API routes that handle their own auth
   if (
