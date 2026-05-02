@@ -2,7 +2,7 @@ import { defineConfig, devices } from "@playwright/test";
 
 export default defineConfig({
   testDir: "./e2e/tests",
-  fullyParallel: true,
+  fullyParallel: !process.env.CI, // Disable parallel in CI to prevent auth race conditions
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
   workers: process.env.CI ? 1 : undefined,
@@ -46,12 +46,19 @@ export default defineConfig({
     },
   ],
 
-  webServer: process.env.CI
+  webServer: process.env.PLAYWRIGHT_SKIP_WEBSERVER
     ? undefined
-    : {
-        command: "pnpm dev --port 7123",
-        url: "http://localhost:7123",
-        reuseExistingServer: !process.env.CI,
-        timeout: 120 * 1000,
-      },
+    : process.env.CI
+      ? {
+          command: "pnpm start",
+          url: "http://localhost:3000",
+          reuseExistingServer: false,
+          timeout: 180 * 1000,
+        }
+      : {
+          command: "pnpm dev --port 7123",
+          url: "http://localhost:7123",
+          reuseExistingServer: true,
+          timeout: 120 * 1000,
+        },
 });

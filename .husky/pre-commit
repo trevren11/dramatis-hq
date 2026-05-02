@@ -1,6 +1,17 @@
+# Pre-commit checks - DO NOT DELETE OR BYPASS without explicit approval
+# See AGENTS.md for guidelines on pre-commit hook policy
+
+# Lint staged files (auto-fixes where possible)
 pnpm lint-staged
+
+# Check formatting
 pnpm format:check
+
+# TypeScript type checking
 pnpm typecheck
-# NOTE: Tests temporarily skipped due to pre-existing React 19/testing-library compatibility issues
-# TODO: Fix test infrastructure - React.act and crypto module issues in test environment
-# pnpm test
+
+# Unit tests - re-enabled after fixing React 19 compatibility
+pnpm test
+
+# NOTE: E2E tests run in CI, not pre-commit (too slow for local dev)
+# E2E tests are required to pass before merge - see .github/workflows/ci.yml

@@ -576,6 +576,89 @@ The script handles everything: syncing code, building images, restarting contain
 
 - Run `./scripts/deploy-limbo.sh` and let it handle everything
 
+## AI Agent Guidelines
+
+**This section is for AI coding assistants (Claude, Copilot, Cursor, etc.) working in this codebase.**
+
+### Test-Driven Development (TDD) is MANDATORY
+
+When implementing features or fixing bugs:
+
+1. **Write the test FIRST** - Before writing any implementation code
+2. **Run the test** - Verify it fails for the right reason
+3. **Write minimal code** - Just enough to make the test pass
+4. **Refactor** - Clean up while keeping tests green
+5. **Repeat** - Continue the cycle until feature is complete
+
+**Never write production code without a failing test first.**
+
+### E2E Test Requirements
+
+**When to update E2E tests:**
+
+- When fixing bugs that affect user-visible behavior
+- When adding new pages, routes, or navigation
+- When modifying authentication or authorization flows
+- When changing form behavior (validation, submission, error handling)
+- When adding modals, dialogs, or interactive components
+
+**When E2E tests are NOT required:**
+
+- Pure refactoring with no behavior change
+- Backend-only changes that don't affect UI
+- Documentation updates
+- Config file changes
+
+**E2E test location:** `e2e/tests/` - organize by feature area (auth, talent, producer, etc.)
+
+### Pre-commit Hooks - DO NOT DELETE OR BYPASS
+
+**CRITICAL: Pre-commit hooks exist for a reason. Do not:**
+
+- Delete or comment out hooks in `.husky/pre-commit`
+- Use `--no-verify` to bypass hooks
+- Modify hook behavior to skip checks
+
+**The ONLY acceptable reason to bypass hooks:**
+
+- Emergency production hotfix with explicit user approval
+- Hook is broken (then fix it immediately after)
+
+**If hooks fail:**
+
+1. Fix the issue - do not bypass
+2. If lint fails, fix lint errors
+3. If typecheck fails, fix type errors
+4. If tests fail, fix the tests or the code
+
+### Code Quality Standards
+
+**ESLint rules enforced (do not violate):**
+
+- `complexity: 15` - Break up complex functions
+- `max-depth: 4` - Flatten nested code
+- `max-lines: 500` - Split large files
+- `max-params: 4` - Use options objects for many params
+
+**When adding new code:**
+
+- Run `pnpm lint` and fix ALL warnings/errors
+- Run `pnpm typecheck` and fix ALL type errors
+- Run `pnpm test` and ensure ALL tests pass
+
+### Workflow Checklist for AI Agents
+
+Before marking any ticket as complete:
+
+- [ ] Wrote tests FIRST (TDD)
+- [ ] All tests pass (`pnpm test`)
+- [ ] No lint errors (`pnpm lint`)
+- [ ] No type errors (`pnpm typecheck`)
+- [ ] E2E tests updated if behavior changed
+- [ ] Pre-commit hooks pass (did not bypass)
+- [ ] No files over 500 lines
+- [ ] No functions with complexity > 15
+
 ## Fixes & Troubleshooting
 
 <!-- Entries added when issues are resolved -->
